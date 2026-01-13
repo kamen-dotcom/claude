@@ -4,7 +4,7 @@ name: Deploy static content to Pages
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["claude/review-changes-mkciabk5v33pczvj-uj7Fk"]
+    branches: ["claude/recipe-calculator-project-3cvac"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
