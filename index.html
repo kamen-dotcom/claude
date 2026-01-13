@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Questionnaire</title>
+    <title>Анкетен въпросник</title>
     <style>
         * {
             margin: 0;
@@ -201,23 +201,23 @@
 </head>
 <body>
     <div class="container">
-        <h1>📋 Survey Questionnaire</h1>
-        <p class="subtitle">Please complete all questions below</p>
+        <h1>📋 Анкетен въпросник</h1>
+        <p class="subtitle">Моля, отговорете на всички въпроси по-долу</p>
 
         <form id="questionnaireForm">
             <!-- Question 1: Text Input -->
             <div class="question">
-                <h3>1. What is your full name?</h3>
-                <input type="text" id="q1" name="q1" placeholder="Enter your full name" required>
+                <h3>1. Как се казвате?</h3>
+                <input type="text" id="q1" name="q1" placeholder="Въведете вашето име" required>
             </div>
 
             <!-- Question 2: Multiple Choice (Radio) -->
             <div class="question">
-                <h3>2. What is your age group?</h3>
+                <h3>2. Каква е вашата възрастова група?</h3>
                 <div class="options">
                     <div class="option">
-                        <input type="radio" id="q2a" name="q2" value="Under 18" required>
-                        <label for="q2a">Under 18</label>
+                        <input type="radio" id="q2a" name="q2" value="Под 18" required>
+                        <label for="q2a">Под 18</label>
                     </div>
                     <div class="option">
                         <input type="radio" id="q2b" name="q2" value="18-25" required>
@@ -232,115 +232,115 @@
                         <label for="q2d">41-60</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q2e" name="q2" value="Over 60" required>
-                        <label for="q2e">Over 60</label>
+                        <input type="radio" id="q2e" name="q2" value="Над 60" required>
+                        <label for="q2e">Над 60</label>
                     </div>
                 </div>
             </div>
 
             <!-- Question 3: Multiple Choice (Radio) -->
             <div class="question">
-                <h3>3. What is your current occupation?</h3>
+                <h3>3. Каква е вашата настояща заетост?</h3>
                 <div class="options">
                     <div class="option">
-                        <input type="radio" id="q3a" name="q3" value="Student" required>
-                        <label for="q3a">Student</label>
+                        <input type="radio" id="q3a" name="q3" value="Студент" required>
+                        <label for="q3a">Студент</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q3b" name="q3" value="Employed" required>
-                        <label for="q3b">Employed</label>
+                        <input type="radio" id="q3b" name="q3" value="Нает на работа" required>
+                        <label for="q3b">Нает на работа</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q3c" name="q3" value="Self-Employed" required>
-                        <label for="q3c">Self-Employed</label>
+                        <input type="radio" id="q3c" name="q3" value="Самонает" required>
+                        <label for="q3c">Самонает</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q3d" name="q3" value="Unemployed" required>
-                        <label for="q3d">Unemployed</label>
+                        <input type="radio" id="q3d" name="q3" value="Безработен" required>
+                        <label for="q3d">Безработен</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q3e" name="q3" value="Retired" required>
-                        <label for="q3e">Retired</label>
+                        <input type="radio" id="q3e" name="q3" value="Пенсионер" required>
+                        <label for="q3e">Пенсионер</label>
                     </div>
                 </div>
             </div>
 
             <!-- Question 4: Checkboxes -->
             <div class="question">
-                <h3>4. What are your interests? (Select all that apply)</h3>
+                <h3>4. Какви са вашите интереси? (Изберете всички, които важат)</h3>
                 <div class="options">
                     <div class="option">
-                        <input type="checkbox" id="q4a" name="q4" value="Sports & Fitness">
-                        <label for="q4a">Sports & Fitness</label>
+                        <input type="checkbox" id="q4a" name="q4" value="Спорт и фитнес">
+                        <label for="q4a">Спорт и фитнес</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" id="q4b" name="q4" value="Music & Arts">
-                        <label for="q4b">Music & Arts</label>
+                        <input type="checkbox" id="q4b" name="q4" value="Музика и изкуство">
+                        <label for="q4b">Музика и изкуство</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" id="q4c" name="q4" value="Technology">
-                        <label for="q4c">Technology</label>
+                        <input type="checkbox" id="q4c" name="q4" value="Технологии">
+                        <label for="q4c">Технологии</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" id="q4d" name="q4" value="Travel">
-                        <label for="q4d">Travel</label>
+                        <input type="checkbox" id="q4d" name="q4" value="Пътувания">
+                        <label for="q4d">Пътувания</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" id="q4e" name="q4" value="Reading & Writing">
-                        <label for="q4e">Reading & Writing</label>
+                        <input type="checkbox" id="q4e" name="q4" value="Четене и писане">
+                        <label for="q4e">Четене и писане</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" id="q4f" name="q4" value="Food & Cooking">
-                        <label for="q4f">Food & Cooking</label>
+                        <input type="checkbox" id="q4f" name="q4" value="Храна и готвене">
+                        <label for="q4f">Храна и готвене</label>
                     </div>
                 </div>
             </div>
 
             <!-- Question 5: Text Area -->
             <div class="question">
-                <h3>5. Please share any additional comments or feedback:</h3>
-                <textarea id="q5" name="q5" placeholder="Write your comments here..." required></textarea>
+                <h3>5. Моля, споделете допълнителни коментари или мнения:</h3>
+                <textarea id="q5" name="q5" placeholder="Напишете вашите коментари тук..." required></textarea>
             </div>
 
             <!-- Question 6: Multiple Choice (Radio) -->
             <div class="question">
-                <h3>6. How did you find this survey?</h3>
+                <h3>6. Как попаднахте на тази анкета?</h3>
                 <div class="options">
                     <div class="option">
-                        <input type="radio" id="q6a" name="q6" value="Social Media" required>
-                        <label for="q6a">Social Media</label>
+                        <input type="radio" id="q6a" name="q6" value="Социални медии" required>
+                        <label for="q6a">Социални медии</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q6b" name="q6" value="Friend or Family" required>
-                        <label for="q6b">Friend or Family</label>
+                        <input type="radio" id="q6b" name="q6" value="Приятел или семейство" required>
+                        <label for="q6b">Приятел или семейство</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q6c" name="q6" value="Search Engine" required>
-                        <label for="q6c">Search Engine</label>
+                        <input type="radio" id="q6c" name="q6" value="Търсачка" required>
+                        <label for="q6c">Търсачка</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q6d" name="q6" value="Email" required>
-                        <label for="q6d">Email</label>
+                        <input type="radio" id="q6d" name="q6" value="Имейл" required>
+                        <label for="q6d">Имейл</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q6e" name="q6" value="Other" required>
-                        <label for="q6e">Other</label>
+                        <input type="radio" id="q6e" name="q6" value="Друго" required>
+                        <label for="q6e">Друго</label>
                     </div>
                 </div>
             </div>
 
-            <div class="error" id="errorMsg">Please answer all required questions.</div>
+            <div class="error" id="errorMsg">Моля, отговорете на всички задължителни въпроси.</div>
 
             <div class="button-container">
-                <button type="submit">Submit Questionnaire</button>
+                <button type="submit">Изпратете анкетата</button>
             </div>
         </form>
 
         <div class="results" id="results">
-            <h2>✅ Thank You for Your Responses!</h2>
+            <h2>✅ Благодарим ви за вашите отговори!</h2>
             <div id="resultsContent"></div>
             <div class="button-container" style="margin-top: 20px;">
-                <button onclick="resetForm()">Take Another Survey</button>
+                <button onclick="resetForm()">Попълнете отново</button>
             </div>
         </div>
     </div>
@@ -372,7 +372,7 @@
 
             // Validate at least one interest is selected
             if (technologies.length === 0) {
-                alert('Please select at least one interest.');
+                alert('Моля, изберете поне един интерес.');
                 return;
             }
 
@@ -380,27 +380,27 @@
             const resultsContent = document.getElementById('resultsContent');
             resultsContent.innerHTML = `
                 <div class="result-item">
-                    <strong>Name:</strong>
+                    <strong>Име:</strong>
                     <p>${escapeHtml(name)}</p>
                 </div>
                 <div class="result-item">
-                    <strong>Age Group:</strong>
+                    <strong>Възрастова група:</strong>
                     <p>${escapeHtml(favLanguage)}</p>
                 </div>
                 <div class="result-item">
-                    <strong>Occupation:</strong>
+                    <strong>Заетост:</strong>
                     <p>${escapeHtml(experience)}</p>
                 </div>
                 <div class="result-item">
-                    <strong>Interests:</strong>
+                    <strong>Интереси:</strong>
                     <p>${technologies.map(t => escapeHtml(t)).join(', ')}</p>
                 </div>
                 <div class="result-item">
-                    <strong>Comments:</strong>
+                    <strong>Коментари:</strong>
                     <p>${escapeHtml(goals)}</p>
                 </div>
                 <div class="result-item">
-                    <strong>How You Found This Survey:</strong>
+                    <strong>Как попаднахте на анкетата:</strong>
                     <p>${escapeHtml(heardFrom)}</p>
                 </div>
             `;
