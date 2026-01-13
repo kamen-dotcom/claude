@@ -346,6 +346,9 @@
     </div>
 
     <script>
+        // IMPORTANT: Replace this URL with your Google Apps Script web app URL
+        const SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+
         document.getElementById('questionnaireForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -376,41 +379,75 @@
                 return;
             }
 
-            // Display results
-            const resultsContent = document.getElementById('resultsContent');
-            resultsContent.innerHTML = `
-                <div class="result-item">
-                    <strong>Име:</strong>
-                    <p>${escapeHtml(name)}</p>
-                </div>
-                <div class="result-item">
-                    <strong>Възрастова група:</strong>
-                    <p>${escapeHtml(favLanguage)}</p>
-                </div>
-                <div class="result-item">
-                    <strong>Заетост:</strong>
-                    <p>${escapeHtml(experience)}</p>
-                </div>
-                <div class="result-item">
-                    <strong>Интереси:</strong>
-                    <p>${technologies.map(t => escapeHtml(t)).join(', ')}</p>
-                </div>
-                <div class="result-item">
-                    <strong>Коментари:</strong>
-                    <p>${escapeHtml(goals)}</p>
-                </div>
-                <div class="result-item">
-                    <strong>Как попаднахте на анкетата:</strong>
-                    <p>${escapeHtml(heardFrom)}</p>
-                </div>
-            `;
+            // Prepare data for Google Sheets
+            const dataToSend = {
+                timestamp: new Date().toLocaleString('bg-BG'),
+                name: name,
+                ageGroup: favLanguage,
+                occupation: experience,
+                interests: technologies.join(', '),
+                comments: goals,
+                source: heardFrom
+            };
 
-            // Hide form and show results
-            document.getElementById('questionnaireForm').style.display = 'none';
-            document.getElementById('results').style.display = 'block';
+            // Show loading state
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Изпращане...';
+            submitButton.disabled = true;
 
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Send to Google Sheets
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend)
+            })
+            .then(() => {
+                // Display results
+                const resultsContent = document.getElementById('resultsContent');
+                resultsContent.innerHTML = `
+                    <div class="result-item">
+                        <strong>Име:</strong>
+                        <p>${escapeHtml(name)}</p>
+                    </div>
+                    <div class="result-item">
+                        <strong>Възрастова група:</strong>
+                        <p>${escapeHtml(favLanguage)}</p>
+                    </div>
+                    <div class="result-item">
+                        <strong>Заетост:</strong>
+                        <p>${escapeHtml(experience)}</p>
+                    </div>
+                    <div class="result-item">
+                        <strong>Интереси:</strong>
+                        <p>${technologies.map(t => escapeHtml(t)).join(', ')}</p>
+                    </div>
+                    <div class="result-item">
+                        <strong>Коментари:</strong>
+                        <p>${escapeHtml(goals)}</p>
+                    </div>
+                    <div class="result-item">
+                        <strong>Как попаднахте на анкетата:</strong>
+                        <p>${escapeHtml(heardFrom)}</p>
+                    </div>
+                `;
+
+                // Hide form and show results
+                document.getElementById('questionnaireForm').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            })
+            .catch(error => {
+                console.error('Грешка при изпращане:', error);
+                alert('Грешка при изпращане на формата. Моля, опитайте отново.');
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+            });
         });
 
         function escapeHtml(text) {
