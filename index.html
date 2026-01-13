@@ -201,114 +201,130 @@
 </head>
 <body>
     <div class="container">
-        <h1>📋 Interactive Questionnaire</h1>
-        <p class="subtitle">Please answer all questions below</p>
+        <h1>📋 Survey Questionnaire</h1>
+        <p class="subtitle">Please complete all questions below</p>
 
         <form id="questionnaireForm">
             <!-- Question 1: Text Input -->
             <div class="question">
-                <h3>1. What is your name?</h3>
-                <input type="text" id="q1" name="q1" placeholder="Enter your name" required>
+                <h3>1. What is your full name?</h3>
+                <input type="text" id="q1" name="q1" placeholder="Enter your full name" required>
             </div>
 
             <!-- Question 2: Multiple Choice (Radio) -->
             <div class="question">
-                <h3>2. What is your favorite programming language?</h3>
+                <h3>2. What is your age group?</h3>
                 <div class="options">
                     <div class="option">
-                        <input type="radio" id="q2a" name="q2" value="JavaScript" required>
-                        <label for="q2a">JavaScript</label>
+                        <input type="radio" id="q2a" name="q2" value="Under 18" required>
+                        <label for="q2a">Under 18</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q2b" name="q2" value="Python" required>
-                        <label for="q2b">Python</label>
+                        <input type="radio" id="q2b" name="q2" value="18-25" required>
+                        <label for="q2b">18-25</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q2c" name="q2" value="Java" required>
-                        <label for="q2c">Java</label>
+                        <input type="radio" id="q2c" name="q2" value="26-40" required>
+                        <label for="q2c">26-40</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q2d" name="q2" value="Other" required>
-                        <label for="q2d">Other</label>
+                        <input type="radio" id="q2d" name="q2" value="41-60" required>
+                        <label for="q2d">41-60</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q2e" name="q2" value="Over 60" required>
+                        <label for="q2e">Over 60</label>
                     </div>
                 </div>
             </div>
 
             <!-- Question 3: Multiple Choice (Radio) -->
             <div class="question">
-                <h3>3. How many years of programming experience do you have?</h3>
+                <h3>3. What is your current occupation?</h3>
                 <div class="options">
                     <div class="option">
-                        <input type="radio" id="q3a" name="q3" value="Less than 1 year" required>
-                        <label for="q3a">Less than 1 year</label>
+                        <input type="radio" id="q3a" name="q3" value="Student" required>
+                        <label for="q3a">Student</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q3b" name="q3" value="1-3 years" required>
-                        <label for="q3b">1-3 years</label>
+                        <input type="radio" id="q3b" name="q3" value="Employed" required>
+                        <label for="q3b">Employed</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q3c" name="q3" value="3-5 years" required>
-                        <label for="q3c">3-5 years</label>
+                        <input type="radio" id="q3c" name="q3" value="Self-Employed" required>
+                        <label for="q3c">Self-Employed</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q3d" name="q3" value="More than 5 years" required>
-                        <label for="q3d">More than 5 years</label>
+                        <input type="radio" id="q3d" name="q3" value="Unemployed" required>
+                        <label for="q3d">Unemployed</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q3e" name="q3" value="Retired" required>
+                        <label for="q3e">Retired</label>
                     </div>
                 </div>
             </div>
 
             <!-- Question 4: Checkboxes -->
             <div class="question">
-                <h3>4. Which technologies are you interested in? (Select all that apply)</h3>
+                <h3>4. What are your interests? (Select all that apply)</h3>
                 <div class="options">
                     <div class="option">
-                        <input type="checkbox" id="q4a" name="q4" value="Web Development">
-                        <label for="q4a">Web Development</label>
+                        <input type="checkbox" id="q4a" name="q4" value="Sports & Fitness">
+                        <label for="q4a">Sports & Fitness</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" id="q4b" name="q4" value="Mobile Development">
-                        <label for="q4b">Mobile Development</label>
+                        <input type="checkbox" id="q4b" name="q4" value="Music & Arts">
+                        <label for="q4b">Music & Arts</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" id="q4c" name="q4" value="Machine Learning">
-                        <label for="q4c">Machine Learning</label>
+                        <input type="checkbox" id="q4c" name="q4" value="Technology">
+                        <label for="q4c">Technology</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" id="q4d" name="q4" value="Cloud Computing">
-                        <label for="q4d">Cloud Computing</label>
+                        <input type="checkbox" id="q4d" name="q4" value="Travel">
+                        <label for="q4d">Travel</label>
                     </div>
                     <div class="option">
-                        <input type="checkbox" id="q4e" name="q4" value="DevOps">
-                        <label for="q4e">DevOps</label>
+                        <input type="checkbox" id="q4e" name="q4" value="Reading & Writing">
+                        <label for="q4e">Reading & Writing</label>
+                    </div>
+                    <div class="option">
+                        <input type="checkbox" id="q4f" name="q4" value="Food & Cooking">
+                        <label for="q4f">Food & Cooking</label>
                     </div>
                 </div>
             </div>
 
             <!-- Question 5: Text Area -->
             <div class="question">
-                <h3>5. What are your goals for learning programming?</h3>
-                <textarea id="q5" name="q5" placeholder="Share your goals and aspirations..." required></textarea>
+                <h3>5. Please share any additional comments or feedback:</h3>
+                <textarea id="q5" name="q5" placeholder="Write your comments here..." required></textarea>
             </div>
 
             <!-- Question 6: Multiple Choice (Radio) -->
             <div class="question">
-                <h3>6. How did you hear about this questionnaire?</h3>
+                <h3>6. How did you find this survey?</h3>
                 <div class="options">
                     <div class="option">
                         <input type="radio" id="q6a" name="q6" value="Social Media" required>
                         <label for="q6a">Social Media</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q6b" name="q6" value="Friend/Colleague" required>
-                        <label for="q6b">Friend/Colleague</label>
+                        <input type="radio" id="q6b" name="q6" value="Friend or Family" required>
+                        <label for="q6b">Friend or Family</label>
                     </div>
                     <div class="option">
                         <input type="radio" id="q6c" name="q6" value="Search Engine" required>
                         <label for="q6c">Search Engine</label>
                     </div>
                     <div class="option">
-                        <input type="radio" id="q6d" name="q6" value="Other" required>
-                        <label for="q6d">Other</label>
+                        <input type="radio" id="q6d" name="q6" value="Email" required>
+                        <label for="q6d">Email</label>
+                    </div>
+                    <div class="option">
+                        <input type="radio" id="q6e" name="q6" value="Other" required>
+                        <label for="q6e">Other</label>
                     </div>
                 </div>
             </div>
@@ -354,9 +370,9 @@
             // Get how they heard
             const heardFrom = formData.get('q6');
 
-            // Validate at least one technology is selected
+            // Validate at least one interest is selected
             if (technologies.length === 0) {
-                alert('Please select at least one technology you are interested in.');
+                alert('Please select at least one interest.');
                 return;
             }
 
@@ -368,23 +384,23 @@
                     <p>${escapeHtml(name)}</p>
                 </div>
                 <div class="result-item">
-                    <strong>Favorite Programming Language:</strong>
+                    <strong>Age Group:</strong>
                     <p>${escapeHtml(favLanguage)}</p>
                 </div>
                 <div class="result-item">
-                    <strong>Programming Experience:</strong>
+                    <strong>Occupation:</strong>
                     <p>${escapeHtml(experience)}</p>
                 </div>
                 <div class="result-item">
-                    <strong>Technologies of Interest:</strong>
+                    <strong>Interests:</strong>
                     <p>${technologies.map(t => escapeHtml(t)).join(', ')}</p>
                 </div>
                 <div class="result-item">
-                    <strong>Learning Goals:</strong>
+                    <strong>Comments:</strong>
                     <p>${escapeHtml(goals)}</p>
                 </div>
                 <div class="result-item">
-                    <strong>How You Heard About This:</strong>
+                    <strong>How You Found This Survey:</strong>
                     <p>${escapeHtml(heardFrom)}</p>
                 </div>
             `;
