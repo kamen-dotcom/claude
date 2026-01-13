@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Nutrition Calculator - Free Recipe Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+
+        @media (max-width: 900px) {
+            .calculator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #43cea2;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 .icon {
+            font-size: 1.5em;
+        }
+
+        /* Recipe Input Section */
+        .recipe-name-input {
+            margin-bottom: 20px;
+        }
+
+        .recipe-name-input input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: border-color 0.3s;
+        }
+
+        .recipe-name-input input:focus {
+            outline: none;
+            border-color: #43cea2;
+        }
+
+        .servings-input {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .servings-input label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .servings-input input {
+            width: 80px;
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .servings-input input:focus {
+            outline: none;
+            border-color: #43cea2;
+        }
+
+        /* Ingredient Input */
+        .ingredient-form {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .ingredient-form {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .ingredient-form input,
+        .ingredient-form select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .ingredient-form input:focus,
+        .ingredient-form select:focus {
+            outline: none;
+            border-color: #43cea2;
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(67, 206, 162, 0.4);
+        }
+
+        /* Ingredient List */
+        .ingredients-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+
+        .ingredient-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #43cea2;
+            transition: transform 0.2s;
+        }
+
+        .ingredient-item:hover {
+            transform: translateX(5px);
+        }
+
+        .ingredient-info {
+            flex: 1;
+        }
+
+        .ingredient-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .ingredient-amount {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .ingredient-calories {
+            color: #43cea2;
+            font-weight: 600;
+            margin: 0 20px;
+        }
+
+        .remove-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: transform 0.2s;
+        }
+
+        .remove-btn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Calculate Button */
+        .calculate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(67, 206, 162, 0.4);
+        }
+
+        /* Nutrition Facts Label */
+        .nutrition-label {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            border: 2px solid #000;
+            padding: 10px;
+            background: white;
+        }
+
+        .nutrition-label .title {
+            font-size: 2em;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .nutrition-label .serving-info {
+            border-bottom: 10px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .nutrition-label .serving-size {
+            font-weight: 600;
+        }
+
+        .nutrition-label .calories-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 5px solid #000;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .nutrition-label .calories-label {
+            font-size: 1.2em;
+            font-weight: 700;
+        }
+
+        .nutrition-label .calories-value {
+            font-size: 2.5em;
+            font-weight: 900;
+        }
+
+        .nutrition-label .daily-value-header {
+            text-align: right;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .nutrition-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .nutrition-row.thick-border {
+            border-bottom: 5px solid #000;
+        }
+
+        .nutrition-row.medium-border {
+            border-bottom: 3px solid #000;
+        }
+
+        .nutrition-row .nutrient-name {
+            font-weight: 700;
+        }
+
+        .nutrition-row .sub-nutrient {
+            padding-left: 20px;
+            font-weight: 400;
+        }
+
+        .nutrition-row .daily-percent {
+            font-weight: 700;
+        }
+
+        .nutrition-footnote {
+            font-size: 0.8em;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #000;
+        }
+
+        /* Quick Add Suggestions */
+        .quick-add {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .quick-add h4 {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .quick-add-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .quick-add-btn {
+            padding: 8px 16px;
+            background: #f0f4ff;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+
+        .quick-add-btn:hover {
+            background: #43cea2;
+            color: white;
+            border-color: #43cea2;
+        }
+
+        /* Autocomplete Dropdown */
+        .autocomplete-container {
+            position: relative;
+        }
+
+        .autocomplete-list {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #43cea2;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .autocomplete-item:hover {
+            background: #f0f4ff;
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-state .icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        /* Reset Button */
+        .reset-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+
+        .reset-btn:hover {
+            background: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+
+        /* Macros Summary */
+        .macros-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .macro-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .macro-item .value {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #185a9d;
+        }
+
+        .macro-item .label {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 600px) {
+            .macros-summary {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header>
+            <h1>Recipe Nutrition Calculator</h1>
+            <p>Analyze your recipes and calculate calories, macros, and nutritional facts</p>
+        </header>
+
+        <div class="calculator-grid">
+            <!-- Left Column - Input -->
+            <div class="card">
+                <h2><span class="icon">+</span> Recipe Ingredients</h2>
+
+                <div class="recipe-name-input">
+                    <input type="text" id="recipeName" placeholder="Recipe Name (e.g., Chicken Salad)">
+                </div>
+
+                <div class="servings-input">
+                    <label for="servings">Number of Servings:</label>
+                    <input type="number" id="servings" value="4" min="1" max="100">
+                </div>
+
+                <div class="ingredient-form">
+                    <div class="autocomplete-container">
+                        <input type="text" id="ingredientName" placeholder="Search ingredient..." autocomplete="off">
+                        <div class="autocomplete-list" id="autocompleteList"></div>
+                    </div>
+                    <input type="number" id="ingredientAmount" placeholder="Amount" step="0.1" min="0">
+                    <select id="ingredientUnit">
+                        <option value="g">grams (g)</option>
+                        <option value="oz">ounces (oz)</option>
+                        <option value="cup">cup</option>
+                        <option value="tbsp">tablespoon</option>
+                        <option value="tsp">teaspoon</option>
+                        <option value="piece">piece</option>
+                        <option value="ml">milliliters (ml)</option>
+                    </select>
+                    <button class="add-btn" onclick="addIngredient()">Add</button>
+                </div>
+
+                <div class="ingredients-list" id="ingredientsList">
+                    <div class="empty-state">
+                        <div class="icon">+</div>
+                        <p>Add ingredients to your recipe</p>
+                    </div>
+                </div>
+
+                <button class="calculate-btn" onclick="calculateNutrition()">
+                    Calculate Nutrition
+                </button>
+
+                <button class="reset-btn" onclick="resetCalculator()">
+                    Clear All Ingredients
+                </button>
+
+                <div class="quick-add">
+                    <h4>Quick Add Common Ingredients</h4>
+                    <div class="quick-add-buttons">
+                        <button class="quick-add-btn" onclick="quickAdd('Chicken Breast')">Chicken Breast</button>
+                        <button class="quick-add-btn" onclick="quickAdd('Olive Oil')">Olive Oil</button>
+                        <button class="quick-add-btn" onclick="quickAdd('Rice')">Rice</button>
+                        <button class="quick-add-btn" onclick="quickAdd('Egg')">Egg</button>
+                        <button class="quick-add-btn" onclick="quickAdd('Butter')">Butter</button>
+                        <button class="quick-add-btn" onclick="quickAdd('Onion')">Onion</button>
+                        <button class="quick-add-btn" onclick="quickAdd('Garlic')">Garlic</button>
+                        <button class="quick-add-btn" onclick="quickAdd('Milk')">Milk</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Nutrition Facts -->
+            <div class="card">
+                <h2><span class="icon">i</span> Nutrition Facts</h2>
+
+                <div class="nutrition-label" id="nutritionLabel">
+                    <div class="title">Nutrition Facts</div>
+                    <div class="serving-info">
+                        <div class="serving-size" id="servingSizeLabel">Per Serving</div>
+                        <div id="servingAmount">--</div>
+                    </div>
+                    <div class="calories-row">
+                        <span class="calories-label">Calories</span>
+                        <span class="calories-value" id="caloriesValue">0</span>
+                    </div>
+                    <div class="daily-value-header">% Daily Value*</div>
+
+                    <div class="nutrition-row thick-border">
+                        <span class="nutrient-name">Total Fat <span id="totalFat">0</span>g</span>
+                        <span class="daily-percent" id="fatPercent">0%</span>
+                    </div>
+                    <div class="nutrition-row">
+                        <span class="sub-nutrient">Saturated Fat <span id="satFat">0</span>g</span>
+                        <span class="daily-percent" id="satFatPercent">0%</span>
+                    </div>
+                    <div class="nutrition-row">
+                        <span class="sub-nutrient">Trans Fat <span id="transFat">0</span>g</span>
+                        <span></span>
+                    </div>
+                    <div class="nutrition-row thick-border">
+                        <span class="nutrient-name">Cholesterol <span id="cholesterol">0</span>mg</span>
+                        <span class="daily-percent" id="cholesterolPercent">0%</span>
+                    </div>
+                    <div class="nutrition-row thick-border">
+                        <span class="nutrient-name">Sodium <span id="sodium">0</span>mg</span>
+                        <span class="daily-percent" id="sodiumPercent">0%</span>
+                    </div>
+                    <div class="nutrition-row medium-border">
+                        <span class="nutrient-name">Total Carbohydrate <span id="totalCarbs">0</span>g</span>
+                        <span class="daily-percent" id="carbsPercent">0%</span>
+                    </div>
+                    <div class="nutrition-row">
+                        <span class="sub-nutrient">Dietary Fiber <span id="fiber">0</span>g</span>
+                        <span class="daily-percent" id="fiberPercent">0%</span>
+                    </div>
+                    <div class="nutrition-row thick-border">
+                        <span class="sub-nutrient">Total Sugars <span id="sugars">0</span>g</span>
+                        <span></span>
+                    </div>
+                    <div class="nutrition-row thick-border">
+                        <span class="nutrient-name">Protein <span id="protein">0</span>g</span>
+                        <span class="daily-percent" id="proteinPercent">0%</span>
+                    </div>
+
+                    <div class="nutrition-footnote">
+                        *Percent Daily Values are based on a 2,000 calorie diet. Your daily values may be higher or lower depending on your calorie needs.
+                    </div>
+                </div>
+
+                <div class="macros-summary">
+                    <div class="macro-item">
+                        <div class="value" id="totalCalories">0</div>
+                        <div class="label">Total Calories</div>
+                    </div>
+                    <div class="macro-item">
+                        <div class="value" id="totalProtein">0g</div>
+                        <div class="label">Protein</div>
+                    </div>
+                    <div class="macro-item">
+                        <div class="value" id="totalCarbsSum">0g</div>
+                        <div class="label">Carbs</div>
+                    </div>
+                    <div class="macro-item">
+                        <div class="value" id="totalFatSum">0g</div>
+                        <div class="label">Fat</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Comprehensive ingredient database with nutritional values per 100g
+        const ingredientDatabase = {
+            // Proteins
+            'Chicken Breast': { calories: 165, protein: 31, carbs: 0, fat: 3.6, satFat: 1, fiber: 0, sugar: 0, sodium: 74, cholesterol: 85 },
+            'Chicken Thigh': { calories: 209, protein: 26, carbs: 0, fat: 10.9, satFat: 3, fiber: 0, sugar: 0, sodium: 84, cholesterol: 130 },
+            'Ground Beef (80/20)': { calories: 254, protein: 26, carbs: 0, fat: 17, satFat: 7, fiber: 0, sugar: 0, sodium: 75, cholesterol: 80 },
+            'Ground Beef (90/10)': { calories: 176, protein: 26, carbs: 0, fat: 10, satFat: 4, fiber: 0, sugar: 0, sodium: 66, cholesterol: 70 },
+            'Salmon': { calories: 208, protein: 20, carbs: 0, fat: 13, satFat: 3, fiber: 0, sugar: 0, sodium: 59, cholesterol: 55 },
+            'Tuna': { calories: 132, protein: 28, carbs: 0, fat: 1, satFat: 0.3, fiber: 0, sugar: 0, sodium: 50, cholesterol: 60 },
+            'Shrimp': { calories: 99, protein: 24, carbs: 0.2, fat: 0.3, satFat: 0.1, fiber: 0, sugar: 0, sodium: 111, cholesterol: 189 },
+            'Pork Chop': { calories: 231, protein: 25, carbs: 0, fat: 14, satFat: 5, fiber: 0, sugar: 0, sodium: 62, cholesterol: 80 },
+            'Turkey Breast': { calories: 135, protein: 30, carbs: 0, fat: 0.7, satFat: 0.2, fiber: 0, sugar: 0, sodium: 46, cholesterol: 83 },
+            'Bacon': { calories: 541, protein: 37, carbs: 1.4, fat: 42, satFat: 14, fiber: 0, sugar: 0, sodium: 1717, cholesterol: 110 },
+            'Tofu': { calories: 76, protein: 8, carbs: 1.9, fat: 4.8, satFat: 0.7, fiber: 0.3, sugar: 0.6, sodium: 7, cholesterol: 0 },
+
+            // Eggs & Dairy
+            'Egg': { calories: 155, protein: 13, carbs: 1.1, fat: 11, satFat: 3.3, fiber: 0, sugar: 1.1, sodium: 124, cholesterol: 373 },
+            'Egg White': { calories: 52, protein: 11, carbs: 0.7, fat: 0.2, satFat: 0, fiber: 0, sugar: 0.7, sodium: 166, cholesterol: 0 },
+            'Milk': { calories: 42, protein: 3.4, carbs: 5, fat: 1, satFat: 0.6, fiber: 0, sugar: 5, sodium: 44, cholesterol: 5 },
+            'Whole Milk': { calories: 61, protein: 3.2, carbs: 4.8, fat: 3.3, satFat: 1.9, fiber: 0, sugar: 5, sodium: 43, cholesterol: 10 },
+            'Greek Yogurt': { calories: 59, protein: 10, carbs: 3.6, fat: 0.7, satFat: 0.5, fiber: 0, sugar: 3.2, sodium: 36, cholesterol: 5 },
+            'Cheddar Cheese': { calories: 403, protein: 25, carbs: 1.3, fat: 33, satFat: 21, fiber: 0, sugar: 0.5, sodium: 621, cholesterol: 105 },
+            'Mozzarella': { calories: 280, protein: 28, carbs: 3.1, fat: 17, satFat: 10, fiber: 0, sugar: 1, sodium: 627, cholesterol: 54 },
+            'Parmesan': { calories: 431, protein: 38, carbs: 4.1, fat: 29, satFat: 17, fiber: 0, sugar: 0.9, sodium: 1529, cholesterol: 68 },
+            'Butter': { calories: 717, protein: 0.9, carbs: 0.1, fat: 81, satFat: 51, fiber: 0, sugar: 0.1, sodium: 11, cholesterol: 215 },
+            'Cream Cheese': { calories: 342, protein: 6, carbs: 4.1, fat: 34, satFat: 19, fiber: 0, sugar: 3.8, sodium: 321, cholesterol: 110 },
+            'Sour Cream': { calories: 193, protein: 2.4, carbs: 4.6, fat: 19, satFat: 11, fiber: 0, sugar: 3.5, sodium: 53, cholesterol: 52 },
+            'Heavy Cream': { calories: 340, protein: 2.1, carbs: 2.8, fat: 36, satFat: 23, fiber: 0, sugar: 2.9, sodium: 38, cholesterol: 137 },
+
+            // Grains & Starches
+            'Rice': { calories: 130, protein: 2.7, carbs: 28, fat: 0.3, satFat: 0.1, fiber: 0.4, sugar: 0, sodium: 1, cholesterol: 0 },
+            'Brown Rice': { calories: 111, protein: 2.6, carbs: 23, fat: 0.9, satFat: 0.2, fiber: 1.8, sugar: 0.4, sodium: 5, cholesterol: 0 },
+            'Pasta': { calories: 131, protein: 5, carbs: 25, fat: 1.1, satFat: 0.2, fiber: 1.8, sugar: 0.6, sodium: 1, cholesterol: 0 },
+            'Bread': { calories: 265, protein: 9, carbs: 49, fat: 3.2, satFat: 0.7, fiber: 2.7, sugar: 5, sodium: 491, cholesterol: 0 },
+            'Whole Wheat Bread': { calories: 247, protein: 13, carbs: 41, fat: 3.4, satFat: 0.6, fiber: 7, sugar: 6, sodium: 400, cholesterol: 0 },
+            'Oatmeal': { calories: 68, protein: 2.4, carbs: 12, fat: 1.4, satFat: 0.2, fiber: 1.7, sugar: 0.5, sodium: 49, cholesterol: 0 },
+            'Quinoa': { calories: 120, protein: 4.4, carbs: 21, fat: 1.9, satFat: 0.2, fiber: 2.8, sugar: 0.9, sodium: 7, cholesterol: 0 },
+            'Flour': { calories: 364, protein: 10, carbs: 76, fat: 1, satFat: 0.2, fiber: 2.7, sugar: 0.3, sodium: 2, cholesterol: 0 },
+            'Potato': { calories: 77, protein: 2, carbs: 17, fat: 0.1, satFat: 0, fiber: 2.2, sugar: 0.8, sodium: 6, cholesterol: 0 },
+            'Sweet Potato': { calories: 86, protein: 1.6, carbs: 20, fat: 0.1, satFat: 0, fiber: 3, sugar: 4.2, sodium: 55, cholesterol: 0 },
+
+            // Vegetables
+            'Broccoli': { calories: 34, protein: 2.8, carbs: 7, fat: 0.4, satFat: 0.1, fiber: 2.6, sugar: 1.7, sodium: 33, cholesterol: 0 },
+            'Spinach': { calories: 23, protein: 2.9, carbs: 3.6, fat: 0.4, satFat: 0.1, fiber: 2.2, sugar: 0.4, sodium: 79, cholesterol: 0 },
+            'Carrot': { calories: 41, protein: 0.9, carbs: 10, fat: 0.2, satFat: 0, fiber: 2.8, sugar: 4.7, sodium: 69, cholesterol: 0 },
+            'Onion': { calories: 40, protein: 1.1, carbs: 9.3, fat: 0.1, satFat: 0, fiber: 1.7, sugar: 4.2, sodium: 4, cholesterol: 0 },
+            'Garlic': { calories: 149, protein: 6.4, carbs: 33, fat: 0.5, satFat: 0.1, fiber: 2.1, sugar: 1, sodium: 17, cholesterol: 0 },
+            'Tomato': { calories: 18, protein: 0.9, carbs: 3.9, fat: 0.2, satFat: 0, fiber: 1.2, sugar: 2.6, sodium: 5, cholesterol: 0 },
+            'Bell Pepper': { calories: 31, protein: 1, carbs: 6, fat: 0.3, satFat: 0, fiber: 2.1, sugar: 4.2, sodium: 4, cholesterol: 0 },
+            'Mushroom': { calories: 22, protein: 3.1, carbs: 3.3, fat: 0.3, satFat: 0, fiber: 1, sugar: 2, sodium: 5, cholesterol: 0 },
+            'Zucchini': { calories: 17, protein: 1.2, carbs: 3.1, fat: 0.3, satFat: 0.1, fiber: 1, sugar: 2.5, sodium: 8, cholesterol: 0 },
+            'Cucumber': { calories: 15, protein: 0.7, carbs: 3.6, fat: 0.1, satFat: 0, fiber: 0.5, sugar: 1.7, sodium: 2, cholesterol: 0 },
+            'Lettuce': { calories: 15, protein: 1.4, carbs: 2.9, fat: 0.2, satFat: 0, fiber: 1.3, sugar: 0.8, sodium: 28, cholesterol: 0 },
+            'Celery': { calories: 16, protein: 0.7, carbs: 3, fat: 0.2, satFat: 0, fiber: 1.6, sugar: 1.3, sodium: 80, cholesterol: 0 },
+            'Green Beans': { calories: 31, protein: 1.8, carbs: 7, fat: 0.1, satFat: 0, fiber: 3.4, sugar: 1.4, sodium: 6, cholesterol: 0 },
+            'Corn': { calories: 86, protein: 3.2, carbs: 19, fat: 1.2, satFat: 0.2, fiber: 2.7, sugar: 3.2, sodium: 15, cholesterol: 0 },
+            'Asparagus': { calories: 20, protein: 2.2, carbs: 3.9, fat: 0.1, satFat: 0, fiber: 2.1, sugar: 1.9, sodium: 2, cholesterol: 0 },
+            'Cauliflower': { calories: 25, protein: 1.9, carbs: 5, fat: 0.3, satFat: 0.1, fiber: 2, sugar: 1.9, sodium: 30, cholesterol: 0 },
+            'Cabbage': { calories: 25, protein: 1.3, carbs: 5.8, fat: 0.1, satFat: 0, fiber: 2.5, sugar: 3.2, sodium: 18, cholesterol: 0 },
+            'Avocado': { calories: 160, protein: 2, carbs: 9, fat: 15, satFat: 2.1, fiber: 7, sugar: 0.7, sodium: 7, cholesterol: 0 },
+
+            // Fruits
+            'Apple': { calories: 52, protein: 0.3, carbs: 14, fat: 0.2, satFat: 0, fiber: 2.4, sugar: 10, sodium: 1, cholesterol: 0 },
+            'Banana': { calories: 89, protein: 1.1, carbs: 23, fat: 0.3, satFat: 0.1, fiber: 2.6, sugar: 12, sodium: 1, cholesterol: 0 },
+            'Orange': { calories: 47, protein: 0.9, carbs: 12, fat: 0.1, satFat: 0, fiber: 2.4, sugar: 9, sodium: 0, cholesterol: 0 },
+            'Strawberry': { calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3, satFat: 0, fiber: 2, sugar: 4.9, sodium: 1, cholesterol: 0 },
+            'Blueberry': { calories: 57, protein: 0.7, carbs: 14, fat: 0.3, satFat: 0, fiber: 2.4, sugar: 10, sodium: 1, cholesterol: 0 },
+            'Lemon': { calories: 29, protein: 1.1, carbs: 9.3, fat: 0.3, satFat: 0, fiber: 2.8, sugar: 2.5, sodium: 2, cholesterol: 0 },
+            'Lime': { calories: 30, protein: 0.7, carbs: 11, fat: 0.2, satFat: 0, fiber: 2.8, sugar: 1.7, sodium: 2, cholesterol: 0 },
+            'Grapes': { calories: 69, protein: 0.7, carbs: 18, fat: 0.2, satFat: 0.1, fiber: 0.9, sugar: 16, sodium: 2, cholesterol: 0 },
+            'Mango': { calories: 60, protein: 0.8, carbs: 15, fat: 0.4, satFat: 0.1, fiber: 1.6, sugar: 14, sodium: 1, cholesterol: 0 },
+            'Pineapple': { calories: 50, protein: 0.5, carbs: 13, fat: 0.1, satFat: 0, fiber: 1.4, sugar: 10, sodium: 1, cholesterol: 0 },
+
+            // Fats & Oils
+            'Olive Oil': { calories: 884, protein: 0, carbs: 0, fat: 100, satFat: 14, fiber: 0, sugar: 0, sodium: 2, cholesterol: 0 },
+            'Vegetable Oil': { calories: 884, protein: 0, carbs: 0, fat: 100, satFat: 8, fiber: 0, sugar: 0, sodium: 0, cholesterol: 0 },
+            'Coconut Oil': { calories: 862, protein: 0, carbs: 0, fat: 100, satFat: 87, fiber: 0, sugar: 0, sodium: 0, cholesterol: 0 },
+            'Mayonnaise': { calories: 680, protein: 1, carbs: 0.6, fat: 75, satFat: 12, fiber: 0, sugar: 0.6, sodium: 635, cholesterol: 42 },
+
+            // Nuts & Seeds
+            'Almonds': { calories: 579, protein: 21, carbs: 22, fat: 50, satFat: 3.8, fiber: 13, sugar: 4.4, sodium: 1, cholesterol: 0 },
+            'Walnuts': { calories: 654, protein: 15, carbs: 14, fat: 65, satFat: 6.1, fiber: 6.7, sugar: 2.6, sodium: 2, cholesterol: 0 },
+            'Peanuts': { calories: 567, protein: 26, carbs: 16, fat: 49, satFat: 6.3, fiber: 8.5, sugar: 4, sodium: 18, cholesterol: 0 },
+            'Peanut Butter': { calories: 588, protein: 25, carbs: 20, fat: 50, satFat: 10, fiber: 6, sugar: 9, sodium: 459, cholesterol: 0 },
+            'Sunflower Seeds': { calories: 584, protein: 21, carbs: 20, fat: 51, satFat: 4.5, fiber: 8.6, sugar: 2.6, sodium: 9, cholesterol: 0 },
+            'Chia Seeds': { calories: 486, protein: 17, carbs: 42, fat: 31, satFat: 3.3, fiber: 34, sugar: 0, sodium: 16, cholesterol: 0 },
+
+            // Legumes
+            'Black Beans': { calories: 132, protein: 8.9, carbs: 24, fat: 0.5, satFat: 0.1, fiber: 8.7, sugar: 0.3, sodium: 1, cholesterol: 0 },
+            'Chickpeas': { calories: 164, protein: 8.9, carbs: 27, fat: 2.6, satFat: 0.3, fiber: 7.6, sugar: 4.8, sodium: 7, cholesterol: 0 },
+            'Lentils': { calories: 116, protein: 9, carbs: 20, fat: 0.4, satFat: 0.1, fiber: 7.9, sugar: 1.8, sodium: 2, cholesterol: 0 },
+            'Kidney Beans': { calories: 127, protein: 8.7, carbs: 23, fat: 0.5, satFat: 0.1, fiber: 6.4, sugar: 0.3, sodium: 2, cholesterol: 0 },
+
+            // Sweeteners
+            'Sugar': { calories: 387, protein: 0, carbs: 100, fat: 0, satFat: 0, fiber: 0, sugar: 100, sodium: 1, cholesterol: 0 },
+            'Honey': { calories: 304, protein: 0.3, carbs: 82, fat: 0, satFat: 0, fiber: 0.2, sugar: 82, sodium: 4, cholesterol: 0 },
+            'Maple Syrup': { calories: 260, protein: 0, carbs: 67, fat: 0, satFat: 0, fiber: 0, sugar: 60, sodium: 12, cholesterol: 0 },
+
+            // Condiments & Sauces
+            'Ketchup': { calories: 112, protein: 1.7, carbs: 26, fat: 0.4, satFat: 0.1, fiber: 0.3, sugar: 22, sodium: 907, cholesterol: 0 },
+            'Mustard': { calories: 66, protein: 4.4, carbs: 6, fat: 3.3, satFat: 0.2, fiber: 3.3, sugar: 3, sodium: 1135, cholesterol: 0 },
+            'Soy Sauce': { calories: 53, protein: 8.1, carbs: 4.9, fat: 0.6, satFat: 0.1, fiber: 0.8, sugar: 0.4, sodium: 5493, cholesterol: 0 },
+            'Vinegar': { calories: 18, protein: 0, carbs: 0.9, fat: 0, satFat: 0, fiber: 0, sugar: 0.4, sodium: 2, cholesterol: 0 },
+            'Salsa': { calories: 36, protein: 1.5, carbs: 7.1, fat: 0.2, satFat: 0, fiber: 1.8, sugar: 4.1, sodium: 571, cholesterol: 0 },
+        };
+
+        // Unit conversion to grams
+        const unitConversions = {
+            'g': 1,
+            'oz': 28.35,
+            'cup': 240,
+            'tbsp': 15,
+            'tsp': 5,
+            'piece': 100, // Default, but varies by ingredient
+            'ml': 1
+        };
+
+        // Special piece weights for common items
+        const pieceWeights = {
+            'Egg': 50,
+            'Banana': 118,
+            'Apple': 182,
+            'Orange': 131,
+            'Garlic': 3,
+            'Onion': 110,
+            'Potato': 150,
+            'Carrot': 61,
+            'Tomato': 123,
+            'Chicken Breast': 174,
+            'Avocado': 201,
+        };
+
+        let ingredients = [];
+
+        // Autocomplete functionality
+        const ingredientInput = document.getElementById('ingredientName');
+        const autocompleteList = document.getElementById('autocompleteList');
+
+        ingredientInput.addEventListener('input', function() {
+            const value = this.value.toLowerCase();
+            autocompleteList.innerHTML = '';
+
+            if (value.length < 1) {
+                autocompleteList.style.display = 'none';
+                return;
+            }
+
+            const matches = Object.keys(ingredientDatabase).filter(name =>
+                name.toLowerCase().includes(value)
+            ).slice(0, 8);
+
+            if (matches.length > 0) {
+                autocompleteList.style.display = 'block';
+                matches.forEach(name => {
+                    const div = document.createElement('div');
+                    div.className = 'autocomplete-item';
+                    div.textContent = name;
+                    div.onclick = () => {
+                        ingredientInput.value = name;
+                        autocompleteList.style.display = 'none';
+                        document.getElementById('ingredientAmount').focus();
+                    };
+                    autocompleteList.appendChild(div);
+                });
+            } else {
+                autocompleteList.style.display = 'none';
+            }
+        });
+
+        // Close autocomplete when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.autocomplete-container')) {
+                autocompleteList.style.display = 'none';
+            }
+        });
+
+        // Add ingredient to list
+        function addIngredient() {
+            const name = ingredientInput.value.trim();
+            const amount = parseFloat(document.getElementById('ingredientAmount').value);
+            const unit = document.getElementById('ingredientUnit').value;
+
+            if (!name) {
+                alert('Please enter an ingredient name');
+                return;
+            }
+
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid amount');
+                return;
+            }
+
+            // Check if ingredient exists in database (case insensitive)
+            const matchedName = Object.keys(ingredientDatabase).find(
+                key => key.toLowerCase() === name.toLowerCase()
+            );
+
+            if (!matchedName) {
+                alert(`"${name}" not found in database. Please select from the suggestions.`);
+                return;
+            }
+
+            // Convert to grams
+            let grams;
+            if (unit === 'piece' && pieceWeights[matchedName]) {
+                grams = amount * pieceWeights[matchedName];
+            } else {
+                grams = amount * unitConversions[unit];
+            }
+
+            const nutrition = ingredientDatabase[matchedName];
+            const calories = Math.round((nutrition.calories * grams) / 100);
+
+            ingredients.push({
+                name: matchedName,
+                amount: amount,
+                unit: unit,
+                grams: grams,
+                calories: calories,
+                nutrition: nutrition
+            });
+
+            renderIngredientsList();
+
+            // Clear inputs
+            ingredientInput.value = '';
+            document.getElementById('ingredientAmount').value = '';
+            ingredientInput.focus();
+        }
+
+        // Render ingredients list
+        function renderIngredientsList() {
+            const listContainer = document.getElementById('ingredientsList');
+
+            if (ingredients.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">+</div>
+                        <p>Add ingredients to your recipe</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = ingredients.map((ing, index) => `
+                <div class="ingredient-item">
+                    <div class="ingredient-info">
+                        <div class="ingredient-name">${ing.name}</div>
+                        <div class="ingredient-amount">${ing.amount} ${ing.unit} (${Math.round(ing.grams)}g)</div>
+                    </div>
+                    <div class="ingredient-calories">${ing.calories} cal</div>
+                    <button class="remove-btn" onclick="removeIngredient(${index})">x</button>
+                </div>
+            `).join('');
+        }
+
+        // Remove ingredient
+        function removeIngredient(index) {
+            ingredients.splice(index, 1);
+            renderIngredientsList();
+            calculateNutrition();
+        }
+
+        // Quick add functionality
+        function quickAdd(ingredientName) {
+            ingredientInput.value = ingredientName;
+            document.getElementById('ingredientAmount').focus();
+        }
+
+        // Calculate and display nutrition
+        function calculateNutrition() {
+            if (ingredients.length === 0) {
+                resetNutritionDisplay();
+                return;
+            }
+
+            const servings = parseInt(document.getElementById('servings').value) || 1;
+
+            // Calculate totals
+            let totals = {
+                calories: 0,
+                protein: 0,
+                carbs: 0,
+                fat: 0,
+                satFat: 0,
+                fiber: 0,
+                sugar: 0,
+                sodium: 0,
+                cholesterol: 0,
+                grams: 0
+            };
+
+            ingredients.forEach(ing => {
+                const factor = ing.grams / 100;
+                totals.calories += ing.nutrition.calories * factor;
+                totals.protein += ing.nutrition.protein * factor;
+                totals.carbs += ing.nutrition.carbs * factor;
+                totals.fat += ing.nutrition.fat * factor;
+                totals.satFat += ing.nutrition.satFat * factor;
+                totals.fiber += ing.nutrition.fiber * factor;
+                totals.sugar += ing.nutrition.sugar * factor;
+                totals.sodium += ing.nutrition.sodium * factor;
+                totals.cholesterol += ing.nutrition.cholesterol * factor;
+                totals.grams += ing.grams;
+            });
+
+            // Per serving values
+            const perServing = {
+                calories: Math.round(totals.calories / servings),
+                protein: (totals.protein / servings).toFixed(1),
+                carbs: (totals.carbs / servings).toFixed(1),
+                fat: (totals.fat / servings).toFixed(1),
+                satFat: (totals.satFat / servings).toFixed(1),
+                fiber: (totals.fiber / servings).toFixed(1),
+                sugar: (totals.sugar / servings).toFixed(1),
+                sodium: Math.round(totals.sodium / servings),
+                cholesterol: Math.round(totals.cholesterol / servings),
+                grams: Math.round(totals.grams / servings)
+            };
+
+            // Daily Value percentages (based on 2000 calorie diet)
+            const dailyValues = {
+                fat: 78, // g
+                satFat: 20, // g
+                cholesterol: 300, // mg
+                sodium: 2300, // mg
+                carbs: 275, // g
+                fiber: 28, // g
+                protein: 50 // g
+            };
+
+            // Update nutrition label
+            document.getElementById('servingAmount').textContent = `${perServing.grams}g per serving`;
+            document.getElementById('caloriesValue').textContent = perServing.calories;
+
+            document.getElementById('totalFat').textContent = perServing.fat;
+            document.getElementById('fatPercent').textContent = Math.round((perServing.fat / dailyValues.fat) * 100) + '%';
+
+            document.getElementById('satFat').textContent = perServing.satFat;
+            document.getElementById('satFatPercent').textContent = Math.round((perServing.satFat / dailyValues.satFat) * 100) + '%';
+
+            document.getElementById('transFat').textContent = '0';
+
+            document.getElementById('cholesterol').textContent = perServing.cholesterol;
+            document.getElementById('cholesterolPercent').textContent = Math.round((perServing.cholesterol / dailyValues.cholesterol) * 100) + '%';
+
+            document.getElementById('sodium').textContent = perServing.sodium;
+            document.getElementById('sodiumPercent').textContent = Math.round((perServing.sodium / dailyValues.sodium) * 100) + '%';
+
+            document.getElementById('totalCarbs').textContent = perServing.carbs;
+            document.getElementById('carbsPercent').textContent = Math.round((perServing.carbs / dailyValues.carbs) * 100) + '%';
+
+            document.getElementById('fiber').textContent = perServing.fiber;
+            document.getElementById('fiberPercent').textContent = Math.round((perServing.fiber / dailyValues.fiber) * 100) + '%';
+
+            document.getElementById('sugars').textContent = perServing.sugar;
+
+            document.getElementById('protein').textContent = perServing.protein;
+            document.getElementById('proteinPercent').textContent = Math.round((perServing.protein / dailyValues.protein) * 100) + '%';
+
+            // Update macros summary (total recipe values)
+            document.getElementById('totalCalories').textContent = Math.round(totals.calories);
+            document.getElementById('totalProtein').textContent = Math.round(totals.protein) + 'g';
+            document.getElementById('totalCarbsSum').textContent = Math.round(totals.carbs) + 'g';
+            document.getElementById('totalFatSum').textContent = Math.round(totals.fat) + 'g';
+        }
+
+        // Reset nutrition display
+        function resetNutritionDisplay() {
+            const fields = ['caloriesValue', 'totalFat', 'satFat', 'transFat', 'cholesterol',
+                          'sodium', 'totalCarbs', 'fiber', 'sugars', 'protein'];
+            fields.forEach(field => {
+                document.getElementById(field).textContent = '0';
+            });
+
+            const percents = ['fatPercent', 'satFatPercent', 'cholesterolPercent', 'sodiumPercent',
+                            'carbsPercent', 'fiberPercent', 'proteinPercent'];
+            percents.forEach(field => {
+                document.getElementById(field).textContent = '0%';
+            });
+
+            document.getElementById('servingAmount').textContent = '--';
+            document.getElementById('totalCalories').textContent = '0';
+            document.getElementById('totalProtein').textContent = '0g';
+            document.getElementById('totalCarbsSum').textContent = '0g';
+            document.getElementById('totalFatSum').textContent = '0g';
+        }
+
+        // Reset calculator
+        function resetCalculator() {
+            ingredients = [];
+            renderIngredientsList();
+            resetNutritionDisplay();
+            document.getElementById('recipeName').value = '';
+            document.getElementById('servings').value = '4';
+        }
+
+        // Allow Enter key to add ingredient
+        ingredientInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (autocompleteList.style.display === 'block') {
+                    const firstItem = autocompleteList.querySelector('.autocomplete-item');
+                    if (firstItem) {
+                        ingredientInput.value = firstItem.textContent;
+                        autocompleteList.style.display = 'none';
+                        document.getElementById('ingredientAmount').focus();
+                    }
+                } else {
+                    addIngredient();
+                }
+            }
+        });
+
+        document.getElementById('ingredientAmount').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addIngredient();
+            }
+        });
+
+        // Update nutrition when servings change
+        document.getElementById('servings').addEventListener('change', calculateNutrition);
+    </script>
+</body>
+</html>
