@@ -694,6 +694,160 @@
             }
         }
 
+        /* Win Popup */
+        .win-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .win-popup.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .win-popup-content {
+            background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 3px solid var(--winbet-green);
+            border-radius: 20px;
+            padding: 40px 50px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: popupBounce 0.5s ease-out;
+            max-width: 90%;
+        }
+
+        @keyframes popupBounce {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .win-popup-glow {
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(141, 198, 63, 0.2) 0%, transparent 50%);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
+        }
+
+        .win-popup-icon {
+            font-size: 4em;
+            margin-bottom: 10px;
+            animation: iconBounce 1s ease-in-out infinite;
+        }
+
+        @keyframes iconBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .win-popup-title {
+            font-family: 'Oswald', sans-serif;
+            font-size: 2.5em;
+            color: var(--winbet-green);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(141, 198, 63, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .win-popup-text {
+            font-size: 1.2em;
+            color: #888;
+            margin-bottom: 5px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .win-popup-prize {
+            font-family: 'Oswald', sans-serif;
+            font-size: 3em;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+            animation: prizePulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes prizePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .btn-bonus {
+            background: linear-gradient(145deg, #ffd700 0%, #ffab00 100%);
+            color: #000;
+            padding: 18px 50px;
+            font-size: 1.3em;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 30px rgba(255, 215, 0, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-bonus:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.6);
+        }
+
+        .win-popup-terms {
+            font-size: 0.75em;
+            color: #555;
+            margin-top: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 480px) {
+            .win-popup-content {
+                padding: 30px 25px;
+            }
+
+            .win-popup-icon {
+                font-size: 3em;
+            }
+
+            .win-popup-title {
+                font-size: 1.8em;
+            }
+
+            .win-popup-prize {
+                font-size: 2.2em;
+            }
+
+            .btn-bonus {
+                padding: 15px 35px;
+                font-size: 1.1em;
+            }
+        }
+
         /* Landscape mode on mobile */
         @media (max-height: 500px) and (orientation: landscape) {
             body {
@@ -796,6 +950,19 @@
         <h2 id="gameOverTitle">Game Over</h2>
         <div class="final-score" id="finalScore"></div>
         <button class="btn btn-play" onclick="resetGame()">Play Again</button>
+    </div>
+
+    <!-- Win Popup -->
+    <div class="win-popup" id="winPopup">
+        <div class="win-popup-content">
+            <div class="win-popup-glow"></div>
+            <div class="win-popup-icon">🎰</div>
+            <h2 class="win-popup-title">CONGRATULATIONS!</h2>
+            <p class="win-popup-text">You won</p>
+            <div class="win-popup-prize">200 FREE SPINS</div>
+            <button class="btn btn-bonus" onclick="closeWinPopup()">GET YOUR BONUS</button>
+            <p class="win-popup-terms">*Terms and conditions apply</p>
+        </div>
     </div>
 
     <script>
@@ -901,6 +1068,7 @@
                     playerWins = true;
                     resultText = 'You Win!';
                     resultClass = 'win';
+                    setTimeout(() => showWinPopup(), 800);
                 } else if (computerValue > playerValue) {
                     computerScore++;
                     playerWins = false;
@@ -967,6 +1135,14 @@
             createDeck();
             resetCards();
             document.getElementById('cardsRemaining').textContent = `Cards remaining: ${deck.length}`;
+        }
+
+        function showWinPopup() {
+            document.getElementById('winPopup').classList.add('show');
+        }
+
+        function closeWinPopup() {
+            document.getElementById('winPopup').classList.remove('show');
         }
 
         document.addEventListener('DOMContentLoaded', () => {
