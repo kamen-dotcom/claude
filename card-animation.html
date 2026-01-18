@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Animation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-x: hidden;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5em;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            border: 2px solid #e94560;
+        }
+
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            perspective: 1000px;
+        }
+
+        .card {
+            width: 280px;
+            height: 380px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-front {
+            background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(233, 69, 96, 0.3);
+        }
+
+        .card-back {
+            background: linear-gradient(145deg, #e94560 0%, #ff6b6b 100%);
+            transform: rotateY(180deg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .card-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .card-title {
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .card-subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9em;
+        }
+
+        .card-back-title {
+            color: #fff;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .card-back-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1em;
+            line-height: 1.6;
+        }
+
+        .card:hover:not(.flipped) {
+            transform: translateY(-10px) rotateX(5deg);
+        }
+
+        .card.flipped:hover {
+            transform: rotateY(180deg) translateY(-10px) rotateX(-5deg);
+        }
+
+        /* Animation classes */
+        .card.shuffle-left {
+            animation: shuffleLeft 0.6s ease-in-out;
+        }
+
+        .card.shuffle-right {
+            animation: shuffleRight 0.6s ease-in-out;
+        }
+
+        .card.bounce-in {
+            animation: bounceIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .card.spin {
+            animation: spin 1s ease-in-out;
+        }
+
+        .card.float-up {
+            animation: floatUp 0.6s ease-out forwards;
+        }
+
+        .card.scatter {
+            animation: scatter 0.8s ease-out forwards;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shuffleLeft {
+            0% { transform: translateX(0) rotateY(0); }
+            25% { transform: translateX(-150px) rotateY(-15deg); }
+            50% { transform: translateX(-150px) rotateY(-15deg) scale(1.1); }
+            75% { transform: translateX(-75px) rotateY(-7deg); }
+            100% { transform: translateX(0) rotateY(0); }
+        }
+
+        @keyframes shuffleRight {
+            0% { transform: translateX(0) rotateY(0); }
+            25% { transform: translateX(150px) rotateY(15deg); }
+            50% { transform: translateX(150px) rotateY(15deg) scale(1.1); }
+            75% { transform: translateX(75px) rotateY(7deg); }
+            100% { transform: translateX(0) rotateY(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(10deg); }
+            70% { transform: scale(0.9) rotate(-5deg); }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        @keyframes spin {
+            0% { transform: rotateY(0) scale(1); }
+            50% { transform: rotateY(540deg) scale(0.8); }
+            100% { transform: rotateY(1080deg) scale(1); }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100px) opacity: 0; }
+            60% { transform: translateY(-20px); }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes scatter {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(var(--scatter-x), var(--scatter-y)) rotate(var(--scatter-r)); opacity: 0; }
+        }
+
+        /* Glow effect on hover */
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #e94560, #ff6b6b, #e94560, #ff6b6b);
+            background-size: 400% 400%;
+            border-radius: 22px;
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            animation: gradientMove 3s ease infinite;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Particle effect container */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: rgba(233, 69, 96, 0.6);
+            border-radius: 50%;
+            animation: particleFloat 15s infinite;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .card {
+                width: 240px;
+                height: 320px;
+            }
+
+            .card-icon {
+                font-size: 60px;
+            }
+
+            .controls {
+                gap: 10px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+
+    <div class="content">
+        <h1>Interactive Card Animation</h1>
+
+        <div class="controls">
+            <button class="btn" onclick="shuffleCards()">Shuffle</button>
+            <button class="btn secondary" onclick="flipAllCards()">Flip All</button>
+            <button class="btn" onclick="spinCards()">Spin</button>
+            <button class="btn secondary" onclick="scatterCards()">Scatter</button>
+            <button class="btn" onclick="resetCards()">Reset</button>
+        </div>
+
+        <div class="cards-container" id="cardsContainer">
+            <!-- Cards will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Card data
+        const cardData = [
+            { icon: '🚀', title: 'Launch', subtitle: 'Start your journey', backTitle: 'Ready for Takeoff!', backText: 'Every great adventure begins with a single step. Your rocket is fueled and ready!' },
+            { icon: '💡', title: 'Innovate', subtitle: 'Think different', backTitle: 'Bright Ideas Ahead', backText: 'Innovation is seeing what everyone has seen and thinking what no one has thought.' },
+            { icon: '🎯', title: 'Focus', subtitle: 'Hit your target', backTitle: 'Stay On Target', backText: 'Success is not about luck. It\'s about focus, hard work, and dedication.' },
+            { icon: '🌟', title: 'Shine', subtitle: 'Be remarkable', backTitle: 'Your Time to Shine', backText: 'Don\'t be afraid to sparkle a little brighter. The world needs your unique light!' },
+            { icon: '🔥', title: 'Ignite', subtitle: 'Fuel your passion', backTitle: 'Feel the Fire', backText: 'Passion is energy. Feel the power that comes from focusing on what excites you.' },
+            { icon: '🎨', title: 'Create', subtitle: 'Express yourself', backTitle: 'Unleash Creativity', backText: 'Creativity is intelligence having fun. Paint your world with bold colors!' }
+        ];
+
+        // Initialize cards
+        function initializeCards() {
+            const container = document.getElementById('cardsContainer');
+            container.innerHTML = '';
+
+            cardData.forEach((data, index) => {
+                const card = document.createElement('div');
+                card.className = 'card bounce-in';
+                card.style.animationDelay = `${index * 0.1}s`;
+                card.innerHTML = `
+                    <div class="card-face card-front">
+                        <div class="card-icon">${data.icon}</div>
+                        <div class="card-title">${data.title}</div>
+                        <div class="card-subtitle">${data.subtitle}</div>
+                    </div>
+                    <div class="card-face card-back">
+                        <div class="card-back-title">${data.backTitle}</div>
+                        <div class="card-back-text">${data.backText}</div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => flipCard(card));
+                container.appendChild(card);
+            });
+        }
+
+        // Flip single card
+        function flipCard(card) {
+            card.classList.toggle('flipped');
+        }
+
+        // Flip all cards
+        function flipAllCards() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.toggle('flipped');
+                }, index * 100);
+            });
+        }
+
+        // Shuffle animation
+        function shuffleCards() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.classList.remove('shuffle-left', 'shuffle-right');
+                void card.offsetWidth; // Trigger reflow
+
+                setTimeout(() => {
+                    if (index % 2 === 0) {
+                        card.classList.add('shuffle-left');
+                    } else {
+                        card.classList.add('shuffle-right');
+                    }
+                }, index * 100);
+
+                setTimeout(() => {
+                    card.classList.remove('shuffle-left', 'shuffle-right');
+                }, 700 + index * 100);
+            });
+        }
+
+        // Spin animation
+        function spinCards() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.classList.remove('spin');
+                void card.offsetWidth;
+
+                setTimeout(() => {
+                    card.classList.add('spin');
+                }, index * 150);
+
+                setTimeout(() => {
+                    card.classList.remove('spin');
+                }, 1000 + index * 150);
+            });
+        }
+
+        // Scatter animation
+        function scatterCards() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                const randomX = (Math.random() - 0.5) * 800;
+                const randomY = (Math.random() - 0.5) * 600;
+                const randomR = (Math.random() - 0.5) * 720;
+
+                card.style.setProperty('--scatter-x', `${randomX}px`);
+                card.style.setProperty('--scatter-y', `${randomY}px`);
+                card.style.setProperty('--scatter-r', `${randomR}deg`);
+
+                card.classList.remove('scatter');
+                void card.offsetWidth;
+                card.classList.add('scatter');
+            });
+
+            // Reset after animation
+            setTimeout(() => {
+                initializeCards();
+            }, 1000);
+        }
+
+        // Reset cards
+        function resetCards() {
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.classList.remove('flipped', 'shuffle-left', 'shuffle-right', 'spin', 'scatter');
+            });
+            initializeCards();
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 20;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.width = `${Math.random() * 10 + 5}px`;
+                particle.style.height = particle.style.width;
+                particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+                particle.style.animationDelay = `${Math.random() * 10}s`;
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            initializeCards();
+        });
+
+        // Add keyboard controls
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 's':
+                    shuffleCards();
+                    break;
+                case 'f':
+                    flipAllCards();
+                    break;
+                case 'r':
+                    resetCards();
+                    break;
+                case ' ':
+                    spinCards();
+                    e.preventDefault();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html>
