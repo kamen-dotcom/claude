@@ -69,9 +69,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 60px;
+            gap: 80px;
             margin-bottom: 40px;
-            min-height: 400px;
+            min-height: 480px;
             padding: 20px;
         }
 
@@ -91,61 +91,90 @@
         }
 
         .card {
-            width: 220px;
-            height: 320px;
-            border-radius: 20px;
+            width: 260px;
+            height: 380px;
+            border-radius: 24px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             font-size: 3em;
             font-weight: bold;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5), 0 5px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.6),
+                0 10px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             transform-style: preserve-3d;
+            cursor: pointer;
         }
 
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 10px 20px rgba(0, 0, 0, 0.4);
+            transform: translateY(-15px) rotateX(5deg);
+            box-shadow:
+                0 35px 70px rgba(0, 0, 0, 0.7),
+                0 15px 30px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(255, 215, 0, 0.2);
         }
 
         .card.face-down {
-            background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #1a237e 100%);
-            border: 4px solid #3949ab;
+            background:
+                linear-gradient(135deg, #0d0d0d 0%, #1a1a2e 25%, #16213e 50%, #1a1a2e 75%, #0d0d0d 100%);
+            border: 3px solid;
+            border-image: linear-gradient(135deg, #ffd700, #b8860b, #ffd700) 1;
             overflow: hidden;
         }
 
         .card.face-down::before {
             content: '';
             position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            bottom: 15px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 10px,
-                rgba(255, 255, 255, 0.03) 10px,
-                rgba(255, 255, 255, 0.03) 20px
-            );
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 16px;
+            background:
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 8px,
+                    rgba(255, 215, 0, 0.03) 8px,
+                    rgba(255, 215, 0, 0.03) 16px
+                ),
+                repeating-linear-gradient(
+                    -45deg,
+                    transparent,
+                    transparent 8px,
+                    rgba(255, 215, 0, 0.03) 8px,
+                    rgba(255, 215, 0, 0.03) 16px
+                );
         }
 
         .card.face-down::after {
-            content: '♠♥♦♣';
-            font-size: 1.8em;
-            color: rgba(255, 255, 255, 0.15);
-            letter-spacing: 5px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+            content: '♠ ♥ ♦ ♣';
+            font-size: 1.5em;
+            color: rgba(255, 215, 0, 0.25);
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { opacity: 0.25; }
+            50% { opacity: 0.5; }
         }
 
         .card.face-up {
-            background: linear-gradient(145deg, #ffffff 0%, #f5f5f5 100%);
-            border: 4px solid #e0e0e0;
+            background:
+                linear-gradient(145deg, #ffffff 0%, #fafafa 50%, #f0f0f0 100%);
+            border: 4px solid #d4af37;
+            box-shadow:
+                0 25px 50px rgba(0, 0, 0, 0.5),
+                0 10px 20px rgba(0, 0, 0, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.8),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .card.face-up::before {
@@ -155,64 +184,102 @@
             left: 0;
             right: 0;
             bottom: 0;
-            border-radius: 16px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 50%);
+            border-radius: 20px;
+            background:
+                linear-gradient(135deg, rgba(255,255,255,0.6) 0%, transparent 40%, transparent 60%, rgba(255,255,255,0.1) 100%);
             pointer-events: none;
         }
 
+        .card.face-up::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 70%
+            );
+            animation: cardShine 4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes cardShine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
         .card.red {
-            color: #d32f2f;
+            color: #c41e3a;
+            text-shadow: 0 2px 4px rgba(196, 30, 58, 0.3);
         }
 
         .card.black {
             color: #1a1a1a;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
 
         .card-value {
-            font-size: 1.8em;
+            font-size: 2.2em;
             position: absolute;
-            top: 15px;
-            left: 20px;
-            line-height: 1;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            top: 18px;
+            left: 22px;
+            line-height: 0.9;
+            font-weight: 800;
+            z-index: 2;
         }
 
         .card-suit {
-            font-size: 4em;
-            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.15));
+            font-size: 5em;
+            filter: drop-shadow(3px 3px 6px rgba(0, 0, 0, 0.2));
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover .card-suit {
+            transform: scale(1.1);
         }
 
         .card-value-bottom {
-            font-size: 1.8em;
+            font-size: 2.2em;
             position: absolute;
-            bottom: 15px;
-            right: 20px;
+            bottom: 18px;
+            right: 22px;
             transform: rotate(180deg);
-            line-height: 1;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            line-height: 0.9;
+            font-weight: 800;
+            z-index: 2;
         }
 
         .card-center-pip {
             position: absolute;
-            font-size: 1.2em;
-            opacity: 0.15;
+            font-size: 1.5em;
+            opacity: 0.1;
+            z-index: 1;
         }
 
-        .pip-tl { top: 70px; left: 30px; }
-        .pip-tr { top: 70px; right: 30px; }
-        .pip-bl { bottom: 70px; left: 30px; }
-        .pip-br { bottom: 70px; right: 30px; }
+        .pip-tl { top: 85px; left: 35px; }
+        .pip-tr { top: 85px; right: 35px; }
+        .pip-bl { bottom: 85px; left: 35px; }
+        .pip-br { bottom: 85px; right: 35px; }
 
         .card.winner {
-            animation: winPulse 0.5s ease-in-out;
-            box-shadow: 0 0 50px #ffd700, 0 0 100px rgba(255, 215, 0, 0.3);
+            animation: winPulse 0.6s ease-in-out;
+            box-shadow:
+                0 0 60px #ffd700,
+                0 0 120px rgba(255, 215, 0, 0.5),
+                0 0 180px rgba(255, 215, 0, 0.3),
+                0 25px 50px rgba(0, 0, 0, 0.5);
             border-color: #ffd700;
         }
 
         .card.loser {
-            opacity: 0.5;
-            transform: scale(0.9);
-            filter: grayscale(30%);
+            opacity: 0.4;
+            transform: scale(0.85) rotateX(-5deg);
+            filter: grayscale(50%) brightness(0.7);
         }
 
         @keyframes winPulse {
@@ -365,21 +432,21 @@
             }
 
             .game-area {
-                gap: 20px;
+                gap: 25px;
                 flex-direction: column;
             }
 
             .card {
-                width: 180px;
-                height: 260px;
+                width: 200px;
+                height: 290px;
             }
 
             .card-suit {
-                font-size: 3em;
+                font-size: 3.5em;
             }
 
             .card-value, .card-value-bottom {
-                font-size: 1.5em;
+                font-size: 1.8em;
             }
 
             .vs {
@@ -399,28 +466,38 @@
             .player-name {
                 font-size: 1.2em;
             }
+
+            .pip-tl { top: 65px; left: 25px; }
+            .pip-tr { top: 65px; right: 25px; }
+            .pip-bl { bottom: 65px; left: 25px; }
+            .pip-br { bottom: 65px; right: 25px; }
         }
 
         @media (max-width: 480px) {
             .card {
-                width: 150px;
-                height: 220px;
+                width: 160px;
+                height: 240px;
             }
 
             .card-suit {
-                font-size: 2.5em;
+                font-size: 3em;
             }
 
             .card-value, .card-value-bottom {
-                font-size: 1.3em;
-                top: 10px;
-                left: 12px;
+                font-size: 1.5em;
+                top: 12px;
+                left: 14px;
             }
 
             .card-value-bottom {
-                bottom: 10px;
-                right: 12px;
+                bottom: 12px;
+                right: 14px;
             }
+
+            .pip-tl { top: 55px; left: 20px; }
+            .pip-tr { top: 55px; right: 20px; }
+            .pip-bl { bottom: 55px; left: 20px; }
+            .pip-br { bottom: 55px; right: 20px; }
         }
     </style>
 </head>
