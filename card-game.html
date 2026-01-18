@@ -154,9 +154,9 @@
         }
 
         .card {
-            width: 220px;
-            height: 330px;
-            border-radius: 16px;
+            width: 200px;
+            height: 300px;
+            border-radius: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -164,8 +164,8 @@
             font-size: 3em;
             font-weight: bold;
             box-shadow:
-                0 20px 50px rgba(0, 0, 0, 0.8),
-                0 0 0 1px rgba(255, 255, 255, 0.1);
+                0 15px 35px rgba(0, 0, 0, 0.6),
+                0 5px 15px rgba(0, 0, 0, 0.4);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             transform-style: preserve-3d;
@@ -173,105 +173,94 @@
         }
 
         .card:hover {
-            transform: translateY(-15px) scale(1.02);
+            transform: translateY(-12px) scale(1.03);
             box-shadow:
-                0 30px 60px rgba(0, 0, 0, 0.9),
-                0 0 30px rgba(141, 198, 63, 0.2);
+                0 25px 50px rgba(0, 0, 0, 0.7),
+                0 0 25px rgba(141, 198, 63, 0.15);
         }
 
-        /* Card Back - Winbet Style */
+        /* Card Back - Classic Red Pattern */
         .card.face-down {
-            background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
-            border: 3px solid var(--winbet-green);
+            background:
+                repeating-linear-gradient(
+                    45deg,
+                    #c41e3a,
+                    #c41e3a 2px,
+                    #a01830 2px,
+                    #a01830 4px
+                );
+            border: 8px solid #fff;
+            box-shadow:
+                0 15px 35px rgba(0, 0, 0, 0.6),
+                0 5px 15px rgba(0, 0, 0, 0.4),
+                inset 0 0 0 3px #c41e3a;
             overflow: hidden;
         }
 
         .card.face-down::before {
             content: '';
             position: absolute;
-            top: 12px;
-            left: 12px;
-            right: 12px;
-            bottom: 12px;
-            border: 2px solid rgba(141, 198, 63, 0.3);
-            border-radius: 10px;
-            background:
-                repeating-linear-gradient(
-                    45deg,
-                    transparent,
-                    transparent 10px,
-                    rgba(141, 198, 63, 0.03) 10px,
-                    rgba(141, 198, 63, 0.03) 20px
-                );
-        }
-
-        .card.face-down::after {
-            content: 'WINBET';
-            font-family: 'Oswald', sans-serif;
-            font-size: 0.7em;
-            font-weight: 700;
-            color: var(--winbet-green);
-            letter-spacing: 4px;
-            text-shadow: 0 0 20px rgba(141, 198, 63, 0.5);
-            padding: 10px 20px;
-            border: 2px solid var(--winbet-green);
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.5);
-        }
-
-        /* Card Front */
-        .card.face-up {
-            background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
-            border: 3px solid var(--winbet-grey);
-        }
-
-        .card.face-up::before {
-            content: '';
-            position: absolute;
             top: 8px;
             left: 8px;
             right: 8px;
             bottom: 8px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            pointer-events: none;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            background:
+                radial-gradient(circle at 50% 50%, transparent 30%, rgba(0,0,0,0.1) 100%);
+        }
+
+        .card.face-down::after {
+            content: '♠♥♦♣';
+            font-size: 0.8em;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 5px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Card Front - Classic Playing Card Style */
+        .card.face-up {
+            background: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            box-shadow:
+                0 15px 35px rgba(0, 0, 0, 0.6),
+                0 5px 15px rgba(0, 0, 0, 0.4),
+                inset 0 0 0 8px #fff,
+                inset 0 0 0 9px #e0e0e0;
+        }
+
+        .card.face-up::before {
+            display: none;
         }
 
         .card.face-up::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 13px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%);
-            pointer-events: none;
+            display: none;
         }
 
         .card.red {
-            color: #e63946;
+            color: #d40000;
         }
 
         .card.black {
-            color: #1a1a1a;
+            color: #000000;
         }
 
         .card-value {
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.8em;
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: 2.2em;
             position: absolute;
-            top: 15px;
-            left: 18px;
-            line-height: 0.9;
+            top: 12px;
+            left: 14px;
+            line-height: 0.85;
             font-weight: 700;
             z-index: 2;
+            text-align: center;
         }
 
         .card-suit {
-            font-size: 4em;
+            font-size: 5em;
             z-index: 2;
-            filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.1));
             transition: transform 0.3s ease;
         }
 
@@ -280,54 +269,58 @@
         }
 
         .card-value-bottom {
-            font-family: 'Oswald', sans-serif;
-            font-size: 1.8em;
+            font-family: 'Times New Roman', Georgia, serif;
+            font-size: 2.2em;
             position: absolute;
-            bottom: 15px;
-            right: 18px;
+            bottom: 12px;
+            right: 14px;
             transform: rotate(180deg);
-            line-height: 0.9;
+            line-height: 0.85;
             font-weight: 700;
             z-index: 2;
+            text-align: center;
         }
 
         .card-center-pip {
-            position: absolute;
-            font-size: 1.2em;
-            opacity: 0.08;
-            z-index: 1;
+            display: none;
         }
 
-        .pip-tl { top: 70px; left: 28px; }
-        .pip-tr { top: 70px; right: 28px; }
-        .pip-bl { bottom: 70px; left: 28px; }
-        .pip-br { bottom: 70px; right: 28px; }
+        .pip-tl, .pip-tr, .pip-bl, .pip-br { display: none; }
 
         .face-card-label {
+            display: none;
+        }
+
+        /* Face card special styling */
+        .card.face-up.face-card {
+            background: #ffffff;
+        }
+
+        .card.face-up .card-figure {
             position: absolute;
-            font-family: 'Roboto', sans-serif;
-            font-size: 0.35em;
-            font-weight: 400;
-            opacity: 0.5;
-            bottom: 46%;
-            z-index: 2;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            font-size: 6em;
+            opacity: 0.15;
+            z-index: 1;
         }
 
         .card.winner {
             animation: winPulse 0.6s ease-in-out;
             box-shadow:
-                0 0 40px var(--winbet-green),
-                0 0 80px rgba(141, 198, 63, 0.5),
-                0 20px 50px rgba(0, 0, 0, 0.8);
+                0 0 30px var(--winbet-green),
+                0 0 60px rgba(141, 198, 63, 0.4),
+                0 20px 50px rgba(0, 0, 0, 0.6);
+            outline: 4px solid var(--winbet-green);
+            outline-offset: -4px;
+        }
+
+        .card.winner.face-up {
             border-color: var(--winbet-green);
         }
 
         .card.loser {
-            opacity: 0.4;
-            transform: scale(0.9);
-            filter: grayscale(60%) brightness(0.6);
+            opacity: 0.5;
+            transform: scale(0.92);
+            filter: grayscale(40%) brightness(0.7);
         }
 
         @keyframes winPulse {
@@ -704,19 +697,14 @@
         function renderCard(card, elementId, isWinner = null) {
             const element = document.getElementById(elementId);
             const colorClass = isRed(card) ? 'red' : 'black';
-            const faceCardName = getFaceCardName(card.value);
-            const faceCardLabel = faceCardName ? `<span class="face-card-label">${faceCardName}</span>` : '';
+            const isFaceCard = ['J', 'Q', 'K', 'A'].includes(card.value);
+            const faceClass = isFaceCard ? 'face-card' : '';
 
-            element.className = `card face-up ${colorClass} flipping`;
+            element.className = `card face-up ${colorClass} ${faceClass} flipping`;
             element.innerHTML = `
-                <span class="card-value">${card.value}<br>${card.suit}</span>
+                <span class="card-value">${card.value}<br><span style="font-size:0.7em">${card.suit}</span></span>
                 <span class="card-suit">${card.suit}</span>
-                ${faceCardLabel}
-                <span class="card-value-bottom">${card.value}<br>${card.suit}</span>
-                <span class="card-center-pip pip-tl">${card.suit}</span>
-                <span class="card-center-pip pip-tr">${card.suit}</span>
-                <span class="card-center-pip pip-bl">${card.suit}</span>
-                <span class="card-center-pip pip-br">${card.suit}</span>
+                <span class="card-value-bottom">${card.value}<br><span style="font-size:0.7em">${card.suit}</span></span>
             `;
 
             setTimeout(() => {
