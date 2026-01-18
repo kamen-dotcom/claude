@@ -512,90 +512,234 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 15px 10px;
+            }
+
             h1 {
-                font-size: 2.5em;
+                font-size: 2.2em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+                margin-bottom: 20px;
+                letter-spacing: 2px;
             }
 
             .game-area {
-                gap: 20px;
-                flex-direction: column;
+                gap: 15px;
+                flex-direction: row;
+                min-height: auto;
+                padding: 10px;
+                margin-bottom: 25px;
+            }
+
+            .player-area {
+                gap: 10px;
+            }
+
+            .player-name {
+                font-size: 1em;
+                letter-spacing: 2px;
             }
 
             .card {
-                width: 180px;
-                height: 270px;
-            }
-
-            .card-suit {
-                font-size: 3.2em;
+                width: 140px;
+                height: 200px;
             }
 
             .card-value, .card-value-bottom {
-                font-size: 1.5em;
+                font-size: 1.6em;
+                top: 8px;
+                left: 10px;
+            }
+
+            .card-value-bottom {
+                bottom: 8px;
+                right: 10px;
             }
 
             .vs {
-                font-size: 1.5em;
-                transform: rotate(90deg);
+                font-size: 1.2em;
             }
 
             .scoreboard {
-                gap: 50px;
-                padding: 15px 40px;
+                gap: 40px;
+                padding: 12px 30px;
+                margin-bottom: 15px;
+            }
+
+            .score-label {
+                font-size: 0.75em;
             }
 
             .score-value {
-                font-size: 2.8em;
+                font-size: 2.2em;
             }
 
-            .pip-tl { top: 55px; left: 22px; }
-            .pip-tr { top: 55px; right: 22px; }
-            .pip-bl { bottom: 55px; left: 22px; }
-            .pip-br { bottom: 55px; right: 22px; }
+            .result-message {
+                font-size: 1.3em;
+                margin-bottom: 15px;
+                min-height: 35px;
+            }
+
+            .controls {
+                gap: 12px;
+            }
+
+            .btn {
+                padding: 14px 30px;
+                font-size: 0.95em;
+            }
+
+            .cards-remaining {
+                margin-top: 20px;
+                font-size: 0.85em;
+            }
 
             .corner-decor {
                 display: none;
             }
+
+            .game-over h2 {
+                font-size: 2.5em;
+            }
+
+            .final-score {
+                font-size: 1.1em;
+            }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 400px) {
+            body {
+                padding: 10px 5px;
+            }
+
             h1 {
-                font-size: 2em;
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 0.8em;
+                margin-bottom: 15px;
+            }
+
+            .game-area {
+                gap: 10px;
             }
 
             .card {
-                width: 150px;
-                height: 225px;
+                width: 120px;
+                height: 170px;
+                border-radius: 8px;
             }
 
-            .card-suit {
-                font-size: 2.6em;
+            .card.face-down {
+                border-width: 5px;
+            }
+
+            .card.face-up {
+                box-shadow:
+                    0 10px 25px rgba(0, 0, 0, 0.5),
+                    0 3px 10px rgba(0, 0, 0, 0.3),
+                    inset 0 0 0 5px #fff,
+                    inset 0 0 0 6px #e0e0e0;
             }
 
             .card-value, .card-value-bottom {
-                font-size: 1.3em;
-                top: 10px;
-                left: 12px;
+                font-size: 1.4em;
+                top: 6px;
+                left: 8px;
             }
 
             .card-value-bottom {
-                bottom: 10px;
-                right: 12px;
+                bottom: 6px;
+                right: 8px;
             }
 
-            .pip-tl { top: 45px; left: 18px; }
-            .pip-tr { top: 45px; right: 18px; }
-            .pip-bl { bottom: 45px; left: 18px; }
-            .pip-br { bottom: 45px; right: 18px; }
+            .player-name {
+                font-size: 0.85em;
+            }
 
-            .btn {
-                padding: 14px 35px;
+            .vs {
                 font-size: 1em;
             }
 
             .scoreboard {
-                gap: 30px;
+                gap: 25px;
+                padding: 10px 20px;
+            }
+
+            .score-value {
+                font-size: 1.8em;
+            }
+
+            .result-message {
+                font-size: 1.1em;
+            }
+
+            .btn {
                 padding: 12px 25px;
+                font-size: 0.85em;
+                letter-spacing: 1px;
+            }
+
+            .game-over h2 {
+                font-size: 2em;
+            }
+        }
+
+        /* Landscape mode on mobile */
+        @media (max-height: 500px) and (orientation: landscape) {
+            body {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+                margin-bottom: 0;
+            }
+
+            .subtitle {
+                display: none;
+            }
+
+            .scoreboard {
+                padding: 8px 25px;
+                margin-bottom: 10px;
+            }
+
+            .score-value {
+                font-size: 1.8em;
+            }
+
+            .game-area {
+                min-height: auto;
+                margin-bottom: 10px;
+            }
+
+            .card {
+                width: 100px;
+                height: 150px;
+            }
+
+            .card-value, .card-value-bottom {
+                font-size: 1.2em;
+            }
+
+            .result-message {
+                font-size: 1em;
+                margin-bottom: 10px;
+                min-height: 25px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.8em;
+            }
+
+            .cards-remaining {
+                margin-top: 10px;
             }
         }
     </style>
