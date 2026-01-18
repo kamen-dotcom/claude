@@ -259,11 +259,16 @@
         }
 
         .card-suit {
-            display: none;
+            font-size: 4em;
+            z-index: 2;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         .card:hover .card-suit {
-            display: none;
+            transform: translate(-50%, -50%) scale(1.1);
         }
 
         .card-value-bottom {
@@ -844,9 +849,9 @@
 
             element.className = `card face-up ${colorClass} ${faceClass} flipping`;
             element.innerHTML = `
-                <span class="card-value">${card.value}<br><span style="font-size:0.7em">${card.suit}</span></span>
+                <span class="card-value">${card.value}</span>
                 <span class="card-suit">${card.suit}</span>
-                <span class="card-value-bottom">${card.value}<br><span style="font-size:0.7em">${card.suit}</span></span>
+                <span class="card-value-bottom">${card.value}</span>
             `;
 
             setTimeout(() => {
