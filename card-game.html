@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hot Cards - Higher Card Wins!</title>
+    <title>WINBET - Higher Card Wins</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Crimson+Text:ital@0;1&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Oswald:wght@500;700&display=swap');
 
         * {
             margin: 0;
@@ -13,16 +13,26 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --winbet-green: #8DC63F;
+            --winbet-green-light: #A8E050;
+            --winbet-green-dark: #6BA32E;
+            --winbet-black: #0a0a0a;
+            --winbet-dark: #1a1a1a;
+            --winbet-grey: #2d2d2d;
+            --winbet-light-grey: #888;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background:
-                radial-gradient(ellipse at center, #5d4e37 0%, #3d2e1f 50%, #2a1f14 100%);
+            font-family: 'Roboto', sans-serif;
+            background: var(--winbet-black);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
             position: relative;
+            overflow-x: hidden;
         }
 
         body::before {
@@ -32,29 +42,46 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L30 60M0 30L60 30' stroke='%23ffffff' stroke-width='0.5' opacity='0.03'/%3E%3C/svg%3E");
+            background:
+                radial-gradient(circle at 20% 80%, rgba(141, 198, 63, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(141, 198, 63, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
         }
 
-        h1 {
-            font-family: 'Playfair Display', serif;
-            color: #ffd700;
-            text-align: center;
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 5px;
-            font-size: 3em;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.3);
             position: relative;
             z-index: 1;
         }
 
+        h1 {
+            font-family: 'Oswald', sans-serif;
+            font-weight: 900;
+            font-size: 3.5em;
+            letter-spacing: 4px;
+            position: relative;
+            z-index: 1;
+        }
+
+        h1 .win {
+            color: #fff;
+        }
+
+        h1 .bet {
+            color: var(--winbet-green);
+        }
+
         .subtitle {
-            color: #d4a574;
+            color: var(--winbet-light-grey);
             text-align: center;
             margin-bottom: 30px;
-            font-size: 1.2em;
-            font-family: 'Crimson Text', serif;
-            font-style: italic;
+            font-size: 1.1em;
+            text-transform: uppercase;
+            letter-spacing: 3px;
             position: relative;
             z-index: 1;
         }
@@ -62,45 +89,45 @@
         .scoreboard {
             display: flex;
             justify-content: center;
-            gap: 60px;
-            margin-bottom: 30px;
-            background: linear-gradient(145deg, rgba(139, 69, 19, 0.6), rgba(101, 67, 33, 0.8));
-            padding: 20px 60px;
-            border-radius: 15px;
-            border: 2px solid #8b4513;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.5), 0 5px 20px rgba(0,0,0,0.4);
+            gap: 80px;
+            margin-bottom: 25px;
+            background: var(--winbet-dark);
+            padding: 20px 70px;
+            border-radius: 12px;
+            border: 2px solid var(--winbet-grey);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             position: relative;
             z-index: 1;
         }
 
         .score {
             text-align: center;
-            color: #fff;
         }
 
         .score-label {
-            font-size: 1.2em;
+            font-size: 0.9em;
             margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 3px;
-            color: #d4a574;
+            color: var(--winbet-light-grey);
+            font-weight: 700;
         }
 
         .score-value {
-            font-size: 3em;
-            font-weight: bold;
-            color: #ffd700;
-            font-family: 'Playfair Display', serif;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-size: 3.5em;
+            font-weight: 900;
+            color: var(--winbet-green);
+            font-family: 'Oswald', sans-serif;
+            text-shadow: 0 0 20px rgba(141, 198, 63, 0.5);
         }
 
         .game-area {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 80px;
-            margin-bottom: 40px;
-            min-height: 500px;
+            gap: 60px;
+            margin-bottom: 30px;
+            min-height: 480px;
             padding: 20px;
             position: relative;
             z-index: 1;
@@ -114,18 +141,21 @@
         }
 
         .player-name {
-            color: #ffd700;
-            font-size: 1.5em;
-            font-weight: bold;
+            color: #fff;
+            font-size: 1.3em;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            font-family: 'Playfair Display', serif;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            letter-spacing: 4px;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .player-name.dealer {
+            color: var(--winbet-green);
         }
 
         .card {
-            width: 240px;
-            height: 360px;
+            width: 220px;
+            height: 330px;
             border-radius: 16px;
             display: flex;
             flex-direction: column;
@@ -134,9 +164,8 @@
             font-size: 3em;
             font-weight: bold;
             box-shadow:
-                0 20px 40px rgba(0, 0, 0, 0.7),
-                0 8px 16px rgba(0, 0, 0, 0.5),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+                0 20px 50px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             transform-style: preserve-3d;
@@ -144,68 +173,56 @@
         }
 
         .card:hover {
-            transform: translateY(-20px) rotateY(5deg) rotateX(5deg);
+            transform: translateY(-15px) scale(1.02);
             box-shadow:
-                0 40px 60px rgba(0, 0, 0, 0.8),
-                0 20px 30px rgba(0, 0, 0, 0.6),
-                0 0 50px rgba(255, 215, 0, 0.15);
+                0 30px 60px rgba(0, 0, 0, 0.9),
+                0 0 30px rgba(141, 198, 63, 0.2);
         }
 
-        /* Card Back - Hot Cards Style */
+        /* Card Back - Winbet Style */
         .card.face-down {
-            background: linear-gradient(145deg, #8b0000 0%, #b22222 30%, #dc143c 50%, #b22222 70%, #8b0000 100%);
-            border: 4px solid #ffd700;
+            background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 3px solid var(--winbet-green);
             overflow: hidden;
         }
 
         .card.face-down::before {
             content: '';
             position: absolute;
-            top: 10px;
-            left: 10px;
-            right: 10px;
-            bottom: 10px;
-            border: 3px solid rgba(255, 215, 0, 0.6);
+            top: 12px;
+            left: 12px;
+            right: 12px;
+            bottom: 12px;
+            border: 2px solid rgba(141, 198, 63, 0.3);
             border-radius: 10px;
             background:
                 repeating-linear-gradient(
                     45deg,
                     transparent,
-                    transparent 5px,
-                    rgba(255, 215, 0, 0.08) 5px,
-                    rgba(255, 215, 0, 0.08) 10px
-                ),
-                repeating-linear-gradient(
-                    -45deg,
-                    transparent,
-                    transparent 5px,
-                    rgba(255, 215, 0, 0.08) 5px,
-                    rgba(255, 215, 0, 0.08) 10px
+                    transparent 10px,
+                    rgba(141, 198, 63, 0.03) 10px,
+                    rgba(141, 198, 63, 0.03) 20px
                 );
         }
 
         .card.face-down::after {
-            content: 'HOT CARDS';
-            font-family: 'Playfair Display', serif;
-            font-size: 0.6em;
-            color: #ffd700;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-            padding: 8px 16px;
-            border: 2px solid #ffd700;
+            content: 'WINBET';
+            font-family: 'Oswald', sans-serif;
+            font-size: 0.7em;
+            font-weight: 700;
+            color: var(--winbet-green);
+            letter-spacing: 4px;
+            text-shadow: 0 0 20px rgba(141, 198, 63, 0.5);
+            padding: 10px 20px;
+            border: 2px solid var(--winbet-green);
             border-radius: 8px;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.5);
         }
 
-        /* Card Front - Vintage Cream Style */
+        /* Card Front */
         .card.face-up {
-            background: linear-gradient(145deg, #faf8f0 0%, #f5f0e1 50%, #ebe5d5 100%);
-            border: 4px solid #8b4513;
-            box-shadow:
-                0 20px 40px rgba(0, 0, 0, 0.6),
-                0 8px 16px rgba(0, 0, 0, 0.4),
-                inset 0 0 20px rgba(139, 69, 19, 0.1),
-                inset 0 2px 0 rgba(255, 255, 255, 0.8);
+            background: linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
+            border: 3px solid var(--winbet-grey);
         }
 
         .card.face-up::before {
@@ -215,7 +232,7 @@
             left: 8px;
             right: 8px;
             bottom: 8px;
-            border: 2px solid rgba(139, 69, 19, 0.3);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             border-radius: 10px;
             pointer-events: none;
         }
@@ -227,13 +244,13 @@
             left: 0;
             right: 0;
             bottom: 0;
-            border-radius: 12px;
-            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 30%);
+            border-radius: 13px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.5) 0%, transparent 50%);
             pointer-events: none;
         }
 
         .card.red {
-            color: #c41e3a;
+            color: #e63946;
         }
 
         .card.black {
@@ -241,86 +258,86 @@
         }
 
         .card-value {
-            font-family: 'Playfair Display', serif;
-            font-size: 2em;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.8em;
             position: absolute;
             top: 15px;
             left: 18px;
-            line-height: 0.85;
+            line-height: 0.9;
             font-weight: 700;
             z-index: 2;
         }
 
         .card-suit {
-            font-size: 4.5em;
+            font-size: 4em;
             z-index: 2;
-            filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.15));
+            filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.1));
             transition: transform 0.3s ease;
         }
 
         .card:hover .card-suit {
-            transform: scale(1.15) rotate(5deg);
+            transform: scale(1.1);
         }
 
         .card-value-bottom {
-            font-family: 'Playfair Display', serif;
-            font-size: 2em;
+            font-family: 'Oswald', sans-serif;
+            font-size: 1.8em;
             position: absolute;
             bottom: 15px;
             right: 18px;
             transform: rotate(180deg);
-            line-height: 0.85;
+            line-height: 0.9;
             font-weight: 700;
             z-index: 2;
         }
 
         .card-center-pip {
             position: absolute;
-            font-size: 1.3em;
-            opacity: 0.12;
+            font-size: 1.2em;
+            opacity: 0.08;
             z-index: 1;
         }
 
-        .pip-tl { top: 75px; left: 30px; }
-        .pip-tr { top: 75px; right: 30px; }
-        .pip-bl { bottom: 75px; left: 30px; }
-        .pip-br { bottom: 75px; right: 30px; }
+        .pip-tl { top: 70px; left: 28px; }
+        .pip-tr { top: 70px; right: 28px; }
+        .pip-bl { bottom: 70px; left: 28px; }
+        .pip-br { bottom: 70px; right: 28px; }
 
-        /* Face card indicator */
         .face-card-label {
             position: absolute;
-            font-family: 'Crimson Text', serif;
-            font-style: italic;
-            font-size: 0.4em;
-            opacity: 0.6;
-            bottom: 45%;
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.35em;
+            font-weight: 400;
+            opacity: 0.5;
+            bottom: 46%;
             z-index: 2;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .card.winner {
             animation: winPulse 0.6s ease-in-out;
             box-shadow:
-                0 0 40px #ffd700,
-                0 0 80px rgba(255, 215, 0, 0.6),
-                0 0 120px rgba(255, 215, 0, 0.4),
-                0 20px 40px rgba(0, 0, 0, 0.6);
-            border-color: #ffd700;
+                0 0 40px var(--winbet-green),
+                0 0 80px rgba(141, 198, 63, 0.5),
+                0 20px 50px rgba(0, 0, 0, 0.8);
+            border-color: var(--winbet-green);
         }
 
         .card.loser {
-            opacity: 0.5;
-            transform: scale(0.88) rotateX(-8deg);
-            filter: grayscale(40%) brightness(0.75);
+            opacity: 0.4;
+            transform: scale(0.9);
+            filter: grayscale(60%) brightness(0.6);
         }
 
         @keyframes winPulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.08) rotate(2deg); }
+            50% { transform: scale(1.05); }
         }
 
         @keyframes flipCard {
             0% { transform: rotateY(0deg) scale(1); }
-            50% { transform: rotateY(90deg) scale(1.1); }
+            50% { transform: rotateY(90deg) scale(1.05); }
             100% { transform: rotateY(0deg) scale(1); }
         }
 
@@ -329,35 +346,37 @@
         }
 
         .vs {
-            font-size: 2.5em;
-            color: #ffd700;
-            font-weight: bold;
-            font-family: 'Playfair Display', serif;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+            font-size: 2em;
+            color: var(--winbet-green);
+            font-weight: 900;
+            font-family: 'Oswald', sans-serif;
+            text-shadow: 0 0 20px rgba(141, 198, 63, 0.3);
         }
 
         .result-message {
-            font-size: 2em;
-            font-weight: bold;
+            font-size: 1.8em;
+            font-weight: 700;
             text-align: center;
             margin-bottom: 20px;
-            min-height: 50px;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
-            font-family: 'Playfair Display', serif;
+            min-height: 45px;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             position: relative;
             z-index: 1;
         }
 
         .result-message.win {
-            color: #4caf50;
+            color: var(--winbet-green);
+            text-shadow: 0 0 20px rgba(141, 198, 63, 0.5);
         }
 
         .result-message.lose {
-            color: #ff6b6b;
+            color: #e63946;
         }
 
         .result-message.tie {
-            color: #ffd700;
+            color: #ffc107;
         }
 
         .controls {
@@ -370,57 +389,58 @@
         }
 
         .btn {
-            padding: 16px 45px;
-            font-size: 1.2em;
-            font-weight: bold;
+            padding: 16px 50px;
+            font-size: 1.1em;
+            font-weight: 700;
             border: none;
-            border-radius: 50px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-family: 'Playfair Display', serif;
+            font-family: 'Oswald', sans-serif;
         }
 
         .btn-play {
-            background: linear-gradient(145deg, #ffd700 0%, #daa520 50%, #b8860b 100%);
-            color: #3d2e1f;
-            border: 2px solid #8b4513;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            background: linear-gradient(145deg, var(--winbet-green) 0%, var(--winbet-green-dark) 100%);
+            color: #000;
+            box-shadow: 0 4px 20px rgba(141, 198, 63, 0.4);
         }
 
         .btn-play:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 35px rgba(255, 215, 0, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(141, 198, 63, 0.6);
+            background: linear-gradient(145deg, var(--winbet-green-light) 0%, var(--winbet-green) 100%);
         }
 
         .btn-play:disabled {
-            background: linear-gradient(145deg, #666 0%, #555 100%);
-            color: #999;
+            background: var(--winbet-grey);
+            color: #666;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
-            border-color: #444;
         }
 
         .btn-reset {
-            background: linear-gradient(145deg, #8b0000 0%, #b22222 50%, #8b0000 100%);
-            color: #ffd700;
-            border: 2px solid #ffd700;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            background: transparent;
+            color: #fff;
+            border: 2px solid var(--winbet-grey);
+            box-shadow: none;
         }
 
         .btn-reset:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 35px rgba(139, 0, 0, 0.5);
+            border-color: var(--winbet-green);
+            color: var(--winbet-green);
+            transform: translateY(-3px);
         }
 
         .cards-remaining {
-            color: #d4a574;
+            color: var(--winbet-light-grey);
             text-align: center;
             margin-top: 25px;
-            font-size: 1.1em;
-            font-family: 'Crimson Text', serif;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             position: relative;
             z-index: 1;
         }
@@ -431,7 +451,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(26, 15, 8, 0.95);
+            background: rgba(0, 0, 0, 0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -450,36 +470,63 @@
         .game-over h2 {
             font-size: 4em;
             margin-bottom: 20px;
-            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
-            font-family: 'Playfair Display', serif;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 4px;
         }
 
         .game-over.win h2 {
-            color: #4caf50;
+            color: var(--winbet-green);
+            text-shadow: 0 0 40px rgba(141, 198, 63, 0.5);
         }
 
         .game-over.lose h2 {
-            color: #ff6b6b;
+            color: #e63946;
         }
 
         .game-over.tie h2 {
-            color: #ffd700;
+            color: #ffc107;
         }
 
         .final-score {
-            color: #d4a574;
-            font-size: 1.5em;
+            color: var(--winbet-light-grey);
+            font-size: 1.4em;
             margin-bottom: 30px;
-            font-family: 'Crimson Text', serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Decorative elements */
+        .corner-decor {
+            position: fixed;
+            width: 150px;
+            height: 150px;
+            border: 2px solid rgba(141, 198, 63, 0.1);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .corner-decor.top-left {
+            top: 20px;
+            left: 20px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-decor.bottom-right {
+            bottom: 20px;
+            right: 20px;
+            border-left: none;
+            border-top: none;
         }
 
         @media (max-width: 768px) {
             h1 {
-                font-size: 2em;
+                font-size: 2.5em;
             }
 
             .game-area {
-                gap: 25px;
+                gap: 20px;
                 flex-direction: column;
             }
 
@@ -493,36 +540,36 @@
             }
 
             .card-value, .card-value-bottom {
-                font-size: 1.6em;
+                font-size: 1.5em;
             }
 
             .vs {
-                font-size: 1.8em;
+                font-size: 1.5em;
                 transform: rotate(90deg);
             }
 
             .scoreboard {
-                gap: 40px;
+                gap: 50px;
                 padding: 15px 40px;
             }
 
             .score-value {
-                font-size: 2.5em;
+                font-size: 2.8em;
             }
 
-            .player-name {
-                font-size: 1.2em;
-            }
+            .pip-tl { top: 55px; left: 22px; }
+            .pip-tr { top: 55px; right: 22px; }
+            .pip-bl { bottom: 55px; left: 22px; }
+            .pip-br { bottom: 55px; right: 22px; }
 
-            .pip-tl { top: 60px; left: 22px; }
-            .pip-tr { top: 60px; right: 22px; }
-            .pip-bl { bottom: 60px; left: 22px; }
-            .pip-br { bottom: 60px; right: 22px; }
+            .corner-decor {
+                display: none;
+            }
         }
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.6em;
+                font-size: 2em;
             }
 
             .card {
@@ -531,11 +578,11 @@
             }
 
             .card-suit {
-                font-size: 2.8em;
+                font-size: 2.6em;
             }
 
             .card-value, .card-value-bottom {
-                font-size: 1.4em;
+                font-size: 1.3em;
                 top: 10px;
                 left: 12px;
             }
@@ -545,26 +592,31 @@
                 right: 12px;
             }
 
-            .pip-tl { top: 50px; left: 18px; }
-            .pip-tr { top: 50px; right: 18px; }
-            .pip-bl { bottom: 50px; left: 18px; }
-            .pip-br { bottom: 50px; right: 18px; }
+            .pip-tl { top: 45px; left: 18px; }
+            .pip-tr { top: 45px; right: 18px; }
+            .pip-bl { bottom: 45px; left: 18px; }
+            .pip-br { bottom: 45px; right: 18px; }
 
             .btn {
-                padding: 12px 30px;
+                padding: 14px 35px;
                 font-size: 1em;
             }
 
             .scoreboard {
-                gap: 25px;
+                gap: 30px;
                 padding: 12px 25px;
             }
         }
     </style>
 </head>
 <body>
-    <h1>Hot Cards</h1>
-    <p class="subtitle">Draw a card and beat the dealer!</p>
+    <div class="corner-decor top-left"></div>
+    <div class="corner-decor bottom-right"></div>
+
+    <div class="logo">
+        <h1><span class="win">WIN</span><span class="bet">BET</span></h1>
+    </div>
+    <p class="subtitle">Higher Card Wins</p>
 
     <div class="scoreboard">
         <div class="score">
@@ -588,7 +640,7 @@
         <div class="vs">VS</div>
 
         <div class="player-area">
-            <div class="player-name">Dealer</div>
+            <div class="player-name dealer">Dealer</div>
             <div class="card face-down" id="computerCard"></div>
         </div>
     </div>
@@ -607,7 +659,6 @@
     </div>
 
     <script>
-        // Card values and suits
         const suits = ['♠', '♥', '♦', '♣'];
         const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
 
@@ -616,7 +667,6 @@
         let computerScore = 0;
         let isDrawing = false;
 
-        // Initialize deck
         function createDeck() {
             deck = [];
             for (let suit of suits) {
@@ -627,7 +677,6 @@
             shuffleDeck();
         }
 
-        // Shuffle deck using Fisher-Yates algorithm
         function shuffleDeck() {
             for (let i = deck.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -635,7 +684,6 @@
             }
         }
 
-        // Get card numeric value for comparison
         function getCardValue(card) {
             const valueMap = {
                 '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8,
@@ -644,18 +692,15 @@
             return valueMap[card.value];
         }
 
-        // Check if card is red
         function isRed(card) {
             return card.suit === '♥' || card.suit === '♦';
         }
 
-        // Get face card name
         function getFaceCardName(value) {
             const names = { 'J': 'Jack', 'Q': 'Queen', 'K': 'King', 'A': 'Ace' };
             return names[value] || '';
         }
 
-        // Render card
         function renderCard(card, elementId, isWinner = null) {
             const element = document.getElementById(elementId);
             const colorClass = isRed(card) ? 'red' : 'black';
@@ -684,7 +729,6 @@
             }, 400);
         }
 
-        // Reset card to face down
         function resetCards() {
             const playerCard = document.getElementById('playerCard');
             const computerCard = document.getElementById('computerCard');
@@ -696,7 +740,6 @@
             computerCard.innerHTML = '';
         }
 
-        // Draw cards
         function drawCards() {
             if (isDrawing || deck.length < 2) return;
 
@@ -704,11 +747,9 @@
             const drawBtn = document.getElementById('drawBtn');
             drawBtn.disabled = true;
 
-            // Reset previous cards
             resetCards();
             document.getElementById('resultMessage').textContent = '';
 
-            // Draw cards after short delay
             setTimeout(() => {
                 const playerCard = deck.pop();
                 const computerCard = deck.pop();
@@ -716,7 +757,6 @@
                 const playerValue = getCardValue(playerCard);
                 const computerValue = getCardValue(computerCard);
 
-                // Determine winner
                 let playerWins = null;
                 let resultText = '';
                 let resultClass = '';
@@ -724,23 +764,21 @@
                 if (playerValue > computerValue) {
                     playerScore++;
                     playerWins = true;
-                    resultText = 'You Win This Round!';
+                    resultText = 'You Win!';
                     resultClass = 'win';
                 } else if (computerValue > playerValue) {
                     computerScore++;
                     playerWins = false;
-                    resultText = 'Dealer Wins This Round!';
+                    resultText = 'Dealer Wins!';
                     resultClass = 'lose';
                 } else {
                     resultText = "It's a Tie!";
                     resultClass = 'tie';
                 }
 
-                // Render cards
                 renderCard(playerCard, 'playerCard', playerWins);
                 renderCard(computerCard, 'computerCard', playerWins === null ? null : !playerWins);
 
-                // Update UI
                 setTimeout(() => {
                     document.getElementById('playerScore').textContent = playerScore;
                     document.getElementById('computerScore').textContent = computerScore;
@@ -751,7 +789,6 @@
 
                     document.getElementById('cardsRemaining').textContent = `Cards remaining: ${deck.length}`;
 
-                    // Check if game is over
                     if (deck.length < 2) {
                         endGame();
                     }
@@ -762,7 +799,6 @@
             }, 300);
         }
 
-        // End game
         function endGame() {
             const gameOver = document.getElementById('gameOver');
             const title = document.getElementById('gameOverTitle');
@@ -782,7 +818,6 @@
             }
         }
 
-        // Reset game
         function resetGame() {
             playerScore = 0;
             computerScore = 0;
@@ -799,12 +834,10 @@
             document.getElementById('cardsRemaining').textContent = `Cards remaining: ${deck.length}`;
         }
 
-        // Initialize game on load
         document.addEventListener('DOMContentLoaded', () => {
             createDeck();
         });
 
-        // Keyboard support
         document.addEventListener('keydown', (e) => {
             if (e.code === 'Space') {
                 e.preventDefault();
