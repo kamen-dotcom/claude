@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motion Animation Showcase</title>
+    <script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 50%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 3.5em;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf, #ff6b6b);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            font-size: 1.3em;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .motion-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .motion-badge a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .motion-badge a:hover {
+            text-decoration: underline;
+        }
+
+        /* Section */
+        .section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 35px;
+            background: linear-gradient(180deg, #00d4ff, #7b2cbf);
+            border-radius: 3px;
+        }
+
+        .section-desc {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        /* Demo Container */
+        .demo-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .demo-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-card h3 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #00d4ff;
+        }
+
+        .demo-card p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9em;
+            margin-bottom: 25px;
+        }
+
+        .demo-area {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* Animated Elements */
+        .animated-box {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #00d4ff, #7b2cbf);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            cursor: pointer;
+        }
+
+        .animated-circle {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #ff6b6b, #feca57);
+            border-radius: 50%;
+        }
+
+        .spring-box {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #5f27cd, #a29bfe);
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+        }
+
+        /* Stagger Items */
+        .stagger-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .stagger-item {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border-radius: 10px;
+        }
+
+        /* Path Animation */
+        .path-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .path-circle {
+            width: 30px;
+            height: 30px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            position: absolute;
+        }
+
+        /* Scroll Section */
+        .scroll-section {
+            min-height: 100vh;
+            padding: 100px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+        }
+
+        .scroll-box {
+            width: 300px;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Draggable */
+        .drag-area {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .draggable {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #feca57, #ff9f43);
+            border-radius: 15px;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            user-select: none;
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+        }
+
+        /* Button */
+        .demo-btn {
+            background: linear-gradient(135deg, #00d4ff 0%, #7b2cbf 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1em;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        .demo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            border-radius: 5px;
+            width: 0%;
+        }
+
+        /* Card Stack */
+        .card-stack {
+            position: relative;
+            width: 150px;
+            height: 200px;
+            margin: 0 auto;
+        }
+
+        .stack-card {
+            position: absolute;
+            width: 150px;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            color: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Morphing Shape */
+        .morph-shape {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            cursor: pointer;
+        }
+
+        /* Typewriter */
+        .typewriter-text {
+            font-size: 1.5em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            min-height: 40px;
+        }
+
+        /* Number Counter */
+        .counter {
+            font-size: 4em;
+            font-weight: bold;
+            background: linear-gradient(90deg, #feca57, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Wave Animation */
+        .wave-container {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+            height: 100px;
+        }
+
+        .wave-bar {
+            width: 15px;
+            height: 50px;
+            background: linear-gradient(180deg, #00d4ff, #7b2cbf);
+            border-radius: 8px;
+        }
+
+        /* Orbit */
+        .orbit-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+
+        .orbit-center {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #feca57, #ff6b6b);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .orbit-planet {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #00d4ff;
+            border-radius: 50%;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            margin-top: 80px;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5em;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+            }
+
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <h1 id="main-title">Motion Animation</h1>
+        <p>A powerful, production-ready animation library for the web</p>
+        <div class="motion-badge">
+            Powered by <a href="https://github.com/motiondivision/motion" target="_blank">Motion</a>
+        </div>
+    </header>
+
+    <!-- Basic Animations -->
+    <section class="section">
+        <h2 class="section-title">Basic Animations</h2>
+        <p class="section-desc">Simple yet powerful animations with animate() function</p>
+
+        <div class="demo-container">
+            <!-- Fade & Scale -->
+            <div class="demo-card">
+                <h3>Fade & Scale</h3>
+                <p>Smooth opacity and scale transitions</p>
+                <div class="demo-area">
+                    <div class="animated-box" id="fadeScale">
+                        <span>1</span>
+                    </div>
+                </div>
+                <button class="demo-btn" onclick="playFadeScale()">Animate</button>
+            </div>
+
+            <!-- Rotate -->
+            <div class="demo-card">
+                <h3>Rotation</h3>
+                <p>Smooth 360° rotation animation</p>
+                <div class="demo-area">
+                    <div class="animated-box" id="rotateBox">
+                        <span>2</span>
+                    </div>
+                </div>
+                <button class="demo-btn" onclick="playRotate()">Spin</button>
+            </div>
+
+            <!-- Move -->
+            <div class="demo-card">
+                <h3>Movement</h3>
+                <p>Translate elements smoothly</p>
+                <div class="demo-area">
+                    <div class="animated-circle" id="moveCircle"></div>
+                </div>
+                <button class="demo-btn" onclick="playMove()">Move</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Spring Animations -->
+    <section class="section">
+        <h2 class="section-title">Spring Physics</h2>
+        <p class="section-desc">Natural, physics-based spring animations</p>
+
+        <div class="demo-container">
+            <!-- Spring Bounce -->
+            <div class="demo-card">
+                <h3>Spring Bounce</h3>
+                <p>Click the box for a bouncy effect</p>
+                <div class="demo-area">
+                    <div class="spring-box" id="springBox" onclick="playSpring()">
+                        <span>3</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Elastic -->
+            <div class="demo-card">
+                <h3>Wave Animation</h3>
+                <p>Audio visualizer style wave</p>
+                <div class="demo-area">
+                    <div class="wave-container" id="waveContainer">
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                        <div class="wave-bar"></div>
+                    </div>
+                </div>
+                <button class="demo-btn" onclick="playWave()">Play</button>
+            </div>
+
+            <!-- Orbit -->
+            <div class="demo-card">
+                <h3>Orbit Animation</h3>
+                <p>Smooth circular motion</p>
+                <div class="demo-area">
+                    <div class="orbit-container" id="orbitContainer">
+                        <div class="orbit-center"></div>
+                        <div class="orbit-planet" id="orbitPlanet"></div>
+                    </div>
+                </div>
+                <button class="demo-btn" onclick="playOrbit()">Orbit</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stagger Animations -->
+    <section class="section">
+        <h2 class="section-title">Stagger Animations</h2>
+        <p class="section-desc">Sequential animations with staggered delays</p>
+
+        <div class="demo-container">
+            <!-- Stagger Grid -->
+            <div class="demo-card">
+                <h3>Stagger Grid</h3>
+                <p>Items animate with staggered timing</p>
+                <div class="demo-area">
+                    <div class="stagger-container" id="staggerGrid">
+                        <div class="stagger-item"></div>
+                        <div class="stagger-item"></div>
+                        <div class="stagger-item"></div>
+                        <div class="stagger-item"></div>
+                        <div class="stagger-item"></div>
+                        <div class="stagger-item"></div>
+                        <div class="stagger-item"></div>
+                        <div class="stagger-item"></div>
+                    </div>
+                </div>
+                <button class="demo-btn" onclick="playStagger()">Animate</button>
+            </div>
+
+            <!-- Card Stack -->
+            <div class="demo-card">
+                <h3>Card Stack</h3>
+                <p>Shuffle card stack animation</p>
+                <div class="demo-area">
+                    <div class="card-stack" id="cardStack">
+                        <div class="stack-card" data-index="0">A</div>
+                        <div class="stack-card" data-index="1">B</div>
+                        <div class="stack-card" data-index="2">C</div>
+                    </div>
+                </div>
+                <button class="demo-btn" onclick="shuffleStack()">Shuffle</button>
+            </div>
+
+            <!-- Progress -->
+            <div class="demo-card">
+                <h3>Progress Bar</h3>
+                <p>Animated loading progress</p>
+                <div class="demo-area" style="flex-direction: column; gap: 20px;">
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
+                    <div class="counter" id="progressCounter">0</div>
+                </div>
+                <button class="demo-btn" onclick="playProgress()">Load</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive -->
+    <section class="section">
+        <h2 class="section-title">Interactive Animations</h2>
+        <p class="section-desc">Gesture-based and interactive animations</p>
+
+        <div class="demo-container">
+            <!-- Drag -->
+            <div class="demo-card">
+                <h3>Draggable</h3>
+                <p>Drag the element around</p>
+                <div class="demo-area">
+                    <div class="drag-area">
+                        <div class="draggable" id="draggable">4</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hover Scale -->
+            <div class="demo-card">
+                <h3>Hover Effects</h3>
+                <p>Hover over the shape</p>
+                <div class="demo-area">
+                    <div class="animated-box" id="hoverBox" style="transition: none;">
+                        <span>5</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Morph -->
+            <div class="demo-card">
+                <h3>Shape Morphing</h3>
+                <p>Click to morph the shape</p>
+                <div class="demo-area">
+                    <div class="morph-shape" id="morphShape" onclick="playMorph()"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scroll Triggered -->
+    <section class="scroll-section">
+        <h2 class="section-title">Scroll-Triggered Animations</h2>
+        <p class="section-desc">Elements animate as they enter the viewport</p>
+
+        <div class="scroll-box" id="scrollBox1">
+            Scroll to reveal this box
+        </div>
+
+        <div class="scroll-box" id="scrollBox2">
+            Another animated element
+        </div>
+
+        <div class="scroll-box" id="scrollBox3">
+            Keep scrolling!
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Built with <a href="https://github.com/motiondivision/motion" target="_blank">Motion</a> - A powerful animation library for the web</p>
+        <p style="margin-top: 10px; font-size: 0.9em;">Learn more at <a href="https://motion.dev" target="_blank">motion.dev</a></p>
+    </footer>
+
+    <script>
+        const { animate, spring, stagger, inView, scroll } = Motion;
+
+        // Initialize header animation
+        function initHeader() {
+            animate('#main-title',
+                { opacity: [0, 1], y: [30, 0] },
+                { duration: 0.8, easing: 'ease-out' }
+            );
+        }
+
+        // Fade & Scale Animation
+        function playFadeScale() {
+            animate('#fadeScale',
+                { scale: [1, 1.3, 1], opacity: [1, 0.5, 1] },
+                { duration: 0.6, easing: spring({ stiffness: 300, damping: 15 }) }
+            );
+        }
+
+        // Rotate Animation
+        function playRotate() {
+            animate('#rotateBox',
+                { rotate: [0, 360] },
+                { duration: 0.8, easing: 'ease-in-out' }
+            );
+        }
+
+        // Move Animation
+        let moveToggle = false;
+        function playMove() {
+            moveToggle = !moveToggle;
+            animate('#moveCircle',
+                { x: moveToggle ? 80 : -80 },
+                { duration: 0.5, easing: spring({ stiffness: 200, damping: 20 }) }
+            );
+        }
+
+        // Spring Animation
+        function playSpring() {
+            animate('#springBox',
+                { scale: [1, 0.8, 1.2, 1] },
+                { duration: 0.5, easing: spring({ stiffness: 400, damping: 10 }) }
+            );
+        }
+
+        // Wave Animation
+        let waveAnimation = null;
+        function playWave() {
+            const bars = document.querySelectorAll('#waveContainer .wave-bar');
+            bars.forEach((bar, i) => {
+                const randomHeight = () => 20 + Math.random() * 80;
+                const animateBar = () => {
+                    animate(bar,
+                        { height: [`${randomHeight()}px`, `${randomHeight()}px`] },
+                        { duration: 0.3 + Math.random() * 0.2 }
+                    ).finished.then(() => {
+                        if (document.querySelector('#waveContainer')) {
+                            setTimeout(animateBar, 0);
+                        }
+                    });
+                };
+                setTimeout(animateBar, i * 50);
+            });
+
+            // Stop after 3 seconds
+            setTimeout(() => {
+                bars.forEach(bar => {
+                    animate(bar, { height: '50px' }, { duration: 0.3 });
+                });
+            }, 3000);
+        }
+
+        // Orbit Animation
+        function playOrbit() {
+            const planet = document.getElementById('orbitPlanet');
+            const radius = 55;
+            const duration = 2000;
+            const startTime = Date.now();
+
+            function updatePosition() {
+                const elapsed = Date.now() - startTime;
+                const progress = (elapsed % duration) / duration;
+                const angle = progress * Math.PI * 2;
+
+                const x = 65 + Math.cos(angle) * radius;
+                const y = 65 + Math.sin(angle) * radius;
+
+                planet.style.left = `${x}px`;
+                planet.style.top = `${y}px`;
+
+                if (elapsed < 4000) {
+                    requestAnimationFrame(updatePosition);
+                }
+            }
+            updatePosition();
+        }
+
+        // Stagger Animation
+        function playStagger() {
+            const items = document.querySelectorAll('#staggerGrid .stagger-item');
+            animate(items,
+                { scale: [0, 1.2, 1], opacity: [0, 1] },
+                { delay: stagger(0.1), duration: 0.4, easing: spring() }
+            );
+        }
+
+        // Card Stack Shuffle
+        let stackIndex = 0;
+        function shuffleStack() {
+            const cards = document.querySelectorAll('#cardStack .stack-card');
+            const topCard = cards[cards.length - 1 - (stackIndex % cards.length)];
+
+            animate(topCard,
+                { x: [0, 200, 0], y: [0, -50, 0], rotate: [0, 15, 0], zIndex: [3, 3, 0] },
+                { duration: 0.6, easing: 'ease-in-out' }
+            ).finished.then(() => {
+                topCard.style.zIndex = 0;
+                cards.forEach((card, i) => {
+                    if (card !== topCard) {
+                        card.style.zIndex = i + 1;
+                    }
+                });
+            });
+
+            stackIndex++;
+        }
+
+        // Progress Animation
+        function playProgress() {
+            const progressBar = document.getElementById('progressBar');
+            const counter = document.getElementById('progressCounter');
+            let count = 0;
+
+            progressBar.style.width = '0%';
+            counter.textContent = '0';
+
+            animate(progressBar,
+                { width: ['0%', '100%'] },
+                { duration: 2, easing: 'ease-out' }
+            );
+
+            const countInterval = setInterval(() => {
+                count += 1;
+                counter.textContent = Math.min(count, 100);
+                if (count >= 100) {
+                    clearInterval(countInterval);
+                }
+            }, 20);
+        }
+
+        // Draggable
+        function initDraggable() {
+            const draggable = document.getElementById('draggable');
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+
+            draggable.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                const rect = draggable.getBoundingClientRect();
+                const parentRect = draggable.parentElement.getBoundingClientRect();
+                initialX = rect.left - parentRect.left;
+                initialY = rect.top - parentRect.top;
+                draggable.style.position = 'absolute';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                draggable.style.left = `${initialX + dx}px`;
+                draggable.style.top = `${initialY + dy}px`;
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    // Spring back to center
+                    animate(draggable,
+                        { left: 'calc(50% - 40px)', top: 'calc(50% - 40px)' },
+                        { duration: 0.5, easing: spring({ stiffness: 300, damping: 20 }) }
+                    );
+                }
+            });
+        }
+
+        // Hover Effects
+        function initHoverEffects() {
+            const hoverBox = document.getElementById('hoverBox');
+
+            hoverBox.addEventListener('mouseenter', () => {
+                animate(hoverBox,
+                    { scale: 1.2, rotate: 5 },
+                    { duration: 0.3, easing: spring() }
+                );
+            });
+
+            hoverBox.addEventListener('mouseleave', () => {
+                animate(hoverBox,
+                    { scale: 1, rotate: 0 },
+                    { duration: 0.3, easing: spring() }
+                );
+            });
+        }
+
+        // Morph Animation
+        let isMorphed = false;
+        function playMorph() {
+            const shape = document.getElementById('morphShape');
+            isMorphed = !isMorphed;
+
+            animate(shape,
+                {
+                    borderRadius: isMorphed ? '50%' : '0%',
+                    rotate: isMorphed ? 180 : 0,
+                    scale: isMorphed ? 1.2 : 1
+                },
+                { duration: 0.5, easing: spring({ stiffness: 200, damping: 15 }) }
+            );
+        }
+
+        // Scroll Animations
+        function initScrollAnimations() {
+            const scrollBoxes = document.querySelectorAll('.scroll-box');
+
+            scrollBoxes.forEach((box, index) => {
+                // Set initial state
+                box.style.opacity = '0';
+                box.style.transform = 'translateY(50px)';
+
+                inView(box, () => {
+                    animate(box,
+                        { opacity: 1, y: 0 },
+                        { duration: 0.6, delay: index * 0.1, easing: 'ease-out' }
+                    );
+                });
+            });
+        }
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeader();
+            initDraggable();
+            initHoverEffects();
+            initScrollAnimations();
+
+            // Initialize card stack positions
+            const cards = document.querySelectorAll('#cardStack .stack-card');
+            cards.forEach((card, i) => {
+                card.style.zIndex = cards.length - i;
+                card.style.transform = `translateY(${i * -5}px) rotate(${(i - 1) * 3}deg)`;
+            });
+        });
+    </script>
+</body>
+</html>
