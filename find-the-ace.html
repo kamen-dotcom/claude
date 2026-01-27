@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find the ACE</title>
-    <script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -189,6 +189,7 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .btn:hover {
@@ -299,8 +300,6 @@
     </div>
 
     <script>
-        const { animate } = Motion;
-
         // Game state
         const gameState = {
             wins: 0,
@@ -366,37 +365,43 @@
             // Calculate distance to move
             const distance = (index2 - index1) * gap;
 
-            // Animate card1 moving right/left and up
-            const anim1 = animate(card1,
-                {
-                    x: [0, distance, distance],
-                    y: [0, -80, 0],
-                    zIndex: [1, 10, 1]
-                },
-                { duration: 0.4, easing: [0.4, 0, 0.2, 1] }
-            );
+            return new Promise(resolve => {
+                const tl = gsap.timeline({ onComplete: () => {
+                    // Swap in the array
+                    [cards[index1], cards[index2]] = [cards[index2], cards[index1]];
+                    // Re-render to reflect new order
+                    renderCards();
+                    resolve();
+                }});
 
-            // Animate card2 moving left/right and down
-            const anim2 = animate(card2,
-                {
-                    x: [0, -distance, -distance],
-                    y: [0, 80, 0],
-                    zIndex: [1, 5, 1]
-                },
-                { duration: 0.4, easing: [0.4, 0, 0.2, 1] }
-            );
+                // Card 1 moves forward (up arc)
+                tl.to(card1, {
+                    x: distance,
+                    y: -80,
+                    zIndex: 10,
+                    duration: 0.2,
+                    ease: "power2.out"
+                }, 0);
+                tl.to(card1, {
+                    y: 0,
+                    duration: 0.2,
+                    ease: "power2.in"
+                }, 0.2);
 
-            await Promise.all([anim1.finished, anim2.finished]);
-
-            // Reset transforms
-            card1.style.transform = '';
-            card2.style.transform = '';
-
-            // Swap in the array
-            [cards[index1], cards[index2]] = [cards[index2], cards[index1]];
-
-            // Re-render to reflect new order
-            renderCards();
+                // Card 2 moves backward (down arc)
+                tl.to(card2, {
+                    x: -distance,
+                    y: 80,
+                    zIndex: 5,
+                    duration: 0.2,
+                    ease: "power2.out"
+                }, 0);
+                tl.to(card2, {
+                    y: 0,
+                    duration: 0.2,
+                    ease: "power2.in"
+                }, 0.2);
+            });
         }
 
         // Shuffle cards
@@ -421,35 +426,29 @@
         // Flip all cards up
         async function flipAllUp() {
             const cardEls = document.querySelectorAll('.card');
-            const promises = [];
-            cardEls.forEach((card, i) => {
-                promises.push(
-                    animate(card, { rotateY: 180 }, {
-                        delay: i * 0.1,
-                        type: "spring",
-                        stiffness: 200,
-                        damping: 20
-                    }).finished
-                );
+            return new Promise(resolve => {
+                gsap.to(cardEls, {
+                    rotateY: 180,
+                    duration: 0.6,
+                    stagger: 0.1,
+                    ease: "back.out(1.7)",
+                    onComplete: resolve
+                });
             });
-            await Promise.all(promises);
         }
 
         // Flip all cards down
         async function flipAllDown() {
             const cardEls = document.querySelectorAll('.card');
-            const promises = [];
-            cardEls.forEach((card, i) => {
-                promises.push(
-                    animate(card, { rotateY: 0 }, {
-                        delay: i * 0.1,
-                        type: "spring",
-                        stiffness: 200,
-                        damping: 20
-                    }).finished
-                );
+            return new Promise(resolve => {
+                gsap.to(cardEls, {
+                    rotateY: 0,
+                    duration: 0.6,
+                    stagger: 0.1,
+                    ease: "back.out(1.7)",
+                    onComplete: resolve
+                });
             });
-            await Promise.all(promises);
         }
 
         // Start game
@@ -505,11 +504,15 @@
             document.querySelectorAll('.card').forEach(c => c.classList.add('disabled'));
 
             // Flip picked card
-            await animate(cardEl, { rotateY: 180, scale: 1.1 }, {
-                type: "spring",
-                stiffness: 200,
-                damping: 15
-            }).finished;
+            await new Promise(resolve => {
+                gsap.to(cardEl, {
+                    rotateY: 180,
+                    scale: 1.1,
+                    duration: 0.5,
+                    ease: "back.out(1.7)",
+                    onComplete: resolve
+                });
+            });
 
             if (cardData.isAce) {
                 // WIN
@@ -520,7 +523,13 @@
                 updateScore();
                 createConfetti();
 
-                animate(cardEl, { y: [0, -30, 0, -15, 0] }, { duration: 0.6 });
+                gsap.to(cardEl, {
+                    y: -30,
+                    duration: 0.3,
+                    ease: "power2.out",
+                    yoyo: true,
+                    repeat: 3
+                });
             } else {
                 // LOSE
                 gameState.losses++;
@@ -528,17 +537,27 @@
                 setMessage('Wrong card! 😢', 'lose');
                 updateScore();
 
-                animate(cardEl, { x: [0, -15, 15, -15, 15, 0] }, { duration: 0.4 });
+                gsap.to(cardEl, {
+                    x: "+=15",
+                    duration: 0.1,
+                    ease: "power2.inOut",
+                    yoyo: true,
+                    repeat: 5
+                });
 
                 // Show ace
                 await sleep(500);
                 const aceEl = document.querySelector('.card.ace');
                 if (aceEl) {
-                    await animate(aceEl, { rotateY: 180, scale: 1.05 }, {
-                        type: "spring",
-                        stiffness: 200,
-                        damping: 20
-                    }).finished;
+                    await new Promise(resolve => {
+                        gsap.to(aceEl, {
+                            rotateY: 180,
+                            scale: 1.05,
+                            duration: 0.5,
+                            ease: "back.out(1.7)",
+                            onComplete: resolve
+                        });
+                    });
                 }
             }
 
@@ -557,9 +576,10 @@
             document.getElementById('losses').textContent = gameState.losses;
             document.getElementById('streak').textContent = gameState.streak;
 
-            animate('#wins', { scale: [1, 1.3, 1] }, { duration: 0.3 });
-            animate('#losses', { scale: [1, 1.3, 1] }, { duration: 0.3 });
-            animate('#streak', { scale: [1, 1.3, 1] }, { duration: 0.3 });
+            gsap.fromTo(['#wins', '#losses', '#streak'],
+                { scale: 1 },
+                { scale: 1.3, duration: 0.15, yoyo: true, repeat: 1 }
+            );
         }
 
         // Set message
@@ -568,7 +588,10 @@
             msg.textContent = text;
             msg.className = `message ${type}`;
             if (text) {
-                animate(msg, { scale: [0.8, 1.1, 1], opacity: [0, 1] }, { duration: 0.4 });
+                gsap.fromTo(msg,
+                    { scale: 0.8, opacity: 0 },
+                    { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.7)" }
+                );
             }
         }
 
@@ -586,13 +609,15 @@
                 c.style.height = c.style.width;
                 document.body.appendChild(c);
 
-                animate(c, {
-                    y: [0, window.innerHeight + 50],
-                    x: [(Math.random() - 0.5) * 200],
-                    rotate: [0, Math.random() * 720],
-                    opacity: [1, 0]
-                }, { duration: 2 + Math.random(), easing: 'ease-out' })
-                .finished.then(() => c.remove());
+                gsap.to(c, {
+                    y: window.innerHeight + 50,
+                    x: `+=${(Math.random() - 0.5) * 200}`,
+                    rotation: Math.random() * 720,
+                    opacity: 0,
+                    duration: 2 + Math.random(),
+                    ease: "power1.out",
+                    onComplete: () => c.remove()
+                });
             }
         }
 
@@ -600,7 +625,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderCards();
             document.getElementById('playBtn').addEventListener('click', startGame);
-            animate('.game-container', { opacity: [0, 1], y: [30, 0] }, { duration: 0.6 });
+            gsap.from('.game-container', { opacity: 0, y: 30, duration: 0.6 });
         });
     </script>
 </body>
