@@ -299,7 +299,7 @@
     </div>
 
     <script>
-        const { animate, spring } = Motion;
+        const { animate } = Motion;
 
         // Game state
         const gameState = {
@@ -425,9 +425,10 @@
             cardEls.forEach((card, i) => {
                 promises.push(
                     animate(card, { rotateY: 180 }, {
-                        duration: 0.5,
                         delay: i * 0.1,
-                        easing: spring({ stiffness: 200, damping: 20 })
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 20
                     }).finished
                 );
             });
@@ -441,9 +442,10 @@
             cardEls.forEach((card, i) => {
                 promises.push(
                     animate(card, { rotateY: 0 }, {
-                        duration: 0.5,
                         delay: i * 0.1,
-                        easing: spring({ stiffness: 200, damping: 20 })
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 20
                     }).finished
                 );
             });
@@ -504,8 +506,9 @@
 
             // Flip picked card
             await animate(cardEl, { rotateY: 180, scale: 1.1 }, {
-                duration: 0.5,
-                easing: spring({ stiffness: 200, damping: 15 })
+                type: "spring",
+                stiffness: 200,
+                damping: 15
             }).finished;
 
             if (cardData.isAce) {
@@ -532,8 +535,9 @@
                 const aceEl = document.querySelector('.card.ace');
                 if (aceEl) {
                     await animate(aceEl, { rotateY: 180, scale: 1.05 }, {
-                        duration: 0.5,
-                        easing: spring({ stiffness: 200, damping: 20 })
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 20
                     }).finished;
                 }
             }
