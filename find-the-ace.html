@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find the ACE</title>
+    <script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a472a 0%, #0d2818 50%, #0a1f13 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .game-container {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #ffd700;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .score-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .score-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            color: #ffd700;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .cards-area {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+            perspective: 1000px;
+            min-height: 280px;
+            align-items: center;
+        }
+
+        .card {
+            width: 160px;
+            height: 220px;
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            border-radius: 15px;
+        }
+
+        .card.disabled {
+            cursor: not-allowed;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #c41e3a 0%, #8b0000 100%);
+            border: 3px solid #ffd700;
+        }
+
+        .card-back::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        .card-back::after {
+            content: '?';
+            font-size: 4em;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            transform: rotateY(180deg);
+            flex-direction: column;
+            border: 3px solid #333;
+        }
+
+        .card-value {
+            font-size: 5em;
+            font-weight: bold;
+        }
+
+        .card-suit {
+            font-size: 2em;
+            margin-top: -10px;
+        }
+
+        .card.ace .card-value {
+            color: #c41e3a;
+        }
+
+        .card.ace .card-suit {
+            color: #c41e3a;
+        }
+
+        .card:not(.ace) .card-value {
+            color: #333;
+        }
+
+        .card:not(.ace) .card-suit {
+            color: #333;
+        }
+
+        .card-corner {
+            position: absolute;
+            font-size: 1.2em;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .card-corner.top-left {
+            top: 10px;
+            left: 12px;
+        }
+
+        .card-corner.bottom-right {
+            bottom: 10px;
+            right: 12px;
+            transform: rotate(180deg);
+        }
+
+        .controls {
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            color: #1a472a;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            font-size: 2em;
+            margin: 20px 0;
+            min-height: 50px;
+            font-weight: bold;
+        }
+
+        .message.win {
+            color: #4ade80;
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+        }
+
+        .message.lose {
+            color: #f87171;
+            text-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
+        }
+
+        .message.shuffle {
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .instructions {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+        }
+
+        /* Glow effect for winning card */
+        .card.winner::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #ffd700, #4ade80, #ffd700);
+            border-radius: 18px;
+            z-index: -1;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .cards-area {
+                gap: 15px;
+            }
+
+            .card {
+                width: 100px;
+                height: 140px;
+            }
+
+            .card-value {
+                font-size: 3em;
+            }
+
+            .card-suit {
+                font-size: 1.5em;
+            }
+
+            .card-back::after {
+                font-size: 2.5em;
+            }
+
+            .score-board {
+                gap: 20px;
+            }
+
+            .score-item {
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Find the ACE</h1>
+        <p class="subtitle">Watch the shuffle, then pick the ACE of Hearts!</p>
+
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-label">Wins</div>
+                <div class="score-value" id="wins">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Losses</div>
+                <div class="score-value" id="losses">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Streak</div>
+                <div class="score-value" id="streak">0</div>
+            </div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div class="cards-area" id="cardsArea">
+            <!-- Cards will be generated by JavaScript -->
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="playBtn" onclick="startGame()">Start Game</button>
+        </div>
+
+        <p class="instructions">Click on a card to reveal it after the shuffle</p>
+    </div>
+
+    <script>
+        const { animate, spring, stagger } = Motion;
+
+        // Game state
+        let gameState = {
+            wins: 0,
+            losses: 0,
+            streak: 0,
+            acePosition: 0,
+            isPlaying: false,
+            canPick: false
+        };
+
+        // Card data
+        const cards = [
+            { value: 'A', suit: '♥', isAce: true },
+            { value: 'K', suit: '♠', isAce: false },
+            { value: 'Q', suit: '♦', isAce: false }
+        ];
+
+        // Initialize cards
+        function createCards() {
+            const cardsArea = document.getElementById('cardsArea');
+            cardsArea.innerHTML = '';
+
+            cards.forEach((card, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.className = `card ${card.isAce ? 'ace' : ''} disabled`;
+                cardEl.dataset.index = index;
+                cardEl.innerHTML = `
+                    <div class="card-face card-back"></div>
+                    <div class="card-face card-front">
+                        <span class="card-corner top-left">${card.value}<br>${card.suit}</span>
+                        <span class="card-value">${card.value}</span>
+                        <span class="card-suit">${card.suit}</span>
+                        <span class="card-corner bottom-right">${card.value}<br>${card.suit}</span>
+                    </div>
+                `;
+                cardEl.addEventListener('click', () => pickCard(index));
+                cardsArea.appendChild(cardEl);
+            });
+        }
+
+        // Shuffle array
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        // Start game
+        async function startGame() {
+            if (gameState.isPlaying) return;
+
+            gameState.isPlaying = true;
+            gameState.canPick = false;
+
+            const playBtn = document.getElementById('playBtn');
+            playBtn.disabled = true;
+            playBtn.textContent = 'Shuffling...';
+
+            setMessage('Watch the cards...', 'shuffle');
+
+            // Reset cards
+            createCards();
+            const cardElements = document.querySelectorAll('.card');
+
+            // Show all cards first
+            await showAllCards(cardElements);
+
+            // Wait a moment
+            await sleep(1500);
+
+            // Hide all cards
+            await hideAllCards(cardElements);
+
+            // Shuffle the cards visually
+            await shuffleCards(cardElements);
+
+            // Shuffle the actual positions
+            const shuffled = shuffleArray([0, 1, 2]);
+            gameState.acePosition = shuffled.indexOf(0); // 0 is the ACE's original index
+
+            // Update card data based on shuffle
+            cardElements.forEach((card, i) => {
+                const originalIndex = shuffled[i];
+                card.dataset.originalIndex = originalIndex;
+                card.className = `card ${cards[originalIndex].isAce ? 'ace' : ''}`;
+
+                // Update front face content
+                const cardData = cards[originalIndex];
+                card.querySelector('.card-value').textContent = cardData.value;
+                card.querySelector('.card-suit').textContent = cardData.suit;
+                card.querySelectorAll('.card-corner').forEach(corner => {
+                    corner.innerHTML = `${cardData.value}<br>${cardData.suit}`;
+                });
+            });
+
+            setMessage('Pick the ACE!', 'shuffle');
+            gameState.canPick = true;
+            playBtn.textContent = 'Pick a Card';
+        }
+
+        // Show all cards
+        async function showAllCards(cardElements) {
+            const promises = [];
+            cardElements.forEach((card, i) => {
+                promises.push(
+                    animate(card,
+                        { rotateY: 180 },
+                        { duration: 0.5, delay: i * 0.15, easing: spring({ stiffness: 200, damping: 20 }) }
+                    ).finished
+                );
+            });
+            await Promise.all(promises);
+        }
+
+        // Hide all cards
+        async function hideAllCards(cardElements) {
+            const promises = [];
+            cardElements.forEach((card, i) => {
+                promises.push(
+                    animate(card,
+                        { rotateY: 0 },
+                        { duration: 0.5, delay: i * 0.1, easing: spring({ stiffness: 200, damping: 20 }) }
+                    ).finished
+                );
+            });
+            await Promise.all(promises);
+        }
+
+        // Shuffle animation
+        async function shuffleCards(cardElements) {
+            const shuffleRounds = 3 + Math.floor(Math.random() * 3); // 3-5 rounds
+
+            for (let round = 0; round < shuffleRounds; round++) {
+                // Random shuffle pattern
+                const pattern = Math.floor(Math.random() * 3);
+
+                if (pattern === 0) {
+                    // Swap left and middle
+                    await swapCards(cardElements[0], cardElements[1], 'right', 'left');
+                } else if (pattern === 1) {
+                    // Swap middle and right
+                    await swapCards(cardElements[1], cardElements[2], 'right', 'left');
+                } else {
+                    // Swap left and right (over middle)
+                    await swapCards(cardElements[0], cardElements[2], 'right', 'left', true);
+                }
+
+                await sleep(100);
+            }
+        }
+
+        // Swap two cards animation
+        async function swapCards(card1, card2, dir1, dir2, overMiddle = false) {
+            const distance = overMiddle ? 380 : 190;
+            const lift = overMiddle ? -80 : -50;
+
+            const anim1 = animate(card1,
+                {
+                    x: [0, distance, distance, 0],
+                    y: [0, lift, lift, 0],
+                    zIndex: [1, 10, 10, 1]
+                },
+                { duration: 0.4, easing: 'ease-in-out' }
+            );
+
+            const anim2 = animate(card2,
+                {
+                    x: [0, -distance, -distance, 0],
+                    y: [0, lift/2, lift/2, 0],
+                    zIndex: [1, 5, 5, 1]
+                },
+                { duration: 0.4, easing: 'ease-in-out' }
+            );
+
+            await Promise.all([anim1.finished, anim2.finished]);
+
+            // Actually swap in DOM
+            const parent = card1.parentNode;
+            const card1Index = Array.from(parent.children).indexOf(card1);
+            const card2Index = Array.from(parent.children).indexOf(card2);
+
+            if (card1Index < card2Index) {
+                parent.insertBefore(card2, card1);
+                parent.insertBefore(card1, parent.children[card2Index + 1] || null);
+            } else {
+                parent.insertBefore(card1, card2);
+                parent.insertBefore(card2, parent.children[card1Index + 1] || null);
+            }
+        }
+
+        // Pick a card
+        async function pickCard(index) {
+            if (!gameState.canPick || !gameState.isPlaying) return;
+
+            gameState.canPick = false;
+            const cardElements = document.querySelectorAll('.card');
+            const pickedCard = cardElements[index];
+            const isAce = pickedCard.classList.contains('ace');
+
+            // Flip the picked card
+            await animate(pickedCard,
+                { rotateY: 180, scale: [1, 1.1, 1.1] },
+                { duration: 0.5, easing: spring({ stiffness: 200, damping: 15 }) }
+            ).finished;
+
+            if (isAce) {
+                // WIN!
+                gameState.wins++;
+                gameState.streak++;
+                pickedCard.classList.add('winner');
+                setMessage('YOU WIN! 🎉', 'win');
+                updateScore();
+                createConfetti();
+
+                // Celebration animation
+                animate(pickedCard,
+                    { y: [0, -20, 0] },
+                    { duration: 0.5, easing: spring({ stiffness: 300, damping: 10 }) }
+                );
+            } else {
+                // LOSE
+                gameState.losses++;
+                gameState.streak = 0;
+                setMessage('Wrong card! 😢', 'lose');
+                updateScore();
+
+                // Shake animation
+                animate(pickedCard,
+                    { x: [0, -10, 10, -10, 10, 0] },
+                    { duration: 0.4, easing: 'ease-in-out' }
+                );
+
+                // Show the ace
+                await sleep(500);
+                cardElements.forEach(card => {
+                    if (card.classList.contains('ace')) {
+                        animate(card,
+                            { rotateY: 180 },
+                            { duration: 0.5, easing: spring({ stiffness: 200, damping: 20 }) }
+                        );
+                    }
+                });
+            }
+
+            // Reset for next game
+            await sleep(1500);
+            gameState.isPlaying = false;
+            const playBtn = document.getElementById('playBtn');
+            playBtn.disabled = false;
+            playBtn.textContent = 'Play Again';
+            setMessage('', '');
+        }
+
+        // Update score display
+        function updateScore() {
+            animate('#wins', { scale: [1, 1.3, 1] }, { duration: 0.3 });
+            animate('#losses', { scale: [1, 1.3, 1] }, { duration: 0.3 });
+            animate('#streak', { scale: [1, 1.3, 1] }, { duration: 0.3 });
+
+            document.getElementById('wins').textContent = gameState.wins;
+            document.getElementById('losses').textContent = gameState.losses;
+            document.getElementById('streak').textContent = gameState.streak;
+        }
+
+        // Set message
+        function setMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = `message ${type}`;
+
+            if (text) {
+                animate(message,
+                    { scale: [0.8, 1.1, 1], opacity: [0, 1] },
+                    { duration: 0.4, easing: spring() }
+                );
+            }
+        }
+
+        // Create confetti
+        function createConfetti() {
+            const colors = ['#ffd700', '#4ade80', '#ff6b6b', '#60a5fa', '#f472b6'];
+
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = `${Math.random() * 100}vw`;
+                confetti.style.top = '-10px';
+                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.width = `${5 + Math.random() * 10}px`;
+                confetti.style.height = confetti.style.width;
+                document.body.appendChild(confetti);
+
+                animate(confetti,
+                    {
+                        y: [0, window.innerHeight + 50],
+                        x: [(Math.random() - 0.5) * 200],
+                        rotate: [0, Math.random() * 720],
+                        opacity: [1, 0]
+                    },
+                    { duration: 2 + Math.random(), easing: 'ease-out' }
+                ).finished.then(() => confetti.remove());
+            }
+        }
+
+        // Helper
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createCards();
+
+            // Entrance animation
+            animate('.game-container',
+                { opacity: [0, 1], y: [30, 0] },
+                { duration: 0.6, easing: 'ease-out' }
+            );
+
+            animate('.card',
+                { scale: [0, 1], rotate: [-10, 0] },
+                { duration: 0.5, delay: stagger(0.1), easing: spring({ stiffness: 200, damping: 15 }) }
+            );
+        });
+    </script>
+</body>
+</html>
