@@ -84,11 +84,8 @@
             cursor: pointer;
             border-radius: 15px;
             top: 30px;
+            transition: none;
         }
-
-        .card[data-position="0"] { left: 0; }
-        .card[data-position="1"] { left: 200px; }
-        .card[data-position="2"] { left: 400px; }
 
         .card.disabled {
             cursor: not-allowed;
@@ -191,17 +188,12 @@
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
-            transition: transform 0.2s, box-shadow 0.2s;
             box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
         }
 
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
-        }
-
-        .btn:active {
-            transform: translateY(0);
         }
 
         .btn:disabled {
@@ -264,44 +256,14 @@
         }
 
         @media (max-width: 600px) {
-            h1 {
-                font-size: 2em;
-            }
-
-            .cards-area {
-                width: 330px;
-                height: 180px;
-            }
-
-            .card {
-                width: 100px;
-                height: 140px;
-                top: 20px;
-            }
-
-            .card[data-position="0"] { left: 0; }
-            .card[data-position="1"] { left: 115px; }
-            .card[data-position="2"] { left: 230px; }
-
-            .card-value {
-                font-size: 3em;
-            }
-
-            .card-suit {
-                font-size: 1.5em;
-            }
-
-            .card-back-pattern {
-                font-size: 2.5em;
-            }
-
-            .score-board {
-                gap: 20px;
-            }
-
-            .score-item {
-                padding: 10px 20px;
-            }
+            h1 { font-size: 2em; }
+            .cards-area { width: 330px; height: 180px; }
+            .card { width: 100px; height: 140px; top: 20px; }
+            .card-value { font-size: 3em; }
+            .card-suit { font-size: 1.5em; }
+            .card-back-pattern { font-size: 2.5em; }
+            .score-board { gap: 20px; }
+            .score-item { padding: 10px 20px; }
         }
     </style>
 </head>
@@ -337,77 +299,147 @@
     </div>
 
     <script>
-        const { animate, spring, stagger } = Motion;
+        const { animate, spring } = Motion;
 
         // Game state
-        let gameState = {
+        const gameState = {
             wins: 0,
             losses: 0,
             streak: 0,
             isPlaying: false,
-            canPick: false,
-            cardPositions: [0, 1, 2] // Which card is at which position
+            canPick: false
         };
 
-        // Card data - index 0 is always ACE
+        // Card data
         const cardsData = [
             { value: 'A', suit: '♥', isAce: true },
             { value: 'K', suit: '♠', isAce: false },
             { value: 'Q', suit: '♦', isAce: false }
         ];
 
-        // Position coordinates
-        const positions = [0, 200, 400];
-        const mobilePositions = [0, 115, 230];
+        // Card positions (which card index is at each position 0, 1, 2)
+        let cardOrder = [0, 1, 2];
 
-        function getPositions() {
-            return window.innerWidth <= 600 ? mobilePositions : positions;
+        // Get X position for slot
+        function getSlotX(slot) {
+            const isMobile = window.innerWidth <= 600;
+            const positions = isMobile ? [0, 115, 230] : [0, 200, 400];
+            return positions[slot];
         }
 
-        // Create card HTML
-        function createCardHTML(cardData) {
-            return `
-                <div class="card-face card-back">
-                    <span class="card-back-pattern">?</span>
-                </div>
-                <div class="card-face card-front">
-                    <span class="card-corner top-left">${cardData.value}<br>${cardData.suit}</span>
-                    <span class="card-value">${cardData.value}</span>
-                    <span class="card-suit">${cardData.suit}</span>
-                    <span class="card-corner bottom-right">${cardData.value}<br>${cardData.suit}</span>
-                </div>
-            `;
-        }
-
-        // Initialize cards
+        // Create cards
         function createCards() {
-            const cardsArea = document.getElementById('cardsArea');
-            cardsArea.innerHTML = '';
-            gameState.cardPositions = [0, 1, 2];
+            const area = document.getElementById('cardsArea');
+            area.innerHTML = '';
+            cardOrder = [0, 1, 2];
 
-            const pos = getPositions();
-
-            cardsData.forEach((cardData, cardIndex) => {
-                const cardEl = document.createElement('div');
-                cardEl.className = `card ${cardData.isAce ? 'ace' : ''} disabled`;
-                cardEl.dataset.cardIndex = cardIndex;
-                cardEl.dataset.position = cardIndex;
-                cardEl.style.left = `${pos[cardIndex]}px`;
-                cardEl.innerHTML = createCardHTML(cardData);
-                cardEl.addEventListener('click', () => pickCard(cardEl));
-                cardsArea.appendChild(cardEl);
+            cardsData.forEach((data, idx) => {
+                const card = document.createElement('div');
+                card.className = `card ${data.isAce ? 'ace' : ''} disabled`;
+                card.id = `card-${idx}`;
+                card.style.left = `${getSlotX(idx)}px`;
+                card.innerHTML = `
+                    <div class="card-face card-back">
+                        <span class="card-back-pattern">?</span>
+                    </div>
+                    <div class="card-face card-front">
+                        <span class="card-corner top-left">${data.value}<br>${data.suit}</span>
+                        <span class="card-value">${data.value}</span>
+                        <span class="card-suit">${data.suit}</span>
+                        <span class="card-corner bottom-right">${data.value}<br>${data.suit}</span>
+                    </div>
+                `;
+                card.onclick = () => pickCard(idx);
+                area.appendChild(card);
             });
         }
 
-        // Get card element by card index
-        function getCardByIndex(index) {
-            return document.querySelector(`.card[data-card-index="${index}"]`);
+        // Get card element
+        function getCard(idx) {
+            return document.getElementById(`card-${idx}`);
         }
 
-        // Get card at position
-        function getCardAtPosition(pos) {
-            const cardIndex = gameState.cardPositions.indexOf(pos);
-            return getCardByIndex(cardIndex);
+        // Sleep helper
+        function sleep(ms) {
+            return new Promise(r => setTimeout(r, ms));
+        }
+
+        // Flip card face up
+        async function flipUp(card, delay = 0) {
+            await animate(card, { rotateY: 180 }, {
+                duration: 0.5,
+                delay,
+                easing: spring({ stiffness: 200, damping: 20 })
+            }).finished;
+        }
+
+        // Flip card face down
+        async function flipDown(card, delay = 0) {
+            await animate(card, { rotateY: 0 }, {
+                duration: 0.5,
+                delay,
+                easing: spring({ stiffness: 200, damping: 20 })
+            }).finished;
+        }
+
+        // Swap two cards animation
+        async function swapCards(slot1, slot2) {
+            // Find which cards are in these slots
+            const cardIdx1 = cardOrder[slot1];
+            const cardIdx2 = cardOrder[slot2];
+
+            const card1 = getCard(cardIdx1);
+            const card2 = getCard(cardIdx2);
+
+            const x1 = getSlotX(slot1);
+            const x2 = getSlotX(slot2);
+
+            // Animate both cards simultaneously
+            const duration = 0.35;
+
+            // Card 1 goes up and to slot2
+            const anim1 = animate(card1,
+                {
+                    left: [x1 + 'px', x2 + 'px'],
+                    top: ['30px', '-20px', '30px']
+                },
+                { duration, easing: [0.4, 0, 0.2, 1] }
+            );
+
+            // Card 2 goes down and to slot1
+            const anim2 = animate(card2,
+                {
+                    left: [x2 + 'px', x1 + 'px'],
+                    top: ['30px', '80px', '30px']
+                },
+                { duration, easing: [0.4, 0, 0.2, 1] }
+            );
+
+            await Promise.all([anim1.finished, anim2.finished]);
+
+            // Update the order array
+            cardOrder[slot1] = cardIdx2;
+            cardOrder[slot2] = cardIdx1;
+        }
+
+        // Shuffle animation
+        async function shuffleCards() {
+            const numShuffles = 6 + Math.floor(Math.random() * 4); // 6-9 shuffles
+
+            for (let i = 0; i < numShuffles; i++) {
+                // Random swap pattern
+                const pattern = Math.floor(Math.random() * 3);
+
+                if (pattern === 0) {
+                    await swapCards(0, 1); // Left <-> Middle
+                } else if (pattern === 1) {
+                    await swapCards(1, 2); // Middle <-> Right
+                } else {
+                    await swapCards(0, 2); // Left <-> Right
+                }
+
+                await sleep(80);
+            }
         }
 
         // Start game
@@ -417,294 +449,144 @@
             gameState.isPlaying = true;
             gameState.canPick = false;
 
-            const playBtn = document.getElementById('playBtn');
-            playBtn.disabled = true;
-            playBtn.textContent = 'Shuffling...';
+            const btn = document.getElementById('playBtn');
+            btn.disabled = true;
+            btn.textContent = 'Shuffling...';
 
             setMessage('Watch the cards...', 'shuffle');
 
-            // Reset cards
+            // Reset
             createCards();
+            await sleep(200);
 
+            // Show cards
+            const cards = [getCard(0), getCard(1), getCard(2)];
+            for (let i = 0; i < 3; i++) {
+                flipUp(cards[i], i * 0.1);
+            }
+            await sleep(800);
+
+            // Let player see
+            await sleep(1200);
+
+            // Hide cards
+            for (let i = 0; i < 3; i++) {
+                flipDown(cards[i], i * 0.1);
+            }
+            await sleep(800);
+
+            setMessage('Shuffling...', 'shuffle');
             await sleep(300);
 
-            // Show all cards (flip face up)
-            await showAllCards();
-
-            // Wait for player to see
-            await sleep(1500);
-
-            // Hide all cards (flip face down)
-            await hideAllCards();
-
-            await sleep(300);
-
-            // Shuffle animation
+            // Shuffle!
             await shuffleCards();
 
             setMessage('Pick the ACE!', 'shuffle');
             gameState.canPick = true;
 
-            // Enable clicking
-            document.querySelectorAll('.card').forEach(card => {
-                card.classList.remove('disabled');
-            });
-
-            playBtn.textContent = 'Pick a Card';
+            // Enable cards
+            cards.forEach(c => c.classList.remove('disabled'));
+            btn.textContent = 'Pick a Card';
         }
 
-        // Show all cards
-        async function showAllCards() {
-            const cards = document.querySelectorAll('.card');
-            const promises = [];
-
-            cards.forEach((card, i) => {
-                promises.push(
-                    animate(card,
-                        { rotateY: 180 },
-                        { duration: 0.6, delay: i * 0.15, easing: spring({ stiffness: 200, damping: 20 }) }
-                    ).finished
-                );
-            });
-
-            await Promise.all(promises);
-        }
-
-        // Hide all cards
-        async function hideAllCards() {
-            const cards = document.querySelectorAll('.card');
-            const promises = [];
-
-            cards.forEach((card, i) => {
-                promises.push(
-                    animate(card,
-                        { rotateY: 0 },
-                        { duration: 0.6, delay: i * 0.1, easing: spring({ stiffness: 200, damping: 20 }) }
-                    ).finished
-                );
-            });
-
-            await Promise.all(promises);
-        }
-
-        // Swap two cards visually and update positions
-        async function swapTwoCards(pos1, pos2) {
-            const posCoords = getPositions();
-
-            // Find which cards are at these positions
-            const cardIndex1 = gameState.cardPositions.indexOf(pos1);
-            const cardIndex2 = gameState.cardPositions.indexOf(pos2);
-
-            const card1 = getCardByIndex(cardIndex1);
-            const card2 = getCardByIndex(cardIndex2);
-
-            if (!card1 || !card2) return;
-
-            const x1 = posCoords[pos1];
-            const x2 = posCoords[pos2];
-
-            // Animate cards swapping
-            const anim1 = animate(card1,
-                {
-                    x: [0, 0, 0],
-                    left: [`${x1}px`, `${x1}px`, `${x2}px`],
-                    y: [0, -60, 0],
-                    zIndex: [1, 10, 1]
-                },
-                { duration: 0.4, easing: [0.4, 0, 0.2, 1] }
-            );
-
-            const anim2 = animate(card2,
-                {
-                    x: [0, 0, 0],
-                    left: [`${x2}px`, `${x2}px`, `${x1}px`],
-                    y: [0, 60, 0],
-                    zIndex: [1, 5, 1]
-                },
-                { duration: 0.4, easing: [0.4, 0, 0.2, 1] }
-            );
-
-            await Promise.all([anim1.finished, anim2.finished]);
-
-            // Update positions in state
-            gameState.cardPositions[cardIndex1] = pos2;
-            gameState.cardPositions[cardIndex2] = pos1;
-
-            // Update data attributes
-            card1.dataset.position = pos2;
-            card2.dataset.position = pos1;
-        }
-
-        // Shuffle cards
-        async function shuffleCards() {
-            const shuffleCount = 5 + Math.floor(Math.random() * 4); // 5-8 shuffles
-
-            for (let i = 0; i < shuffleCount; i++) {
-                // Pick two different positions to swap
-                const swapType = Math.floor(Math.random() * 3);
-
-                let pos1, pos2;
-                if (swapType === 0) {
-                    pos1 = 0; pos2 = 1; // Left and middle
-                } else if (swapType === 1) {
-                    pos1 = 1; pos2 = 2; // Middle and right
-                } else {
-                    pos1 = 0; pos2 = 2; // Left and right
-                }
-
-                await swapTwoCards(pos1, pos2);
-                await sleep(100);
-            }
-        }
-
-        // Pick a card
-        async function pickCard(cardEl) {
+        // Pick card
+        async function pickCard(cardIdx) {
             if (!gameState.canPick || !gameState.isPlaying) return;
-
             gameState.canPick = false;
 
-            // Disable all cards
-            document.querySelectorAll('.card').forEach(card => {
-                card.classList.add('disabled');
-            });
+            // Disable all
+            [0, 1, 2].forEach(i => getCard(i).classList.add('disabled'));
 
-            const isAce = cardEl.classList.contains('ace');
+            const card = getCard(cardIdx);
+            const isAce = cardsData[cardIdx].isAce;
 
-            // Flip the picked card
-            await animate(cardEl,
-                { rotateY: 180, scale: 1.1 },
-                { duration: 0.5, easing: spring({ stiffness: 200, damping: 15 }) }
-            ).finished;
+            // Flip picked card
+            await animate(card, { rotateY: 180, scale: 1.1 }, {
+                duration: 0.5,
+                easing: spring({ stiffness: 200, damping: 15 })
+            }).finished;
 
             if (isAce) {
-                // WIN!
                 gameState.wins++;
                 gameState.streak++;
-                cardEl.classList.add('winner');
+                card.classList.add('winner');
                 setMessage('YOU WIN! 🎉', 'win');
                 updateScore();
                 createConfetti();
 
-                // Celebration animation
-                animate(cardEl,
-                    { y: [0, -30, 0, -15, 0] },
-                    { duration: 0.6, easing: 'ease-out' }
-                );
+                animate(card, { y: [0, -30, 0, -15, 0] }, { duration: 0.6 });
             } else {
-                // LOSE
                 gameState.losses++;
                 gameState.streak = 0;
                 setMessage('Wrong card! 😢', 'lose');
                 updateScore();
 
-                // Shake animation
-                animate(cardEl,
-                    { x: [0, -15, 15, -15, 15, 0] },
-                    { duration: 0.5, easing: 'ease-in-out' }
-                );
+                animate(card, { x: [0, -15, 15, -15, 15, 0] }, { duration: 0.4 });
 
-                // Show the ace after a moment
-                await sleep(600);
-                const aceCard = document.querySelector('.card.ace');
-                if (aceCard) {
-                    await animate(aceCard,
-                        { rotateY: 180, scale: 1.05 },
-                        { duration: 0.5, easing: spring({ stiffness: 200, damping: 20 }) }
-                    ).finished;
-                }
+                // Show ace
+                await sleep(500);
+                const aceCard = getCard(0); // Ace is always index 0
+                await flipUp(aceCard);
             }
 
-            // Reset for next game
+            // Reset
             await sleep(2000);
             gameState.isPlaying = false;
-            const playBtn = document.getElementById('playBtn');
-            playBtn.disabled = false;
-            playBtn.textContent = 'Play Again';
+            const btn = document.getElementById('playBtn');
+            btn.disabled = false;
+            btn.textContent = 'Play Again';
             setMessage('', '');
         }
 
-        // Update score display
+        // Update score
         function updateScore() {
-            animate('#wins', { scale: [1, 1.3, 1] }, { duration: 0.3 });
-            animate('#losses', { scale: [1, 1.3, 1] }, { duration: 0.3 });
-            animate('#streak', { scale: [1, 1.3, 1] }, { duration: 0.3 });
-
             document.getElementById('wins').textContent = gameState.wins;
             document.getElementById('losses').textContent = gameState.losses;
             document.getElementById('streak').textContent = gameState.streak;
+
+            animate('#wins', { scale: [1, 1.3, 1] }, { duration: 0.3 });
+            animate('#losses', { scale: [1, 1.3, 1] }, { duration: 0.3 });
+            animate('#streak', { scale: [1, 1.3, 1] }, { duration: 0.3 });
         }
 
         // Set message
         function setMessage(text, type) {
-            const message = document.getElementById('message');
-            message.textContent = text;
-            message.className = `message ${type}`;
-
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type}`;
             if (text) {
-                animate(message,
-                    { scale: [0.8, 1.1, 1], opacity: [0, 1] },
-                    { duration: 0.4, easing: spring() }
-                );
+                animate(msg, { scale: [0.8, 1.1, 1], opacity: [0, 1] }, { duration: 0.4 });
             }
         }
 
-        // Create confetti
+        // Confetti
         function createConfetti() {
             const colors = ['#ffd700', '#4ade80', '#ff6b6b', '#60a5fa', '#f472b6'];
-
             for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti';
-                confetti.style.left = `${Math.random() * 100}vw`;
-                confetti.style.top = '-10px';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                confetti.style.width = `${5 + Math.random() * 10}px`;
-                confetti.style.height = confetti.style.width;
-                document.body.appendChild(confetti);
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = `${Math.random() * 100}vw`;
+                c.style.top = '-10px';
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                c.style.width = `${5 + Math.random() * 10}px`;
+                c.style.height = c.style.width;
+                document.body.appendChild(c);
 
-                animate(confetti,
-                    {
-                        y: [0, window.innerHeight + 50],
-                        x: [(Math.random() - 0.5) * 200],
-                        rotate: [0, Math.random() * 720],
-                        opacity: [1, 0]
-                    },
-                    { duration: 2 + Math.random(), easing: 'ease-out' }
-                ).finished.then(() => confetti.remove());
+                animate(c, {
+                    y: [0, window.innerHeight + 50],
+                    x: [(Math.random() - 0.5) * 200],
+                    rotate: [0, Math.random() * 720],
+                    opacity: [1, 0]
+                }, { duration: 2 + Math.random(), easing: 'ease-out' })
+                .finished.then(() => c.remove());
             }
         }
 
-        // Helper
-        function sleep(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
-
-        // Initialize
+        // Init
         document.addEventListener('DOMContentLoaded', () => {
             createCards();
-
-            // Entrance animation
-            animate('.game-container',
-                { opacity: [0, 1], y: [30, 0] },
-                { duration: 0.6, easing: 'ease-out' }
-            );
-
-            animate('.card',
-                { scale: [0, 1], rotate: [-10, 0] },
-                { duration: 0.5, delay: stagger(0.1), easing: spring({ stiffness: 200, damping: 15 }) }
-            );
-        });
-
-        // Handle resize
-        window.addEventListener('resize', () => {
-            if (!gameState.isPlaying) {
-                const pos = getPositions();
-                document.querySelectorAll('.card').forEach(card => {
-                    const position = parseInt(card.dataset.position);
-                    card.style.left = `${pos[position]}px`;
-                });
-            }
+            animate('.game-container', { opacity: [0, 1], y: [30, 0] }, { duration: 0.6 });
         });
     </script>
 </body>
