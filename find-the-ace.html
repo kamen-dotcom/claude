@@ -625,7 +625,10 @@
         document.addEventListener('DOMContentLoaded', () => {
             renderCards();
             document.getElementById('playBtn').addEventListener('click', startGame);
-            gsap.from('.game-container', { opacity: 0, y: 30, duration: 0.6 });
+            gsap.from('.game-container', { opacity: 0, y: 30, duration: 0.6, onComplete: () => {
+                // Auto-start the game when page loads
+                startGame();
+            }});
         });
     </script>
 </body>
