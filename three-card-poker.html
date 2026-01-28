@@ -386,90 +386,133 @@
         }
 
         .btn {
-            padding: 10px 20px;
-            font-size: 0.75em;
-            font-weight: 600;
+            padding: 12px 24px;
+            font-size: 0.8em;
+            font-weight: 700;
             font-family: 'Inter', sans-serif;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.15s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
             white-space: nowrap;
             position: relative;
-            overflow: hidden;
+            box-shadow:
+                0 6px 0 rgba(0,0,0,0.3),
+                0 8px 15px rgba(0,0,0,0.3),
+                inset 0 2px 0 rgba(255,255,255,0.2);
+        }
+
+        .btn:active:not(:disabled) {
+            transform: translateY(4px);
+            box-shadow:
+                0 2px 0 rgba(0,0,0,0.3),
+                0 4px 8px rgba(0,0,0,0.3),
+                inset 0 2px 0 rgba(255,255,255,0.2);
         }
 
         .btn::before {
             content: '';
             position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
-            opacity: 0;
-            transition: opacity 0.3s;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.15), transparent);
+            border-radius: 8px 8px 0 0;
+            pointer-events: none;
         }
 
-        .btn:hover::before {
-            opacity: 1;
+        .btn:hover:not(:disabled) {
+            filter: brightness(1.1);
         }
 
         .btn:disabled {
-            opacity: 0.3;
+            opacity: 0.4;
             cursor: not-allowed;
             transform: none !important;
+            filter: grayscale(0.5);
         }
 
         .btn-deal {
-            background: linear-gradient(135deg, #a855f7, #ec4899);
-            color: white;
+            background: linear-gradient(to bottom, #ffd700, #ff9500);
+            color: #1a1a2e;
+            box-shadow:
+                0 6px 0 #b36b00,
+                0 8px 15px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.3);
         }
 
-        .btn-deal:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(168,85,247,0.4);
+        .btn-deal:active:not(:disabled) {
+            box-shadow:
+                0 2px 0 #b36b00,
+                0 4px 8px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.3);
         }
 
         .btn-fold {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
+            background: linear-gradient(to bottom, #ff6b6b, #ee4444);
             color: white;
+            box-shadow:
+                0 6px 0 #aa2222,
+                0 8px 15px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.2);
         }
 
-        .btn-fold:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(239,68,68,0.4);
+        .btn-fold:active:not(:disabled) {
+            box-shadow:
+                0 2px 0 #aa2222,
+                0 4px 8px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.2);
         }
 
         .btn-call {
-            background: linear-gradient(135deg, #22c55e, #16a34a);
+            background: linear-gradient(to bottom, #4ade80, #22c55e);
             color: white;
+            box-shadow:
+                0 6px 0 #15803d,
+                0 8px 15px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.2);
         }
 
-        .btn-call:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(34,197,94,0.4);
+        .btn-call:active:not(:disabled) {
+            box-shadow:
+                0 2px 0 #15803d,
+                0 4px 8px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.2);
         }
 
         .btn-raise {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            background: linear-gradient(to bottom, #60a5fa, #3b82f6);
             color: white;
+            box-shadow:
+                0 6px 0 #1d4ed8,
+                0 8px 15px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.2);
         }
 
-        .btn-raise:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59,130,246,0.4);
+        .btn-raise:active:not(:disabled) {
+            box-shadow:
+                0 2px 0 #1d4ed8,
+                0 4px 8px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.2);
         }
 
         .btn-reset {
-            background: rgba(255,255,255,0.1);
+            background: linear-gradient(to bottom, #6b7280, #4b5563);
             color: white;
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow:
+                0 6px 0 #374151,
+                0 8px 15px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.15);
         }
 
-        .btn-reset:hover:not(:disabled) {
-            transform: translateY(-2px);
-            background: rgba(255,255,255,0.15);
-            box-shadow: 0 8px 25px rgba(255,255,255,0.1);
+        .btn-reset:active:not(:disabled) {
+            box-shadow:
+                0 2px 0 #374151,
+                0 4px 8px rgba(0,0,0,0.4),
+                inset 0 2px 0 rgba(255,255,255,0.15);
         }
 
         .game-phase {
@@ -614,8 +657,20 @@
             }
 
             .btn {
-                padding: 8px 14px;
+                padding: 10px 16px;
                 font-size: 0.7em;
+                box-shadow:
+                    0 4px 0 rgba(0,0,0,0.3),
+                    0 6px 10px rgba(0,0,0,0.3),
+                    inset 0 2px 0 rgba(255,255,255,0.2);
+            }
+
+            .btn:active:not(:disabled) {
+                transform: translateY(3px);
+                box-shadow:
+                    0 1px 0 rgba(0,0,0,0.3),
+                    0 3px 6px rgba(0,0,0,0.3),
+                    inset 0 2px 0 rgba(255,255,255,0.2);
             }
 
             .pot-display {
