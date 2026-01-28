@@ -201,14 +201,15 @@
         }
 
         .card.face-down {
-            background: linear-gradient(145deg, #1e3a5f, #2c5282);
-            border: 3px solid #4a90d9;
-            color: #4a90d9;
+            background: linear-gradient(145deg, #8b0000, #b22222);
+            border: 3px solid #ffd700;
+            color: #ffd700;
         }
 
         .card.face-down::before {
-            content: '🂠';
-            font-size: 3em;
+            content: '♠♥♦♣';
+            font-size: 1.2em;
+            letter-spacing: -2px;
         }
 
         .card.face-up {
@@ -273,15 +274,15 @@
 
         .controls {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 8px;
+            flex-wrap: nowrap;
             justify-content: center;
             margin-bottom: 12px;
         }
 
         .btn {
-            padding: 8px 18px;
-            font-size: 0.85em;
+            padding: 6px 12px;
+            font-size: 0.75em;
             font-weight: bold;
             border: none;
             border-radius: 6px;
@@ -289,6 +290,7 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            white-space: nowrap;
         }
 
         .btn:disabled {
