@@ -238,6 +238,42 @@
             pointer-events: none;
         }
 
+        /* Firework particle */
+        .firework {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Star sparkle */
+        .sparkle {
+            position: fixed;
+            font-size: 20px;
+            pointer-events: none;
+        }
+
+        /* Screen flash */
+        .screen-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+        }
+
+        /* Gold coins */
+        .coin {
+            position: fixed;
+            font-size: 30px;
+            pointer-events: none;
+        }
+
         .card.winner::after {
             content: '';
             position: absolute;
@@ -378,6 +414,9 @@
 
         <p class="instructions">Click on a card to reveal it after the shuffle</p>
     </div>
+
+    <!-- Screen Flash Effect -->
+    <div class="screen-flash" id="screenFlash"></div>
 
     <!-- Win Popup -->
     <div class="popup-overlay" id="winPopup">
@@ -605,24 +644,64 @@
             });
 
             if (cardData.isAce) {
-                // WIN
+                // WIN - SPECTACULAR CELEBRATION!
                 gameState.wins++;
                 gameState.streak++;
                 cardEl.classList.add('winner');
+
+                // Screen flash
+                screenFlash();
+
+                // Dramatic card animation
+                const tl = gsap.timeline();
+                tl.to(cardEl, {
+                    scale: 1.5,
+                    y: -50,
+                    duration: 0.3,
+                    ease: "back.out(2)"
+                });
+                tl.to(cardEl, {
+                    rotation: 360,
+                    duration: 0.5,
+                    ease: "power2.inOut"
+                });
+                tl.to(cardEl, {
+                    scale: 1.2,
+                    y: -30,
+                    rotation: 0,
+                    duration: 0.3,
+                    ease: "elastic.out(1, 0.5)"
+                });
+
+                // Start all effects
                 setMessage('YOU WIN! 🎉', 'win');
                 updateScore();
-                createConfetti();
 
+                // Multiple waves of effects
+                createConfetti();
+                createFireworks();
+                createSparkles();
+                createCoins();
+
+                await sleep(300);
+                createConfetti();
+                createFireworks();
+
+                await sleep(300);
+                createSparkles();
+                createCoins();
+
+                // Bounce animation
                 gsap.to(cardEl, {
                     y: -30,
                     duration: 0.3,
                     ease: "power2.out",
                     yoyo: true,
-                    repeat: 3
+                    repeat: 5
                 });
 
                 // Show win popup after animation
-                await sleep(1000);
+                await sleep(1500);
                 showWinPopup();
             } else {
                 // LOSE
@@ -689,28 +768,129 @@
             }
         }
 
-        // Confetti
+        // Confetti - enhanced
         function createConfetti() {
-            const colors = ['#ffd700', '#4ade80', '#ff6b6b', '#60a5fa', '#f472b6'];
-            for (let i = 0; i < 50; i++) {
+            const colors = ['#ffd700', '#4ade80', '#ff6b6b', '#60a5fa', '#f472b6', '#ffffff'];
+            for (let i = 0; i < 80; i++) {
                 const c = document.createElement('div');
                 c.className = 'confetti';
                 c.style.left = `${Math.random() * 100}vw`;
                 c.style.top = '-10px';
                 c.style.background = colors[Math.floor(Math.random() * colors.length)];
                 c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                c.style.width = `${5 + Math.random() * 10}px`;
+                c.style.width = `${5 + Math.random() * 15}px`;
                 c.style.height = c.style.width;
+                c.style.boxShadow = `0 0 ${5 + Math.random() * 10}px ${colors[Math.floor(Math.random() * colors.length)]}`;
                 document.body.appendChild(c);
 
                 gsap.to(c, {
                     y: window.innerHeight + 50,
-                    x: `+=${(Math.random() - 0.5) * 200}`,
-                    rotation: Math.random() * 720,
+                    x: `+=${(Math.random() - 0.5) * 400}`,
+                    rotation: Math.random() * 1080,
                     opacity: 0,
-                    duration: 2 + Math.random(),
+                    duration: 2.5 + Math.random() * 1.5,
                     ease: "power1.out",
                     onComplete: () => c.remove()
+                });
+            }
+        }
+
+        // Screen flash effect
+        function screenFlash() {
+            const flash = document.getElementById('screenFlash');
+            gsap.timeline()
+                .to(flash, { opacity: 0.8, duration: 0.1 })
+                .to(flash, { opacity: 0, duration: 0.3 });
+        }
+
+        // Fireworks effect
+        function createFireworks() {
+            const colors = ['#ffd700', '#ff6b6b', '#4ade80', '#60a5fa', '#f472b6'];
+            const positions = [
+                { x: window.innerWidth * 0.2, y: window.innerHeight * 0.3 },
+                { x: window.innerWidth * 0.8, y: window.innerHeight * 0.3 },
+                { x: window.innerWidth * 0.5, y: window.innerHeight * 0.2 },
+                { x: window.innerWidth * 0.3, y: window.innerHeight * 0.5 },
+                { x: window.innerWidth * 0.7, y: window.innerHeight * 0.5 }
+            ];
+
+            positions.forEach((pos, idx) => {
+                setTimeout(() => {
+                    const color = colors[idx % colors.length];
+                    for (let i = 0; i < 30; i++) {
+                        const particle = document.createElement('div');
+                        particle.className = 'firework';
+                        particle.style.left = pos.x + 'px';
+                        particle.style.top = pos.y + 'px';
+                        particle.style.background = color;
+                        particle.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+                        document.body.appendChild(particle);
+
+                        const angle = (i / 30) * Math.PI * 2;
+                        const velocity = 100 + Math.random() * 150;
+                        const destX = Math.cos(angle) * velocity;
+                        const destY = Math.sin(angle) * velocity;
+
+                        gsap.to(particle, {
+                            x: destX,
+                            y: destY,
+                            opacity: 0,
+                            scale: 0,
+                            duration: 1 + Math.random() * 0.5,
+                            ease: "power2.out",
+                            onComplete: () => particle.remove()
+                        });
+                    }
+                }, idx * 150);
+            });
+        }
+
+        // Sparkles effect
+        function createSparkles() {
+            const sparkleChars = ['✨', '⭐', '🌟', '💫', '✦'];
+            for (let i = 0; i < 30; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.textContent = sparkleChars[Math.floor(Math.random() * sparkleChars.length)];
+                sparkle.style.left = `${Math.random() * 100}vw`;
+                sparkle.style.top = `${Math.random() * 100}vh`;
+                sparkle.style.fontSize = `${15 + Math.random() * 25}px`;
+                document.body.appendChild(sparkle);
+
+                gsap.fromTo(sparkle,
+                    { scale: 0, rotation: 0, opacity: 1 },
+                    {
+                        scale: 1.5,
+                        rotation: 360,
+                        opacity: 0,
+                        duration: 1 + Math.random(),
+                        ease: "power2.out",
+                        onComplete: () => sparkle.remove()
+                    }
+                );
+            }
+        }
+
+        // Gold coins effect
+        function createCoins() {
+            const coinChars = ['🪙', '💰', '💵', '💎'];
+            for (let i = 0; i < 20; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'coin';
+                coin.textContent = coinChars[Math.floor(Math.random() * coinChars.length)];
+                coin.style.left = `${30 + Math.random() * 40}vw`;
+                coin.style.top = `${window.innerHeight * 0.4}px`;
+                document.body.appendChild(coin);
+
+                gsap.to(coin, {
+                    y: -(200 + Math.random() * 300),
+                    x: (Math.random() - 0.5) * 300,
+                    rotation: Math.random() * 720,
+                    opacity: 0,
+                    duration: 1.5 + Math.random(),
+                    delay: Math.random() * 0.5,
+                    ease: "power2.out",
+                    onComplete: () => coin.remove()
                 });
             }
         }
