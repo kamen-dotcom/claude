@@ -201,15 +201,20 @@
         }
 
         .card.face-down {
-            background: linear-gradient(145deg, #8b0000, #b22222);
+            background:
+                repeating-linear-gradient(
+                    45deg,
+                    #8b0000,
+                    #8b0000 10px,
+                    #a00000 10px,
+                    #a00000 20px
+                );
             border: 3px solid #ffd700;
             color: #ffd700;
         }
 
         .card.face-down::before {
-            content: '♠♥♦♣';
-            font-size: 1.2em;
-            letter-spacing: -2px;
+            content: '';
         }
 
         .card.face-up {
