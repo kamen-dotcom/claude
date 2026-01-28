@@ -23,60 +23,60 @@
         }
 
         h1 {
-            font-size: 2.5em;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-            margin-bottom: 5px;
+            font-size: 1.8em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            margin-bottom: 3px;
             color: #ffd700;
         }
 
         .subtitle {
-            font-size: 1.1em;
+            font-size: 0.9em;
             opacity: 0.9;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .balance-display {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin-bottom: 20px;
+            gap: 25px;
+            margin-bottom: 10px;
         }
 
         .balance-item {
             background: rgba(0,0,0,0.3);
-            padding: 10px 25px;
-            border-radius: 10px;
+            padding: 6px 15px;
+            border-radius: 8px;
             text-align: center;
         }
 
         .balance-label {
-            font-size: 0.9em;
+            font-size: 0.7em;
             opacity: 0.8;
-            margin-bottom: 5px;
+            margin-bottom: 2px;
         }
 
         .balance-value {
-            font-size: 1.8em;
+            font-size: 1.2em;
             font-weight: bold;
             color: #ffd700;
         }
 
         .pot-display {
             background: linear-gradient(145deg, #8B4513, #A0522D);
-            padding: 15px 40px;
+            padding: 8px 25px;
             border-radius: 50%;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.4), inset 0 2px 10px rgba(255,255,255,0.1);
-            border: 3px solid #ffd700;
+            margin-bottom: 10px;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.4), inset 0 2px 8px rgba(255,255,255,0.1);
+            border: 2px solid #ffd700;
         }
 
         .pot-label {
-            font-size: 0.8em;
+            font-size: 0.65em;
             opacity: 0.9;
         }
 
         .pot-value {
-            font-size: 2em;
+            font-size: 1.3em;
             font-weight: bold;
             color: #ffd700;
         }
@@ -84,8 +84,8 @@
         .betting-controls {
             display: flex;
             align-items: center;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 10px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -93,24 +93,24 @@
         .bet-adjuster {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 6px;
             background: rgba(0,0,0,0.3);
-            padding: 10px 15px;
-            border-radius: 10px;
+            padding: 5px 10px;
+            border-radius: 8px;
         }
 
         .bet-adjuster label {
-            font-size: 0.9em;
+            font-size: 0.75em;
         }
 
         .bet-btn {
-            width: 35px;
-            height: 35px;
+            width: 26px;
+            height: 26px;
             border: none;
             border-radius: 50%;
             background: linear-gradient(145deg, #ffd700, #ffaa00);
             color: #1a472a;
-            font-size: 1.3em;
+            font-size: 1em;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
@@ -118,7 +118,7 @@
 
         .bet-btn:hover {
             transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(255,215,0,0.5);
+            box-shadow: 0 0 10px rgba(255,215,0,0.5);
         }
 
         .bet-btn:disabled {
@@ -128,18 +128,18 @@
         }
 
         .bet-amount {
-            font-size: 1.5em;
+            font-size: 1.1em;
             font-weight: bold;
             color: #ffd700;
-            min-width: 60px;
+            min-width: 50px;
             text-align: center;
         }
 
         .result-message {
-            font-size: 1.5em;
+            font-size: 1.1em;
             font-weight: bold;
-            min-height: 40px;
-            margin-bottom: 15px;
+            min-height: 28px;
+            margin-bottom: 8px;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
             transition: all 0.3s;
         }
@@ -151,10 +151,10 @@
         .game-area {
             display: flex;
             flex-direction: column;
-            gap: 30px;
-            margin-bottom: 25px;
+            gap: 20px;
+            margin-bottom: 15px;
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
         }
 
         .player-section {
@@ -162,8 +162,8 @@
         }
 
         .player-name {
-            font-size: 1.2em;
-            margin-bottom: 10px;
+            font-size: 0.95em;
+            margin-bottom: 6px;
             font-weight: bold;
         }
 
@@ -171,49 +171,49 @@
         .player-name.player { color: #4ade80; }
 
         .hand-info {
-            font-size: 0.9em;
+            font-size: 0.8em;
             opacity: 0.8;
-            margin-top: 8px;
-            min-height: 20px;
+            margin-top: 6px;
+            min-height: 18px;
         }
 
         .cards-container {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             perspective: 1000px;
         }
 
         .card {
-            width: 80px;
-            height: 112px;
-            border-radius: 8px;
+            width: 120px;
+            height: 168px;
+            border-radius: 10px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-size: 1.4em;
+            font-size: 1.8em;
             font-weight: bold;
             transition: all 0.4s ease;
             position: relative;
             cursor: default;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4);
         }
 
         .card.face-down {
             background: linear-gradient(145deg, #1e3a5f, #2c5282);
-            border: 2px solid #4a90d9;
+            border: 3px solid #4a90d9;
             color: #4a90d9;
         }
 
         .card.face-down::before {
             content: '🂠';
-            font-size: 2em;
+            font-size: 3em;
         }
 
         .card.face-up {
             background: white;
-            border: 2px solid #ddd;
+            border: 3px solid #ddd;
         }
 
         .card.face-up.red {
@@ -226,23 +226,23 @@
 
         .card .card-corner {
             position: absolute;
-            font-size: 0.6em;
+            font-size: 0.55em;
             line-height: 1;
         }
 
         .card .card-corner.top-left {
-            top: 5px;
-            left: 5px;
+            top: 8px;
+            left: 8px;
         }
 
         .card .card-corner.bottom-right {
-            bottom: 5px;
-            right: 5px;
+            bottom: 8px;
+            right: 8px;
             transform: rotate(180deg);
         }
 
         .card .card-center {
-            font-size: 1.8em;
+            font-size: 2.5em;
         }
 
         .card.winner {
@@ -273,22 +273,22 @@
 
         .controls {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
 
         .btn {
-            padding: 12px 30px;
-            font-size: 1.1em;
+            padding: 8px 18px;
+            font-size: 0.85em;
             font-weight: bold;
             border: none;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         .btn:disabled {
@@ -348,36 +348,36 @@
         }
 
         .game-phase {
-            font-size: 1em;
+            font-size: 0.8em;
             opacity: 0.8;
-            margin-bottom: 15px;
-            padding: 8px 20px;
+            margin-bottom: 8px;
+            padding: 5px 15px;
             background: rgba(0,0,0,0.2);
-            border-radius: 20px;
+            border-radius: 15px;
         }
 
         .hand-rankings {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 12px;
+            padding: 10px;
             background: rgba(0,0,0,0.3);
-            border-radius: 10px;
-            max-width: 400px;
+            border-radius: 8px;
+            max-width: 350px;
         }
 
         .hand-rankings h3 {
             color: #ffd700;
-            margin-bottom: 10px;
-            font-size: 1em;
+            margin-bottom: 6px;
+            font-size: 0.8em;
         }
 
         .hand-rankings ul {
             list-style: none;
-            font-size: 0.85em;
+            font-size: 0.7em;
             opacity: 0.9;
         }
 
         .hand-rankings li {
-            padding: 3px 0;
+            padding: 2px 0;
         }
 
         .game-over-overlay {
@@ -419,42 +419,50 @@
 
         @media (max-width: 600px) {
             h1 {
-                font-size: 1.8em;
-            }
-
-            .card {
-                width: 65px;
-                height: 91px;
-                font-size: 1.2em;
-            }
-
-            .card .card-center {
-                font-size: 1.5em;
-            }
-
-            .balance-display {
-                gap: 20px;
-            }
-
-            .balance-value {
                 font-size: 1.4em;
             }
 
+            .subtitle {
+                font-size: 0.75em;
+            }
+
+            .card {
+                width: 95px;
+                height: 133px;
+                font-size: 1.5em;
+            }
+
+            .card .card-center {
+                font-size: 2em;
+            }
+
+            .cards-container {
+                gap: 8px;
+            }
+
+            .balance-display {
+                gap: 15px;
+            }
+
+            .balance-value {
+                font-size: 1em;
+            }
+
             .btn {
-                padding: 10px 20px;
-                font-size: 0.95em;
+                padding: 6px 14px;
+                font-size: 0.75em;
             }
 
             .betting-controls {
-                gap: 10px;
+                gap: 8px;
             }
 
             .pot-display {
-                padding: 12px 30px;
+                padding: 6px 18px;
             }
 
             .pot-value {
-                font-size: 1.5em;
+                font-size: 1.1em;
             }
         }
     </style>
