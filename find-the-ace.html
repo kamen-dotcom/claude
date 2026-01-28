@@ -266,6 +266,86 @@
             .score-board { gap: 20px; }
             .score-item { padding: 10px 20px; }
         }
+
+        /* Win Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background: linear-gradient(135deg, #1a472a 0%, #0d2818 100%);
+            border: 3px solid #ffd700;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+            transform: scale(0.8);
+            transition: transform 0.3s;
+        }
+
+        .popup-overlay.active .popup-content {
+            transform: scale(1);
+        }
+
+        .popup-title {
+            color: #ffd700;
+            font-size: 2em;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .popup-prize {
+            color: #4ade80;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .popup-bonus {
+            color: #60a5fa;
+            font-size: 1.3em;
+            margin-bottom: 30px;
+        }
+
+        .popup-btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            color: #1a472a;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .popup-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -297,6 +377,16 @@
         </div>
 
         <p class="instructions">Click on a card to reveal it after the shuffle</p>
+    </div>
+
+    <!-- Win Popup -->
+    <div class="popup-overlay" id="winPopup">
+        <div class="popup-content">
+            <h2 class="popup-title">🎉 CONGRATULATIONS! 🎉</h2>
+            <p class="popup-prize">You won 100 Free Spins</p>
+            <p class="popup-bonus">and 40 Euro No Deposit Money!</p>
+            <a href="https://winbet.bg" class="popup-btn" target="_blank">Click Here to Continue</a>
+        </div>
     </div>
 
     <script>
@@ -530,6 +620,10 @@
                     yoyo: true,
                     repeat: 3
                 });
+
+                // Show win popup after animation
+                await sleep(1000);
+                showWinPopup();
             } else {
                 // LOSE
                 gameState.losses++;
@@ -619,6 +713,16 @@
                     onComplete: () => c.remove()
                 });
             }
+        }
+
+        // Show win popup
+        function showWinPopup() {
+            const popup = document.getElementById('winPopup');
+            popup.classList.add('active');
+            gsap.fromTo(popup.querySelector('.popup-content'),
+                { scale: 0.8, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 0.5, ease: "back.out(1.7)" }
+            );
         }
 
         // Init
