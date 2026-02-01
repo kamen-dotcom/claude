@@ -478,6 +478,20 @@
             <button class="city-tab" onclick="selectCity('starazagora')">Стара Загора</button>
             <button class="city-tab" onclick="selectCity('pleven')">Плевен</button>
             <button class="city-tab" onclick="selectCity('blagoevgrad')">Благоевград</button>
+            <button class="city-tab" onclick="selectCity('velikotarnovo')">В. Търново</button>
+            <button class="city-tab" onclick="selectCity('dobrich')">Добрич</button>
+            <button class="city-tab" onclick="selectCity('shumen')">Шумен</button>
+            <button class="city-tab" onclick="selectCity('sliven')">Сливен</button>
+            <button class="city-tab" onclick="selectCity('haskovo')">Хасково</button>
+            <button class="city-tab" onclick="selectCity('pazardzhik')">Пазарджик</button>
+            <button class="city-tab" onclick="selectCity('gabrovo')">Габрово</button>
+            <button class="city-tab" onclick="selectCity('vratsa')">Враца</button>
+            <button class="city-tab" onclick="selectCity('vidin')">Видин</button>
+            <button class="city-tab" onclick="selectCity('pernik')">Перник</button>
+            <button class="city-tab" onclick="selectCity('bansko')">Банско</button>
+            <button class="city-tab" onclick="selectCity('sunnybeach')">Сл. бряг</button>
+            <button class="city-tab" onclick="selectCity('sozopol')">Созопол</button>
+            <button class="city-tab" onclick="selectCity('nesebar')">Несебър</button>
         </div>
 
         <!-- City Info -->
@@ -857,6 +871,274 @@
                     { title: "Студентско търсене", text: "Югозападният университет осигурява <strong>постоянно търсене</strong> на студентски жилища." },
                     { title: "Висока доходност", text: "Благоевград предлага <strong>5.5-6.5% Cap Rate</strong> с ниска начална инвестиция." },
                     { title: "Близо до Банско", text: "Възможност за краткосрочни наеми през ски сезона." }
+                ]
+            },
+            velikotarnovo: {
+                name: "Велико Търново",
+                description: "Старата столица - университетски и туристически град",
+                avgPrice: 1200,
+                avgRent: 350,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 1500, monthlyRent2Room: 400, avgSize2Room: 60 },
+                    { name: "Широк център", segment: "premium", pricePerSqm: 1350, monthlyRent2Room: 380, avgSize2Room: 65 },
+                    { name: "Света гора", segment: "mid", pricePerSqm: 1200, monthlyRent2Room: 350, avgSize2Room: 65 },
+                    { name: "Бузлуджа", segment: "mid", pricePerSqm: 1100, monthlyRent2Room: 320, avgSize2Room: 65 },
+                    { name: "Картала", segment: "mid", pricePerSqm: 1050, monthlyRent2Room: 300, avgSize2Room: 65 },
+                    { name: "Акация", segment: "affordable", pricePerSqm: 950, monthlyRent2Room: 280, avgSize2Room: 65 },
+                    { name: "Колю Фичето", segment: "affordable", pricePerSqm: 900, monthlyRent2Room: 260, avgSize2Room: 65 },
+                    { name: "Чолаковци", segment: "affordable", pricePerSqm: 850, monthlyRent2Room: 250, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Студентски наеми", text: "ВТУ осигурява <strong>стабилно търсене</strong> на студентски жилища през учебната година." },
+                    { title: "Туристически потенциал", text: "Историческият център е подходящ за <strong>Airbnb</strong> и краткосрочни наеми." },
+                    { title: "Добра доходност", text: "Cap Rate от <strong>5-6%</strong> при умерени цени на имотите." }
+                ]
+            },
+            dobrich: {
+                name: "Добрич",
+                description: "Житницата на България - близо до морето и Румъния",
+                avgPrice: 850,
+                avgRent: 280,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 1050, monthlyRent2Room: 320, avgSize2Room: 60 },
+                    { name: "Дружба 1", segment: "mid", pricePerSqm: 900, monthlyRent2Room: 280, avgSize2Room: 65 },
+                    { name: "Дружба 2", segment: "mid", pricePerSqm: 850, monthlyRent2Room: 270, avgSize2Room: 65 },
+                    { name: "Дружба 3", segment: "mid", pricePerSqm: 820, monthlyRent2Room: 260, avgSize2Room: 65 },
+                    { name: "Строител", segment: "affordable", pricePerSqm: 750, monthlyRent2Room: 240, avgSize2Room: 65 },
+                    { name: "Рилци", segment: "affordable", pricePerSqm: 700, monthlyRent2Room: 220, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Най-висок Cap Rate", text: "Добрич предлага <strong>6-7% Cap Rate</strong> - сред най-високите в страната." },
+                    { title: "Близо до морето", text: "30 км от Албена и Балчик - потенциал за сезонни наеми." },
+                    { title: "Ниски цени", text: "Достъпни имоти за начинаещи инвеститори." }
+                ]
+            },
+            shumen: {
+                name: "Шумен",
+                description: "Културен и образователен център в Североизточна България",
+                avgPrice: 950,
+                avgRent: 300,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 1150, monthlyRent2Room: 350, avgSize2Room: 60 },
+                    { name: "Тракия", segment: "mid", pricePerSqm: 1000, monthlyRent2Room: 310, avgSize2Room: 65 },
+                    { name: "Добруджански", segment: "mid", pricePerSqm: 950, monthlyRent2Room: 290, avgSize2Room: 65 },
+                    { name: "Боян Българанов", segment: "mid", pricePerSqm: 900, monthlyRent2Room: 280, avgSize2Room: 65 },
+                    { name: "Дивдядово", segment: "affordable", pricePerSqm: 800, monthlyRent2Room: 250, avgSize2Room: 65 },
+                    { name: "Химик", segment: "affordable", pricePerSqm: 750, monthlyRent2Room: 230, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Университетски град", text: "Шуменският университет създава търсене на <strong>студентски жилища</strong>." },
+                    { title: "Висока доходност", text: "Cap Rate от <strong>5.5-6.5%</strong> при ниски начални инвестиции." },
+                    { title: "Индустриална база", text: "Стабилно търсене от работници в местната индустрия." }
+                ]
+            },
+            sliven: {
+                name: "Сливен",
+                description: "Градът под Сините камъни - индустриален център",
+                avgPrice: 800,
+                avgRent: 260,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 1000, monthlyRent2Room: 320, avgSize2Room: 60 },
+                    { name: "Клуцохор", segment: "mid", pricePerSqm: 850, monthlyRent2Room: 270, avgSize2Room: 65 },
+                    { name: "Сини камъни", segment: "mid", pricePerSqm: 800, monthlyRent2Room: 260, avgSize2Room: 65 },
+                    { name: "Дружба", segment: "mid", pricePerSqm: 780, monthlyRent2Room: 250, avgSize2Room: 65 },
+                    { name: "Република", segment: "affordable", pricePerSqm: 700, monthlyRent2Room: 230, avgSize2Room: 65 },
+                    { name: "Българка", segment: "affordable", pricePerSqm: 650, monthlyRent2Room: 210, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Много висок Cap Rate", text: "Сливен предлага <strong>6-7% Cap Rate</strong> - отличен за cash flow." },
+                    { title: "Ниска начална инвестиция", text: "Двустаен апартамент за под <strong>40,000 EUR</strong>." },
+                    { title: "Текстилна индустрия", text: "Стабилно търсене от работници в текстилния сектор." }
+                ]
+            },
+            haskovo: {
+                name: "Хасково",
+                description: "Градът на Богородица - търговски център на юг",
+                avgPrice: 750,
+                avgRent: 250,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 950, monthlyRent2Room: 300, avgSize2Room: 60 },
+                    { name: "Воеводски", segment: "mid", pricePerSqm: 800, monthlyRent2Room: 260, avgSize2Room: 65 },
+                    { name: "Орфей", segment: "mid", pricePerSqm: 750, monthlyRent2Room: 250, avgSize2Room: 65 },
+                    { name: "Бадема", segment: "mid", pricePerSqm: 720, monthlyRent2Room: 240, avgSize2Room: 65 },
+                    { name: "Кенана", segment: "affordable", pricePerSqm: 650, monthlyRent2Room: 220, avgSize2Room: 65 },
+                    { name: "Овчарски", segment: "affordable", pricePerSqm: 600, monthlyRent2Room: 200, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Най-достъпен пазар", text: "Хасково е сред <strong>най-евтините</strong> градове за покупка на имот." },
+                    { title: "Отличен Cap Rate", text: "Доходност от <strong>6-7%</strong> годишно." },
+                    { title: "Гранична търговия", text: "Близостта до Турция и Гърция създава бизнес активност." }
+                ]
+            },
+            pazardzhik: {
+                name: "Пазарджик",
+                description: "Градът на златото - между София и Пловдив",
+                avgPrice: 850,
+                avgRent: 280,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 1050, monthlyRent2Room: 320, avgSize2Room: 60 },
+                    { name: "Широк център", segment: "mid", pricePerSqm: 900, monthlyRent2Room: 290, avgSize2Room: 65 },
+                    { name: "Ябълките", segment: "mid", pricePerSqm: 850, monthlyRent2Room: 270, avgSize2Room: 65 },
+                    { name: "Изток", segment: "mid", pricePerSqm: 800, monthlyRent2Room: 260, avgSize2Room: 65 },
+                    { name: "Запад", segment: "affordable", pricePerSqm: 750, monthlyRent2Room: 240, avgSize2Room: 65 },
+                    { name: "Марица", segment: "affordable", pricePerSqm: 700, monthlyRent2Room: 220, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Стратегическо местоположение", text: "На магистрала <strong>Тракия</strong> - добра свързаност." },
+                    { title: "Висока доходност", text: "Cap Rate от <strong>5.5-6.5%</strong> годишно." },
+                    { title: "Индустриална зона", text: "Новите заводи създават търсене на наеми." }
+                ]
+            },
+            gabrovo: {
+                name: "Габрово",
+                description: "Столицата на хумора - индустриален град в Балкана",
+                avgPrice: 700,
+                avgRent: 240,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 900, monthlyRent2Room: 280, avgSize2Room: 60 },
+                    { name: "Шиваров мост", segment: "mid", pricePerSqm: 750, monthlyRent2Room: 250, avgSize2Room: 65 },
+                    { name: "Русевци", segment: "mid", pricePerSqm: 700, monthlyRent2Room: 230, avgSize2Room: 65 },
+                    { name: "Бичкиня", segment: "mid", pricePerSqm: 650, monthlyRent2Room: 220, avgSize2Room: 65 },
+                    { name: "Трендафил", segment: "affordable", pricePerSqm: 600, monthlyRent2Room: 200, avgSize2Room: 65 },
+                    { name: "Славовци", segment: "affordable", pricePerSqm: 550, monthlyRent2Room: 180, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Много висок Cap Rate", text: "Габрово предлага <strong>6.5-7.5%</strong> - сред най-високите в страната." },
+                    { title: "Технически университет", text: "Студентско търсене през учебната година." },
+                    { title: "Ниски цени", text: "Двустаен апартамент за под <strong>35,000 EUR</strong>." }
+                ]
+            },
+            vratsa: {
+                name: "Враца",
+                description: "Град под скалите - туристически потенциал",
+                avgPrice: 1050,
+                avgRent: 300,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 1250, monthlyRent2Room: 350, avgSize2Room: 60 },
+                    { name: "Дъбника", segment: "mid", pricePerSqm: 1100, monthlyRent2Room: 310, avgSize2Room: 65 },
+                    { name: "Медковец", segment: "mid", pricePerSqm: 1000, monthlyRent2Room: 290, avgSize2Room: 65 },
+                    { name: "Младост", segment: "mid", pricePerSqm: 950, monthlyRent2Room: 280, avgSize2Room: 65 },
+                    { name: "Сениче", segment: "affordable", pricePerSqm: 850, monthlyRent2Room: 250, avgSize2Room: 65 },
+                    { name: "Кулата", segment: "affordable", pricePerSqm: 800, monthlyRent2Room: 240, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Бърз ръст на цените", text: "Цените във Враца растат с <strong>17%+ годишно</strong>." },
+                    { title: "Добра доходност", text: "Cap Rate около <strong>5-5.5%</strong> с потенциал за поскъпване." },
+                    { title: "Туристически потенциал", text: "Врачански Балкан привлича туристи и катерачи." }
+                ]
+            },
+            vidin: {
+                name: "Видин",
+                description: "Дунавски град - най-западната точка на Дунав мост",
+                avgPrice: 800,
+                avgRent: 250,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 1000, monthlyRent2Room: 300, avgSize2Room: 60 },
+                    { name: "Калето", segment: "premium", pricePerSqm: 950, monthlyRent2Room: 290, avgSize2Room: 60 },
+                    { name: "Химик", segment: "mid", pricePerSqm: 800, monthlyRent2Room: 260, avgSize2Room: 65 },
+                    { name: "Панония", segment: "mid", pricePerSqm: 750, monthlyRent2Room: 240, avgSize2Room: 65 },
+                    { name: "Бонония", segment: "affordable", pricePerSqm: 650, monthlyRent2Room: 220, avgSize2Room: 65 },
+                    { name: "Вида", segment: "affordable", pricePerSqm: 600, monthlyRent2Room: 200, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Бърз ръст", text: "Цените са нараснали с <strong>22%+ годишно</strong> - догонващ ефект." },
+                    { title: "Висок Cap Rate", text: "Доходност от <strong>6-7%</strong> годишно." },
+                    { title: "Дунав мост 2", text: "Подобрена свързаност с Румъния и Западна Европа." }
+                ]
+            },
+            pernik: {
+                name: "Перник",
+                description: "Градът на миньорите - близо до София",
+                avgPrice: 950,
+                avgRent: 320,
+                neighborhoods: [
+                    { name: "Център", segment: "premium", pricePerSqm: 1150, monthlyRent2Room: 360, avgSize2Room: 60 },
+                    { name: "Изток", segment: "mid", pricePerSqm: 1000, monthlyRent2Room: 330, avgSize2Room: 65 },
+                    { name: "Мошино", segment: "mid", pricePerSqm: 950, monthlyRent2Room: 310, avgSize2Room: 65 },
+                    { name: "Тева", segment: "mid", pricePerSqm: 900, monthlyRent2Room: 300, avgSize2Room: 65 },
+                    { name: "Църква", segment: "affordable", pricePerSqm: 800, monthlyRent2Room: 270, avgSize2Room: 65 },
+                    { name: "Калкас", segment: "affordable", pricePerSqm: 750, monthlyRent2Room: 250, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Близо до София", text: "30 минути от столицата - атрактивен за <strong>комутери</strong>." },
+                    { title: "Добра доходност", text: "Cap Rate от <strong>5.5-6%</strong> с по-ниски цени от София." },
+                    { title: "Подобрена инфраструктура", text: "Новата магистрала намалява времето до София." }
+                ]
+            },
+            bansko: {
+                name: "Банско",
+                description: "Най-популярният ски курорт в България",
+                avgPrice: 1300,
+                avgRent: 450,
+                neighborhoods: [
+                    { name: "Ски зона", segment: "premium", pricePerSqm: 1600, monthlyRent2Room: 550, avgSize2Room: 55 },
+                    { name: "Център", segment: "premium", pricePerSqm: 1450, monthlyRent2Room: 500, avgSize2Room: 55 },
+                    { name: "Нов град", segment: "mid", pricePerSqm: 1300, monthlyRent2Room: 450, avgSize2Room: 55 },
+                    { name: "Старият град", segment: "mid", pricePerSqm: 1200, monthlyRent2Room: 420, avgSize2Room: 55 },
+                    { name: "Разложка", segment: "affordable", pricePerSqm: 1100, monthlyRent2Room: 380, avgSize2Room: 55 },
+                    { name: "Покрайнини", segment: "affordable", pricePerSqm: 950, monthlyRent2Room: 330, avgSize2Room: 60 },
+                ],
+                tips: [
+                    { title: "Сезонни наеми", text: "Airbnb доходност през <strong>ски сезона</strong> може да надхвърли 8-10% годишно." },
+                    { title: "Целогодишен туризъм", text: "Летен туризъм и фестивали добавят <strong>допълнителна доходност</strong>." },
+                    { title: "Чуждестранни купувачи", text: "Голям интерес от британски и скандинавски инвеститори." }
+                ]
+            },
+            sunnybeach: {
+                name: "Слънчев бряг",
+                description: "Най-големият морски курорт в България",
+                avgPrice: 1500,
+                avgRent: 500,
+                neighborhoods: [
+                    { name: "Централна част", segment: "premium", pricePerSqm: 2000, monthlyRent2Room: 600, avgSize2Room: 50 },
+                    { name: "Първа линия", segment: "premium", pricePerSqm: 2200, monthlyRent2Room: 650, avgSize2Room: 45 },
+                    { name: "Какао бийч", segment: "mid", pricePerSqm: 1600, monthlyRent2Room: 520, avgSize2Room: 50 },
+                    { name: "Южна част", segment: "mid", pricePerSqm: 1400, monthlyRent2Room: 480, avgSize2Room: 55 },
+                    { name: "Северна част", segment: "affordable", pricePerSqm: 1200, monthlyRent2Room: 420, avgSize2Room: 55 },
+                    { name: "Периферия", segment: "affordable", pricePerSqm: 1000, monthlyRent2Room: 350, avgSize2Room: 55 },
+                ],
+                tips: [
+                    { title: "Летни Airbnb наеми", text: "Доходност от <strong>10-15% годишно</strong> при активно управление през лятото." },
+                    { title: "Голямо предлагане", text: "Много имоти на пазара - важен е <strong>изборът на локация</strong>." },
+                    { title: "Сезонност", text: "Основната доходност е <strong>юни-септември</strong>; зимата е слаба." }
+                ]
+            },
+            sozopol: {
+                name: "Созопол",
+                description: "Най-старият град по Черноморието - културен и туристически център",
+                avgPrice: 2100,
+                avgRent: 650,
+                neighborhoods: [
+                    { name: "Стар град", segment: "premium", pricePerSqm: 2800, monthlyRent2Room: 800, avgSize2Room: 50 },
+                    { name: "Нов град", segment: "premium", pricePerSqm: 2300, monthlyRent2Room: 700, avgSize2Room: 55 },
+                    { name: "Буджака", segment: "premium", pricePerSqm: 2500, monthlyRent2Room: 750, avgSize2Room: 55 },
+                    { name: "Харманите", segment: "mid", pricePerSqm: 1900, monthlyRent2Room: 600, avgSize2Room: 55 },
+                    { name: "Каваците", segment: "mid", pricePerSqm: 1700, monthlyRent2Room: 550, avgSize2Room: 55 },
+                    { name: "Черноморец", segment: "affordable", pricePerSqm: 1500, monthlyRent2Room: 480, avgSize2Room: 60 },
+                ],
+                tips: [
+                    { title: "Премиум локация", text: "Созопол е <strong>най-скъпият</strong> морски курорт - качествени наематели." },
+                    { title: "Културен туризъм", text: "Аполония и фестивалите привличат <strong>платежоспособни туристи</strong>." },
+                    { title: "Ограничено строителство", text: "Малко ново строителство = <strong>стабилни цени</strong>." }
+                ]
+            },
+            nesebar: {
+                name: "Несебър",
+                description: "Перлата на Черноморието - UNESCO обект",
+                avgPrice: 1800,
+                avgRent: 580,
+                neighborhoods: [
+                    { name: "Стар град", segment: "premium", pricePerSqm: 2500, monthlyRent2Room: 750, avgSize2Room: 45 },
+                    { name: "Нов Несебър", segment: "premium", pricePerSqm: 2100, monthlyRent2Room: 650, avgSize2Room: 55 },
+                    { name: "Южен плаж", segment: "mid", pricePerSqm: 1800, monthlyRent2Room: 580, avgSize2Room: 55 },
+                    { name: "Северен плаж", segment: "mid", pricePerSqm: 1600, monthlyRent2Room: 520, avgSize2Room: 55 },
+                    { name: "Равда", segment: "affordable", pricePerSqm: 1400, monthlyRent2Room: 450, avgSize2Room: 60 },
+                    { name: "Свети Влас", segment: "mid", pricePerSqm: 1700, monthlyRent2Room: 550, avgSize2Room: 55 },
+                ],
+                tips: [
+                    { title: "UNESCO статут", text: "Историческият статут гарантира <strong>дългосрочна стойност</strong>." },
+                    { title: "Целогодишен град", text: "За разлика от другите курорти, Несебър живее <strong>целогодишно</strong>." },
+                    { title: "Добър баланс", text: "Съчетание от <strong>туристически наеми</strong> и капиталова печалба." }
                 ]
             }
         };
