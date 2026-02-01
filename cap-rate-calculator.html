@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калкулатор за капитализация на недвижими имоти - София</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5f2e 0%, #2d8a4e 50%, #4ade80 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #1a5f2e;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .data-source {
+            text-align: center;
+            font-size: 0.85em;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .data-source a {
+            color: #2d8a4e;
+            text-decoration: none;
+        }
+
+        .data-source a:hover {
+            text-decoration: underline;
+        }
+
+        .calculator-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8fdf9;
+            border-radius: 15px;
+            border-left: 5px solid #2d8a4e;
+        }
+
+        .calculator-section h2 {
+            color: #1a5f2e;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .input-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-item label {
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-item input,
+        .input-item select {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-item input:focus,
+        .input-item select:focus {
+            outline: none;
+            border-color: #2d8a4e;
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #1a5f2e 0%, #2d8a4e 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .result-box h3 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .result-value {
+            font-size: 3em;
+            font-weight: bold;
+        }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .result-detail-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .result-detail-item span {
+            display: block;
+            font-size: 0.85em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .result-detail-item strong {
+            font-size: 1.2em;
+        }
+
+        .neighborhood-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .neighborhood-table th,
+        .neighborhood-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .neighborhood-table th {
+            background: #1a5f2e;
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        .neighborhood-table tr:hover {
+            background: #f0fdf4;
+            cursor: pointer;
+        }
+
+        .neighborhood-table tr.selected {
+            background: #dcfce7;
+        }
+
+        .cap-rate-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .cap-rate-high {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .cap-rate-medium {
+            background: #fef9c3;
+            color: #854d0e;
+        }
+
+        .cap-rate-low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .segment-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .segment-premium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .segment-mid {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .segment-affordable {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #2d8a4e;
+            background: white;
+            color: #2d8a4e;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #2d8a4e;
+            color: white;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            padding: 20px;
+            border-radius: 15px;
+            border-left: 4px solid #2d8a4e;
+        }
+
+        .info-card h4 {
+            color: #1a5f2e;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            color: #333;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .formula {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.1em;
+            color: #1e293b;
+        }
+
+        .sort-icon {
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        .comparison-section {
+            margin-top: 30px;
+        }
+
+        .chart-placeholder {
+            background: #f8fdf9;
+            border: 2px dashed #2d8a4e;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .bar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .bar-label {
+            width: 150px;
+            font-size: 0.85em;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .bar-container {
+            flex: 1;
+            background: #e5e7eb;
+            border-radius: 5px;
+            height: 25px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1a5f2e 0%, #4ade80 100%);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .neighborhood-table th,
+            .neighborhood-table td {
+                padding: 8px 10px;
+                font-size: 0.9em;
+            }
+
+            .bar-label {
+                width: 100px;
+                font-size: 0.75em;
+            }
+
+            .result-value {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Калкулатор за капитализация (Cap Rate)</h1>
+        <p class="subtitle">Изчислете доходността от наем на недвижими имоти в София по квартали</p>
+        <p class="data-source">
+            Данни: <a href="https://www.imot.bg/sredni-ceni" target="_blank">imot.bg</a> |
+            <a href="https://money.bg/property" target="_blank">money.bg</a> |
+            <a href="https://www.investor.bg" target="_blank">investor.bg</a> | Актуализирано: Януари 2026
+        </p>
+
+        <!-- Info Cards -->
+        <div class="info-cards">
+            <div class="info-card">
+                <h4>Какво е Cap Rate?</h4>
+                <p>Капитализационният коефициент (Cap Rate) показва годишната доходност от наем като процент от стойността на имота. По-висок Cap Rate = по-висока доходност.</p>
+            </div>
+            <div class="info-card">
+                <h4>Формула</h4>
+                <div class="formula">
+                    Cap Rate = (Годишен наем / Цена на имота) × 100%
+                </div>
+            </div>
+            <div class="info-card">
+                <h4>Среден Cap Rate в София</h4>
+                <p>Средната доходност от наем в София е около <strong>3.3-4.0%</strong> годишно, което означава изплащане на инвестицията за <strong>25-30 години</strong>.</p>
+            </div>
+        </div>
+
+        <!-- Custom Calculator -->
+        <div class="calculator-section">
+            <h2>Калкулатор за вашия имот</h2>
+            <div class="input-group">
+                <div class="input-item">
+                    <label for="neighborhood">Изберете квартал</label>
+                    <select id="neighborhood" onchange="fillNeighborhoodData()">
+                        <option value="">-- Изберете или въведете ръчно --</option>
+                    </select>
+                </div>
+                <div class="input-item">
+                    <label for="propertySize">Площ (кв.м.)</label>
+                    <input type="number" id="propertySize" value="70" min="20" max="500" onchange="calculateCapRate()">
+                </div>
+                <div class="input-item">
+                    <label for="pricePerSqm">Цена на кв.м. (EUR)</label>
+                    <input type="number" id="pricePerSqm" value="2700" min="500" max="10000" onchange="calculateCapRate()">
+                </div>
+                <div class="input-item">
+                    <label for="monthlyRent">Месечен наем (EUR)</label>
+                    <input type="number" id="monthlyRent" value="650" min="100" max="5000" onchange="calculateCapRate()">
+                </div>
+            </div>
+
+            <div class="result-box">
+                <h3>Капитализационен коефициент (Cap Rate)</h3>
+                <div class="result-value" id="capRateResult">4.13%</div>
+                <div class="result-details">
+                    <div class="result-detail-item">
+                        <span>Обща стойност на имота</span>
+                        <strong id="totalValue">189,000 EUR</strong>
+                    </div>
+                    <div class="result-detail-item">
+                        <span>Годишен доход от наем</span>
+                        <strong id="annualRent">7,800 EUR</strong>
+                    </div>
+                    <div class="result-detail-item">
+                        <span>Години за изплащане</span>
+                        <strong id="paybackYears">24.2 години</strong>
+                    </div>
+                    <div class="result-detail-item">
+                        <span>Месечен доход/кв.м.</span>
+                        <strong id="rentPerSqm">9.29 EUR</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Neighborhood Comparison -->
+        <div class="calculator-section">
+            <h2>Сравнение по квартали в София</h2>
+
+            <div class="filter-section">
+                <button class="filter-btn active" onclick="filterTable('all')">Всички</button>
+                <button class="filter-btn" onclick="filterTable('premium')">Премиум</button>
+                <button class="filter-btn" onclick="filterTable('mid')">Среден сегмент</button>
+                <button class="filter-btn" onclick="filterTable('affordable')">Достъпни</button>
+            </div>
+
+            <div class="table-container">
+                <table class="neighborhood-table" id="neighborhoodTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">Квартал <span class="sort-icon">&#9650;&#9660;</span></th>
+                            <th onclick="sortTable(1)">Сегмент</th>
+                            <th onclick="sortTable(2)">Цена/кв.м. (EUR) <span class="sort-icon">&#9650;&#9660;</span></th>
+                            <th onclick="sortTable(3)">Наем 2-ст./мес. (EUR) <span class="sort-icon">&#9650;&#9660;</span></th>
+                            <th onclick="sortTable(4)">Наем/кв.м./мес. (EUR) <span class="sort-icon">&#9650;&#9660;</span></th>
+                            <th onclick="sortTable(5)">Cap Rate <span class="sort-icon">&#9650;&#9660;</span></th>
+                            <th onclick="sortTable(6)">Години изплащане <span class="sort-icon">&#9650;&#9660;</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Visual Comparison -->
+        <div class="calculator-section comparison-section">
+            <h2>Визуално сравнение на Cap Rate по квартали</h2>
+            <div class="bar-chart" id="barChart">
+            </div>
+        </div>
+
+        <!-- Investment Tips -->
+        <div class="calculator-section">
+            <h2>Съвети за инвеститори</h2>
+            <div class="info-cards">
+                <div class="info-card">
+                    <h4>Най-висока доходност</h4>
+                    <p>Квартали като <strong>Левски Г, Люлин, Надежда</strong> предлагат най-висока капитализация (4-5%), но с по-нисък потенциал за поскъпване.</p>
+                </div>
+                <div class="info-card">
+                    <h4>Балансирана инвестиция</h4>
+                    <p>Квартали като <strong>Младост, Студентски град, Витоша</strong> предлагат добра доходност (3.5-4%) с потенциал за умерено поскъпване.</p>
+                </div>
+                <div class="info-card">
+                    <h4>Престижни локации</h4>
+                    <p>Кварталите <strong>Лозенец, Иван Вазов, Изток</strong> имат по-нисък Cap Rate (2.5-3.5%), но стабилно търсене и потенциал за капиталова печалба.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sofia neighborhood data based on latest market research (2025-2026)
+        // Sources: imot.bg, money.bg, investor.bg
+        const neighborhoods = [
+            // Premium segment
+            { name: "Лозенец", segment: "premium", pricePerSqm: 4150, monthlyRent2Room: 700, avgSize2Room: 65 },
+            { name: "Иван Вазов", segment: "premium", pricePerSqm: 4000, monthlyRent2Room: 720, avgSize2Room: 65 },
+            { name: "Изток", segment: "premium", pricePerSqm: 3900, monthlyRent2Room: 650, avgSize2Room: 70 },
+            { name: "Изгрев", segment: "premium", pricePerSqm: 3800, monthlyRent2Room: 660, avgSize2Room: 70 },
+            { name: "Оборище", segment: "premium", pricePerSqm: 3600, monthlyRent2Room: 660, avgSize2Room: 65 },
+            { name: "Център", segment: "premium", pricePerSqm: 3500, monthlyRent2Room: 770, avgSize2Room: 60 },
+            { name: "Докторски паметник", segment: "premium", pricePerSqm: 3400, monthlyRent2Room: 620, avgSize2Room: 65 },
+
+            // Mid segment
+            { name: "Кръстова вада", segment: "mid", pricePerSqm: 2800, monthlyRent2Room: 600, avgSize2Room: 70 },
+            { name: "Манастирски ливади", segment: "mid", pricePerSqm: 2650, monthlyRent2Room: 580, avgSize2Room: 70 },
+            { name: "Витоша", segment: "mid", pricePerSqm: 2600, monthlyRent2Room: 550, avgSize2Room: 70 },
+            { name: "Стрелбище", segment: "mid", pricePerSqm: 2500, monthlyRent2Room: 530, avgSize2Room: 65 },
+            { name: "Борово", segment: "mid", pricePerSqm: 2450, monthlyRent2Room: 520, avgSize2Room: 65 },
+            { name: "Гео Милев", segment: "mid", pricePerSqm: 2400, monthlyRent2Room: 520, avgSize2Room: 65 },
+            { name: "Редута", segment: "mid", pricePerSqm: 2350, monthlyRent2Room: 500, avgSize2Room: 65 },
+            { name: "Яворов", segment: "mid", pricePerSqm: 2300, monthlyRent2Room: 500, avgSize2Room: 65 },
+
+            // Affordable segment
+            { name: "Младост 1", segment: "affordable", pricePerSqm: 2200, monthlyRent2Room: 550, avgSize2Room: 65 },
+            { name: "Младост 2", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 520, avgSize2Room: 65 },
+            { name: "Младост 3", segment: "affordable", pricePerSqm: 2050, monthlyRent2Room: 510, avgSize2Room: 65 },
+            { name: "Младост 4", segment: "affordable", pricePerSqm: 2000, monthlyRent2Room: 500, avgSize2Room: 65 },
+            { name: "Студентски град", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 520, avgSize2Room: 60 },
+            { name: "Обеля", segment: "affordable", pricePerSqm: 2200, monthlyRent2Room: 500, avgSize2Room: 65 },
+            { name: "Горубляне", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 480, avgSize2Room: 65 },
+            { name: "Дружба 1", segment: "affordable", pricePerSqm: 1950, monthlyRent2Room: 480, avgSize2Room: 65 },
+            { name: "Дружба 2", segment: "affordable", pricePerSqm: 1900, monthlyRent2Room: 470, avgSize2Room: 65 },
+            { name: "Люлин 1-4", segment: "affordable", pricePerSqm: 1950, monthlyRent2Room: 480, avgSize2Room: 65 },
+            { name: "Люлин 5-10", segment: "affordable", pricePerSqm: 1850, monthlyRent2Room: 460, avgSize2Room: 65 },
+            { name: "Овча купел", segment: "affordable", pricePerSqm: 2000, monthlyRent2Room: 480, avgSize2Room: 65 },
+            { name: "Надежда", segment: "affordable", pricePerSqm: 1800, monthlyRent2Room: 450, avgSize2Room: 65 },
+            { name: "Левски Г", segment: "affordable", pricePerSqm: 1700, monthlyRent2Room: 420, avgSize2Room: 60 },
+            { name: "Хиподрума", segment: "affordable", pricePerSqm: 2050, monthlyRent2Room: 490, avgSize2Room: 65 },
+            { name: "Банишора", segment: "affordable", pricePerSqm: 1900, monthlyRent2Room: 460, avgSize2Room: 65 },
+            { name: "Сердика", segment: "affordable", pricePerSqm: 1850, monthlyRent2Room: 440, avgSize2Room: 65 },
+            { name: "Хаджи Димитър", segment: "affordable", pricePerSqm: 1800, monthlyRent2Room: 430, avgSize2Room: 65 },
+            { name: "Красно село", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 500, avgSize2Room: 65 },
+            { name: "Славия", segment: "affordable", pricePerSqm: 2000, monthlyRent2Room: 480, avgSize2Room: 65 },
+        ];
+
+        // Calculate derived values for each neighborhood
+        function calculateNeighborhoodData(n) {
+            const rentPerSqm = n.monthlyRent2Room / n.avgSize2Room;
+            const annualRentPerSqm = rentPerSqm * 12;
+            const capRate = (annualRentPerSqm / n.pricePerSqm) * 100;
+            const paybackYears = n.pricePerSqm / annualRentPerSqm;
+
+            return {
+                ...n,
+                rentPerSqm: rentPerSqm.toFixed(2),
+                capRate: capRate.toFixed(2),
+                paybackYears: paybackYears.toFixed(1)
+            };
+        }
+
+        // Populate dropdown
+        function populateDropdown() {
+            const select = document.getElementById('neighborhood');
+            neighborhoods.forEach(n => {
+                const option = document.createElement('option');
+                option.value = n.name;
+                option.textContent = n.name;
+                select.appendChild(option);
+            });
+        }
+
+        // Fill data when neighborhood is selected
+        function fillNeighborhoodData() {
+            const selected = document.getElementById('neighborhood').value;
+            if (selected) {
+                const n = neighborhoods.find(x => x.name === selected);
+                if (n) {
+                    document.getElementById('pricePerSqm').value = n.pricePerSqm;
+                    document.getElementById('monthlyRent').value = n.monthlyRent2Room;
+                    document.getElementById('propertySize').value = n.avgSize2Room;
+                    calculateCapRate();
+                }
+            }
+        }
+
+        // Calculate cap rate
+        function calculateCapRate() {
+            const size = parseFloat(document.getElementById('propertySize').value) || 70;
+            const pricePerSqm = parseFloat(document.getElementById('pricePerSqm').value) || 2700;
+            const monthlyRent = parseFloat(document.getElementById('monthlyRent').value) || 650;
+
+            const totalValue = size * pricePerSqm;
+            const annualRent = monthlyRent * 12;
+            const capRate = (annualRent / totalValue) * 100;
+            const paybackYears = totalValue / annualRent;
+            const rentPerSqm = monthlyRent / size;
+
+            document.getElementById('capRateResult').textContent = capRate.toFixed(2) + '%';
+            document.getElementById('totalValue').textContent = totalValue.toLocaleString('de-DE') + ' EUR';
+            document.getElementById('annualRent').textContent = annualRent.toLocaleString('de-DE') + ' EUR';
+            document.getElementById('paybackYears').textContent = paybackYears.toFixed(1) + ' години';
+            document.getElementById('rentPerSqm').textContent = rentPerSqm.toFixed(2) + ' EUR';
+        }
+
+        // Populate table
+        function populateTable(filter = 'all') {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            let data = neighborhoods.map(calculateNeighborhoodData);
+
+            if (filter !== 'all') {
+                data = data.filter(n => n.segment === filter);
+            }
+
+            // Sort by cap rate descending by default
+            data.sort((a, b) => parseFloat(b.capRate) - parseFloat(a.capRate));
+
+            data.forEach(n => {
+                const row = document.createElement('tr');
+                row.dataset.segment = n.segment;
+                row.onclick = () => selectNeighborhood(n.name);
+
+                const capRateClass = parseFloat(n.capRate) >= 4 ? 'cap-rate-high' :
+                                    parseFloat(n.capRate) >= 3.2 ? 'cap-rate-medium' : 'cap-rate-low';
+
+                const segmentClass = n.segment === 'premium' ? 'segment-premium' :
+                                    n.segment === 'mid' ? 'segment-mid' : 'segment-affordable';
+                const segmentText = n.segment === 'premium' ? 'Премиум' :
+                                   n.segment === 'mid' ? 'Среден' : 'Достъпен';
+
+                row.innerHTML = `
+                    <td><strong>${n.name}</strong></td>
+                    <td><span class="segment-badge ${segmentClass}">${segmentText}</span></td>
+                    <td>${n.pricePerSqm.toLocaleString('de-DE')}</td>
+                    <td>${n.monthlyRent2Room}</td>
+                    <td>${n.rentPerSqm}</td>
+                    <td><span class="cap-rate-badge ${capRateClass}">${n.capRate}%</span></td>
+                    <td>${n.paybackYears}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            updateBarChart(data);
+        }
+
+        // Filter table
+        function filterTable(filter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            populateTable(filter);
+        }
+
+        // Select neighborhood from table
+        function selectNeighborhood(name) {
+            document.getElementById('neighborhood').value = name;
+            fillNeighborhoodData();
+
+            // Highlight selected row
+            document.querySelectorAll('.neighborhood-table tr').forEach(tr => tr.classList.remove('selected'));
+            event.target.closest('tr').classList.add('selected');
+
+            // Scroll to calculator
+            document.querySelector('.calculator-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Sort table
+        let sortDirection = {};
+        function sortTable(columnIndex) {
+            const table = document.getElementById('neighborhoodTable');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            sortDirection[columnIndex] = !sortDirection[columnIndex];
+            const direction = sortDirection[columnIndex] ? 1 : -1;
+
+            rows.sort((a, b) => {
+                let aVal = a.cells[columnIndex].textContent.trim();
+                let bVal = b.cells[columnIndex].textContent.trim();
+
+                // Remove non-numeric characters for numeric columns
+                if (columnIndex >= 2) {
+                    aVal = parseFloat(aVal.replace(/[^0-9.-]/g, '')) || 0;
+                    bVal = parseFloat(bVal.replace(/[^0-9.-]/g, '')) || 0;
+                    return (aVal - bVal) * direction;
+                }
+
+                return aVal.localeCompare(bVal, 'bg') * direction;
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Update bar chart
+        function updateBarChart(data) {
+            const container = document.getElementById('barChart');
+            container.innerHTML = '';
+
+            // Take top 15 by cap rate
+            const topData = data.slice(0, 15);
+            const maxCapRate = Math.max(...topData.map(n => parseFloat(n.capRate)));
+
+            topData.forEach(n => {
+                const percentage = (parseFloat(n.capRate) / maxCapRate) * 100;
+                const item = document.createElement('div');
+                item.className = 'bar-item';
+                item.innerHTML = `
+                    <div class="bar-label">${n.name}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: ${percentage}%">${n.capRate}%</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            populateDropdown();
+            populateTable();
+            calculateCapRate();
+        });
+    </script>
+</body>
+</html>
