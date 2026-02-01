@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Калкулатор за капитализация на недвижими имоти - София</title>
+    <title>Калкулатор за капитализация на недвижими имоти - България</title>
     <style>
         * {
             margin: 0;
@@ -56,6 +56,58 @@
 
         .data-source a:hover {
             text-decoration: underline;
+        }
+
+        /* City Tabs */
+        .city-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f0fdf4;
+            border-radius: 15px;
+        }
+
+        .city-tab {
+            padding: 12px 24px;
+            border: 2px solid #2d8a4e;
+            background: white;
+            color: #2d8a4e;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .city-tab:hover {
+            background: #dcfce7;
+        }
+
+        .city-tab.active {
+            background: linear-gradient(135deg, #1a5f2e 0%, #2d8a4e 100%);
+            color: white;
+            border-color: #1a5f2e;
+        }
+
+        .city-info {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .city-info h2 {
+            color: #1a5f2e;
+            margin-bottom: 5px;
+        }
+
+        .city-info p {
+            color: #666;
+            font-size: 0.9em;
         }
 
         .calculator-section {
@@ -302,15 +354,6 @@
             margin-top: 30px;
         }
 
-        .chart-placeholder {
-            background: #f8fdf9;
-            border: 2px dashed #2d8a4e;
-            border-radius: 15px;
-            padding: 40px;
-            text-align: center;
-            margin-top: 20px;
-        }
-
         .bar-chart {
             display: flex;
             flex-direction: column;
@@ -353,6 +396,36 @@
             font-weight: bold;
         }
 
+        /* City comparison table */
+        .city-comparison {
+            margin-top: 30px;
+        }
+
+        .city-comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .city-comparison-table th,
+        .city-comparison-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .city-comparison-table th {
+            background: #1a5f2e;
+            color: white;
+        }
+
+        .city-comparison-table tr:nth-child(even) {
+            background: #f8fdf9;
+        }
+
+        .city-comparison-table tr:hover {
+            background: #dcfce7;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 20px;
@@ -360,6 +433,11 @@
 
             h1 {
                 font-size: 1.5em;
+            }
+
+            .city-tab {
+                padding: 10px 16px;
+                font-size: 0.85em;
             }
 
             .neighborhood-table th,
@@ -382,12 +460,31 @@
 <body>
     <div class="container">
         <h1>Калкулатор за капитализация (Cap Rate)</h1>
-        <p class="subtitle">Изчислете доходността от наем на недвижими имоти в София по квартали</p>
+        <p class="subtitle">Изчислете доходността от наем на недвижими имоти в България по градове и квартали</p>
         <p class="data-source">
             Данни: <a href="https://www.imot.bg/sredni-ceni" target="_blank">imot.bg</a> |
             <a href="https://money.bg/property" target="_blank">money.bg</a> |
-            <a href="https://www.investor.bg" target="_blank">investor.bg</a> | Актуализирано: Януари 2026
+            <a href="https://www.investor.bg" target="_blank">investor.bg</a> |
+            <a href="https://address.bg" target="_blank">address.bg</a> | Актуализирано: Януари 2026
         </p>
+
+        <!-- City Tabs -->
+        <div class="city-tabs" id="cityTabs">
+            <button class="city-tab active" onclick="selectCity('sofia')">София</button>
+            <button class="city-tab" onclick="selectCity('plovdiv')">Пловдив</button>
+            <button class="city-tab" onclick="selectCity('varna')">Варна</button>
+            <button class="city-tab" onclick="selectCity('burgas')">Бургас</button>
+            <button class="city-tab" onclick="selectCity('ruse')">Русе</button>
+            <button class="city-tab" onclick="selectCity('starazagora')">Стара Загора</button>
+            <button class="city-tab" onclick="selectCity('pleven')">Плевен</button>
+            <button class="city-tab" onclick="selectCity('blagoevgrad')">Благоевград</button>
+        </div>
+
+        <!-- City Info -->
+        <div class="city-info" id="cityInfo">
+            <h2 id="cityName">София</h2>
+            <p id="cityDescription">Столицата на България - най-голям пазар на недвижими имоти</p>
+        </div>
 
         <!-- Info Cards -->
         <div class="info-cards">
@@ -402,8 +499,8 @@
                 </div>
             </div>
             <div class="info-card">
-                <h4>Среден Cap Rate в София</h4>
-                <p>Средната доходност от наем в София е около <strong>3.3-4.0%</strong> годишно, което означава изплащане на инвестицията за <strong>25-30 години</strong>.</p>
+                <h4>Среден Cap Rate в България</h4>
+                <p>Средната доходност от наем варира: София <strong>3.3-4.0%</strong>, Варна/Бургас <strong>4.0-5.0%</strong>, други градове <strong>4.5-6.0%</strong>.</p>
             </div>
         </div>
 
@@ -457,7 +554,7 @@
 
         <!-- Neighborhood Comparison -->
         <div class="calculator-section">
-            <h2>Сравнение по квартали в София</h2>
+            <h2 id="comparisonTitle">Сравнение по квартали в София</h2>
 
             <div class="filter-section">
                 <button class="filter-btn active" onclick="filterTable('all')">Всички</button>
@@ -492,71 +589,323 @@
             </div>
         </div>
 
+        <!-- City Comparison -->
+        <div class="calculator-section city-comparison">
+            <h2>Сравнение между градовете в България</h2>
+            <div class="table-container">
+                <table class="city-comparison-table" id="cityComparisonTable">
+                    <thead>
+                        <tr>
+                            <th>Град</th>
+                            <th>Ср. цена/кв.м. (EUR)</th>
+                            <th>Ср. наем 2-ст. (EUR)</th>
+                            <th>Ср. Cap Rate</th>
+                            <th>Години изплащане</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cityComparisonBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
         <!-- Investment Tips -->
         <div class="calculator-section">
             <h2>Съвети за инвеститори</h2>
-            <div class="info-cards">
-                <div class="info-card">
-                    <h4>Най-висока доходност</h4>
-                    <p>Квартали като <strong>Левски Г, Люлин, Надежда</strong> предлагат най-висока капитализация (4-5%), но с по-нисък потенциал за поскъпване.</p>
-                </div>
-                <div class="info-card">
-                    <h4>Балансирана инвестиция</h4>
-                    <p>Квартали като <strong>Младост, Студентски град, Витоша</strong> предлагат добра доходност (3.5-4%) с потенциал за умерено поскъпване.</p>
-                </div>
-                <div class="info-card">
-                    <h4>Престижни локации</h4>
-                    <p>Кварталите <strong>Лозенец, Иван Вазов, Изток</strong> имат по-нисък Cap Rate (2.5-3.5%), но стабилно търсене и потенциал за капиталова печалба.</p>
-                </div>
+            <div class="info-cards" id="investmentTips">
             </div>
         </div>
     </div>
 
     <script>
-        // Sofia neighborhood data based on latest market research (2025-2026)
-        // Sources: imot.bg, money.bg, investor.bg
-        const neighborhoods = [
-            // Premium segment
-            { name: "Лозенец", segment: "premium", pricePerSqm: 4150, monthlyRent2Room: 700, avgSize2Room: 65 },
-            { name: "Иван Вазов", segment: "premium", pricePerSqm: 4000, monthlyRent2Room: 720, avgSize2Room: 65 },
-            { name: "Изток", segment: "premium", pricePerSqm: 3900, monthlyRent2Room: 650, avgSize2Room: 70 },
-            { name: "Изгрев", segment: "premium", pricePerSqm: 3800, monthlyRent2Room: 660, avgSize2Room: 70 },
-            { name: "Оборище", segment: "premium", pricePerSqm: 3600, monthlyRent2Room: 660, avgSize2Room: 65 },
-            { name: "Център", segment: "premium", pricePerSqm: 3500, monthlyRent2Room: 770, avgSize2Room: 60 },
-            { name: "Докторски паметник", segment: "premium", pricePerSqm: 3400, monthlyRent2Room: 620, avgSize2Room: 65 },
+        // City data with neighborhoods
+        // Sources: imot.bg, money.bg, investor.bg, address.bg (2025-2026)
+        const cityData = {
+            sofia: {
+                name: "София",
+                description: "Столицата на България - най-голям пазар на недвижими имоти",
+                avgPrice: 2700,
+                avgRent: 680,
+                neighborhoods: [
+                    // Premium segment
+                    { name: "Лозенец", segment: "premium", pricePerSqm: 4150, monthlyRent2Room: 700, avgSize2Room: 65 },
+                    { name: "Иван Вазов", segment: "premium", pricePerSqm: 4000, monthlyRent2Room: 720, avgSize2Room: 65 },
+                    { name: "Изток", segment: "premium", pricePerSqm: 3900, monthlyRent2Room: 650, avgSize2Room: 70 },
+                    { name: "Изгрев", segment: "premium", pricePerSqm: 3800, monthlyRent2Room: 660, avgSize2Room: 70 },
+                    { name: "Оборище", segment: "premium", pricePerSqm: 3600, monthlyRent2Room: 660, avgSize2Room: 65 },
+                    { name: "Център", segment: "premium", pricePerSqm: 3500, monthlyRent2Room: 770, avgSize2Room: 60 },
+                    { name: "Докторски паметник", segment: "premium", pricePerSqm: 3400, monthlyRent2Room: 620, avgSize2Room: 65 },
+                    // Mid segment
+                    { name: "Кръстова вада", segment: "mid", pricePerSqm: 2800, monthlyRent2Room: 600, avgSize2Room: 70 },
+                    { name: "Манастирски ливади", segment: "mid", pricePerSqm: 2650, monthlyRent2Room: 580, avgSize2Room: 70 },
+                    { name: "Витоша", segment: "mid", pricePerSqm: 2600, monthlyRent2Room: 550, avgSize2Room: 70 },
+                    { name: "Стрелбище", segment: "mid", pricePerSqm: 2500, monthlyRent2Room: 530, avgSize2Room: 65 },
+                    { name: "Борово", segment: "mid", pricePerSqm: 2450, monthlyRent2Room: 520, avgSize2Room: 65 },
+                    { name: "Гео Милев", segment: "mid", pricePerSqm: 2400, monthlyRent2Room: 520, avgSize2Room: 65 },
+                    { name: "Редута", segment: "mid", pricePerSqm: 2350, monthlyRent2Room: 500, avgSize2Room: 65 },
+                    { name: "Яворов", segment: "mid", pricePerSqm: 2300, monthlyRent2Room: 500, avgSize2Room: 65 },
+                    // Affordable segment
+                    { name: "Младост 1", segment: "affordable", pricePerSqm: 2200, monthlyRent2Room: 550, avgSize2Room: 65 },
+                    { name: "Младост 2", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 520, avgSize2Room: 65 },
+                    { name: "Младост 3", segment: "affordable", pricePerSqm: 2050, monthlyRent2Room: 510, avgSize2Room: 65 },
+                    { name: "Младост 4", segment: "affordable", pricePerSqm: 2000, monthlyRent2Room: 500, avgSize2Room: 65 },
+                    { name: "Студентски град", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 520, avgSize2Room: 60 },
+                    { name: "Обеля", segment: "affordable", pricePerSqm: 2200, monthlyRent2Room: 500, avgSize2Room: 65 },
+                    { name: "Горубляне", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 480, avgSize2Room: 65 },
+                    { name: "Дружба 1", segment: "affordable", pricePerSqm: 1950, monthlyRent2Room: 480, avgSize2Room: 65 },
+                    { name: "Дружба 2", segment: "affordable", pricePerSqm: 1900, monthlyRent2Room: 470, avgSize2Room: 65 },
+                    { name: "Люлин 1-4", segment: "affordable", pricePerSqm: 1950, monthlyRent2Room: 480, avgSize2Room: 65 },
+                    { name: "Люлин 5-10", segment: "affordable", pricePerSqm: 1850, monthlyRent2Room: 460, avgSize2Room: 65 },
+                    { name: "Овча купел", segment: "affordable", pricePerSqm: 2000, monthlyRent2Room: 480, avgSize2Room: 65 },
+                    { name: "Надежда", segment: "affordable", pricePerSqm: 1800, monthlyRent2Room: 450, avgSize2Room: 65 },
+                    { name: "Левски Г", segment: "affordable", pricePerSqm: 1700, monthlyRent2Room: 420, avgSize2Room: 60 },
+                    { name: "Хиподрума", segment: "affordable", pricePerSqm: 2050, monthlyRent2Room: 490, avgSize2Room: 65 },
+                    { name: "Банишора", segment: "affordable", pricePerSqm: 1900, monthlyRent2Room: 460, avgSize2Room: 65 },
+                    { name: "Сердика", segment: "affordable", pricePerSqm: 1850, monthlyRent2Room: 440, avgSize2Room: 65 },
+                    { name: "Хаджи Димитър", segment: "affordable", pricePerSqm: 1800, monthlyRent2Room: 430, avgSize2Room: 65 },
+                    { name: "Красно село", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 500, avgSize2Room: 65 },
+                    { name: "Славия", segment: "affordable", pricePerSqm: 2000, monthlyRent2Room: 480, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Най-висока доходност", text: "Квартали като <strong>Левски Г, Люлин, Надежда</strong> предлагат най-висока капитализация (4-5%), но с по-нисък потенциал за поскъпване." },
+                    { title: "Балансирана инвестиция", text: "Квартали като <strong>Младост, Студентски град, Витоша</strong> предлагат добра доходност (3.5-4%) с потенциал за умерено поскъпване." },
+                    { title: "Престижни локации", text: "Кварталите <strong>Лозенец, Иван Вазов, Изток</strong> имат по-нисък Cap Rate (2.5-3.5%), но стабилно търсене и потенциал за капиталова печалба." }
+                ]
+            },
+            varna: {
+                name: "Варна",
+                description: "Морската столица на България - втори по големина пазар",
+                avgPrice: 1800,
+                avgRent: 520,
+                neighborhoods: [
+                    // Premium segment
+                    { name: "Гръцка махала", segment: "premium", pricePerSqm: 2650, monthlyRent2Room: 680, avgSize2Room: 65 },
+                    { name: "Център", segment: "premium", pricePerSqm: 2400, monthlyRent2Room: 620, avgSize2Room: 60 },
+                    { name: "Бриз", segment: "premium", pricePerSqm: 2170, monthlyRent2Room: 600, avgSize2Room: 65 },
+                    { name: "Чайка", segment: "premium", pricePerSqm: 2050, monthlyRent2Room: 580, avgSize2Room: 65 },
+                    { name: "Генералите", segment: "premium", pricePerSqm: 2300, monthlyRent2Room: 600, avgSize2Room: 70 },
+                    // Mid segment
+                    { name: "Левски", segment: "mid", pricePerSqm: 1990, monthlyRent2Room: 550, avgSize2Room: 65 },
+                    { name: "Трошево", segment: "mid", pricePerSqm: 1750, monthlyRent2Room: 480, avgSize2Room: 65 },
+                    { name: "Виница", segment: "mid", pricePerSqm: 1850, monthlyRent2Room: 520, avgSize2Room: 70 },
+                    { name: "Младост", segment: "mid", pricePerSqm: 1700, monthlyRent2Room: 470, avgSize2Room: 65 },
+                    { name: "Възраждане", segment: "mid", pricePerSqm: 1650, monthlyRent2Room: 450, avgSize2Room: 65 },
+                    // Affordable segment
+                    { name: "Владиславово", segment: "affordable", pricePerSqm: 1450, monthlyRent2Room: 400, avgSize2Room: 65 },
+                    { name: "Аспарухово", segment: "affordable", pricePerSqm: 1350, monthlyRent2Room: 380, avgSize2Room: 65 },
+                    { name: "Галата", segment: "affordable", pricePerSqm: 1400, monthlyRent2Room: 390, avgSize2Room: 65 },
+                    { name: "Кайсиева градина", segment: "affordable", pricePerSqm: 1500, monthlyRent2Room: 420, avgSize2Room: 65 },
+                    { name: "Изгрев", segment: "affordable", pricePerSqm: 1550, monthlyRent2Room: 430, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Най-висока доходност", text: "Квартали като <strong>Владиславово, Аспарухово</strong> предлагат Cap Rate над 5%, идеални за дългосрочни наеми." },
+                    { title: "Краткосрочни наеми", text: "Близо до морето (<strong>Чайка, Бриз</strong>) има потенциал за летни Airbnb наеми с по-висока сезонна доходност." },
+                    { title: "Студентски наеми", text: "Близо до университетите (<strong>Левски, Трошево</strong>) има стабилно търсене от студенти през учебната година." }
+                ]
+            },
+            plovdiv: {
+                name: "Пловдив",
+                description: "Вторият по големина град - културна столица с растящ пазар",
+                avgPrice: 1350,
+                avgRent: 450,
+                neighborhoods: [
+                    // Premium segment
+                    { name: "Център", segment: "premium", pricePerSqm: 1900, monthlyRent2Room: 550, avgSize2Room: 60 },
+                    { name: "Стария град", segment: "premium", pricePerSqm: 2100, monthlyRent2Room: 580, avgSize2Room: 55 },
+                    { name: "Кършияка", segment: "premium", pricePerSqm: 1450, monthlyRent2Room: 480, avgSize2Room: 65 },
+                    // Mid segment
+                    { name: "Тракия", segment: "mid", pricePerSqm: 1400, monthlyRent2Room: 450, avgSize2Room: 70 },
+                    { name: "Христо Смирненски", segment: "mid", pricePerSqm: 1300, monthlyRent2Room: 420, avgSize2Room: 65 },
+                    { name: "Южен", segment: "mid", pricePerSqm: 1350, monthlyRent2Room: 430, avgSize2Room: 65 },
+                    { name: "Каменица", segment: "mid", pricePerSqm: 1250, monthlyRent2Room: 400, avgSize2Room: 65 },
+                    { name: "Смирненски", segment: "mid", pricePerSqm: 1280, monthlyRent2Room: 410, avgSize2Room: 65 },
+                    // Affordable segment
+                    { name: "Столипиново", segment: "affordable", pricePerSqm: 850, monthlyRent2Room: 280, avgSize2Room: 60 },
+                    { name: "Изгрев", segment: "affordable", pricePerSqm: 1100, monthlyRent2Room: 350, avgSize2Room: 65 },
+                    { name: "Прослав", segment: "affordable", pricePerSqm: 1200, monthlyRent2Room: 380, avgSize2Room: 65 },
+                    { name: "Коматево", segment: "affordable", pricePerSqm: 1050, monthlyRent2Room: 340, avgSize2Room: 65 },
+                    { name: "Захарна фабрика", segment: "affordable", pricePerSqm: 1000, monthlyRent2Room: 320, avgSize2Room: 65 },
+                    { name: "Северен", segment: "affordable", pricePerSqm: 1150, monthlyRent2Room: 360, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Добра доходност", text: "Пловдив предлага средно <strong>4-5% Cap Rate</strong>, по-добър от София при по-ниска начална инвестиция." },
+                    { title: "Логистична зона", text: "Районите около <strong>Тракия</strong> и логистичния хъб имат стабилно търсене от работници в индустриалните зони." },
+                    { title: "Туристически наеми", text: "<strong>Стария град</strong> и <strong>Центъра</strong> са подходящи за краткосрочни туристически наеми." }
+                ]
+            },
+            burgas: {
+                name: "Бургас",
+                description: "Четвъртият по големина град - морски курорт и индустриален център",
+                avgPrice: 1400,
+                avgRent: 450,
+                neighborhoods: [
+                    // Premium segment
+                    { name: "Лазур", segment: "premium", pricePerSqm: 2200, monthlyRent2Room: 580, avgSize2Room: 65 },
+                    { name: "Център", segment: "premium", pricePerSqm: 1800, monthlyRent2Room: 520, avgSize2Room: 60 },
+                    { name: "Зорница", segment: "premium", pricePerSqm: 1700, monthlyRent2Room: 500, avgSize2Room: 65 },
+                    { name: "Братя Миладинови", segment: "premium", pricePerSqm: 1650, monthlyRent2Room: 480, avgSize2Room: 65 },
+                    // Mid segment
+                    { name: "Славейков", segment: "mid", pricePerSqm: 1300, monthlyRent2Room: 420, avgSize2Room: 65 },
+                    { name: "Изгрев", segment: "mid", pricePerSqm: 1350, monthlyRent2Room: 430, avgSize2Room: 65 },
+                    { name: "Възраждане", segment: "mid", pricePerSqm: 1250, monthlyRent2Room: 400, avgSize2Room: 65 },
+                    { name: "Сарафово", segment: "mid", pricePerSqm: 1450, monthlyRent2Room: 450, avgSize2Room: 70 },
+                    // Affordable segment
+                    { name: "Меден рудник", segment: "affordable", pricePerSqm: 1000, monthlyRent2Room: 350, avgSize2Room: 65 },
+                    { name: "Мадика", segment: "affordable", pricePerSqm: 950, monthlyRent2Room: 320, avgSize2Room: 65 },
+                    { name: "Долно Езерово", segment: "affordable", pricePerSqm: 900, monthlyRent2Room: 300, avgSize2Room: 65 },
+                    { name: "Победа", segment: "affordable", pricePerSqm: 1100, monthlyRent2Room: 360, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Сезонна доходност", text: "Бургас има потенциал за <strong>летни Airbnb наеми</strong> с премиум цени през юни-август." },
+                    { title: "Нов жилищен фонд", text: "<strong>Меден рудник</strong> има много ново строителство на достъпни цени с добра доходност." },
+                    { title: "Близо до плажа", text: "<strong>Лазур</strong> и <strong>Сарафово</strong> са на крачки от морето - атрактивни за наематели." }
+                ]
+            },
+            ruse: {
+                name: "Русе",
+                description: "Дунавската перла - пети по големина град с европейска архитектура",
+                avgPrice: 1400,
+                avgRent: 400,
+                neighborhoods: [
+                    // Premium segment
+                    { name: "Център", segment: "premium", pricePerSqm: 1650, monthlyRent2Room: 460, avgSize2Room: 60 },
+                    { name: "Широк център", segment: "premium", pricePerSqm: 1500, monthlyRent2Room: 420, avgSize2Room: 65 },
+                    // Mid segment
+                    { name: "Възраждане", segment: "mid", pricePerSqm: 1400, monthlyRent2Room: 390, avgSize2Room: 65 },
+                    { name: "Дружба", segment: "mid", pricePerSqm: 1300, monthlyRent2Room: 360, avgSize2Room: 65 },
+                    { name: "Чародейка", segment: "mid", pricePerSqm: 1250, monthlyRent2Room: 350, avgSize2Room: 65 },
+                    { name: "Здравец", segment: "mid", pricePerSqm: 1200, monthlyRent2Room: 340, avgSize2Room: 65 },
+                    // Affordable segment
+                    { name: "Здравец Изток", segment: "affordable", pricePerSqm: 1100, monthlyRent2Room: 300, avgSize2Room: 65 },
+                    { name: "Родина", segment: "affordable", pricePerSqm: 1050, monthlyRent2Room: 290, avgSize2Room: 65 },
+                    { name: "Долапите", segment: "affordable", pricePerSqm: 1200, monthlyRent2Room: 320, avgSize2Room: 65 },
+                    { name: "Цветница", segment: "affordable", pricePerSqm: 1000, monthlyRent2Room: 280, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Висока доходност", text: "Русе предлага средно <strong>5-6% Cap Rate</strong> - сред най-добрите в страната." },
+                    { title: "Гранична търговия", text: "Близостта до Румъния създава допълнително търсене от бизнес пътници." },
+                    { title: "Индустриална зона", text: "Работниците в индустриалните зони търсят достъпни наеми в кварталите около центъра." }
+                ]
+            },
+            starazagora: {
+                name: "Стара Загора",
+                description: "Шестият по големина град - индустриален и образователен център",
+                avgPrice: 1100,
+                avgRent: 350,
+                neighborhoods: [
+                    // Premium segment
+                    { name: "Център", segment: "premium", pricePerSqm: 1350, monthlyRent2Room: 400, avgSize2Room: 60 },
+                    { name: "Казански", segment: "premium", pricePerSqm: 1250, monthlyRent2Room: 380, avgSize2Room: 65 },
+                    // Mid segment
+                    { name: "Три чучура", segment: "mid", pricePerSqm: 1100, monthlyRent2Room: 340, avgSize2Room: 65 },
+                    { name: "Железник", segment: "mid", pricePerSqm: 1050, monthlyRent2Room: 320, avgSize2Room: 65 },
+                    { name: "Самара", segment: "mid", pricePerSqm: 1000, monthlyRent2Room: 310, avgSize2Room: 65 },
+                    // Affordable segment
+                    { name: "Зора", segment: "affordable", pricePerSqm: 900, monthlyRent2Room: 280, avgSize2Room: 65 },
+                    { name: "Загоре", segment: "affordable", pricePerSqm: 850, monthlyRent2Room: 260, avgSize2Room: 65 },
+                    { name: "Кольо Ганчев", segment: "affordable", pricePerSqm: 950, monthlyRent2Room: 290, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Отлична доходност", text: "Стара Загора предлага <strong>5.5-6.5% Cap Rate</strong> - една от най-високите в страната." },
+                    { title: "Студентски град", text: "Тракийският университет създава постоянно търсене на студентски жилища." },
+                    { title: "Достъпни цени", text: "Ниските цени на имотите правят града привлекателен за начинаещи инвеститори." }
+                ]
+            },
+            pleven: {
+                name: "Плевен",
+                description: "Седмият по големина град - важен икономически център в Северна България",
+                avgPrice: 950,
+                avgRent: 300,
+                neighborhoods: [
+                    // Premium segment
+                    { name: "Център", segment: "premium", pricePerSqm: 1150, monthlyRent2Room: 350, avgSize2Room: 60 },
+                    { name: "Идеален център", segment: "premium", pricePerSqm: 1250, monthlyRent2Room: 380, avgSize2Room: 60 },
+                    // Mid segment
+                    { name: "Дружба", segment: "mid", pricePerSqm: 950, monthlyRent2Room: 290, avgSize2Room: 65 },
+                    { name: "Сторгозия", segment: "mid", pricePerSqm: 900, monthlyRent2Room: 280, avgSize2Room: 65 },
+                    { name: "Мара Денчева", segment: "mid", pricePerSqm: 880, monthlyRent2Room: 270, avgSize2Room: 65 },
+                    // Affordable segment
+                    { name: "Кайлъка", segment: "affordable", pricePerSqm: 800, monthlyRent2Room: 250, avgSize2Room: 65 },
+                    { name: "Западна зона", segment: "affordable", pricePerSqm: 750, monthlyRent2Room: 230, avgSize2Room: 65 },
+                    { name: "9-ти квартал", segment: "affordable", pricePerSqm: 700, monthlyRent2Room: 220, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Много висока доходност", text: "Плевен предлага <strong>6-7% Cap Rate</strong> - сред най-високите в България." },
+                    { title: "Ниска начална инвестиция", text: "Можете да закупите двустаен апартамент за под <strong>50,000 EUR</strong>." },
+                    { title: "Медицински център", text: "Търсенето от медицински персонал създава стабилен пазар за наеми." }
+                ]
+            },
+            blagoevgrad: {
+                name: "Благоевград",
+                description: "Университетски град в Югозападна България",
+                avgPrice: 1000,
+                avgRent: 320,
+                neighborhoods: [
+                    // Premium segment
+                    { name: "Център", segment: "premium", pricePerSqm: 1200, monthlyRent2Room: 380, avgSize2Room: 60 },
+                    { name: "Широк център", segment: "premium", pricePerSqm: 1100, monthlyRent2Room: 350, avgSize2Room: 65 },
+                    // Mid segment
+                    { name: "Еленово", segment: "mid", pricePerSqm: 1000, monthlyRent2Room: 320, avgSize2Room: 65 },
+                    { name: "Струмско", segment: "mid", pricePerSqm: 950, monthlyRent2Room: 300, avgSize2Room: 65 },
+                    { name: "Освобождение", segment: "mid", pricePerSqm: 900, monthlyRent2Room: 290, avgSize2Room: 65 },
+                    // Affordable segment
+                    { name: "Запад", segment: "affordable", pricePerSqm: 850, monthlyRent2Room: 270, avgSize2Room: 65 },
+                    { name: "Грамада", segment: "affordable", pricePerSqm: 800, monthlyRent2Room: 250, avgSize2Room: 65 },
+                    { name: "Ален мак", segment: "affordable", pricePerSqm: 780, monthlyRent2Room: 240, avgSize2Room: 65 },
+                ],
+                tips: [
+                    { title: "Студентско търсене", text: "Югозападният университет осигурява <strong>постоянно търсене</strong> на студентски жилища." },
+                    { title: "Висока доходност", text: "Благоевград предлага <strong>5.5-6.5% Cap Rate</strong> с ниска начална инвестиция." },
+                    { title: "Близо до Банско", text: "Възможност за краткосрочни наеми през ски сезона." }
+                ]
+            }
+        };
 
-            // Mid segment
-            { name: "Кръстова вада", segment: "mid", pricePerSqm: 2800, monthlyRent2Room: 600, avgSize2Room: 70 },
-            { name: "Манастирски ливади", segment: "mid", pricePerSqm: 2650, monthlyRent2Room: 580, avgSize2Room: 70 },
-            { name: "Витоша", segment: "mid", pricePerSqm: 2600, monthlyRent2Room: 550, avgSize2Room: 70 },
-            { name: "Стрелбище", segment: "mid", pricePerSqm: 2500, monthlyRent2Room: 530, avgSize2Room: 65 },
-            { name: "Борово", segment: "mid", pricePerSqm: 2450, monthlyRent2Room: 520, avgSize2Room: 65 },
-            { name: "Гео Милев", segment: "mid", pricePerSqm: 2400, monthlyRent2Room: 520, avgSize2Room: 65 },
-            { name: "Редута", segment: "mid", pricePerSqm: 2350, monthlyRent2Room: 500, avgSize2Room: 65 },
-            { name: "Яворов", segment: "mid", pricePerSqm: 2300, monthlyRent2Room: 500, avgSize2Room: 65 },
+        let currentCity = 'sofia';
+        let currentNeighborhoods = cityData.sofia.neighborhoods;
 
-            // Affordable segment
-            { name: "Младост 1", segment: "affordable", pricePerSqm: 2200, monthlyRent2Room: 550, avgSize2Room: 65 },
-            { name: "Младост 2", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 520, avgSize2Room: 65 },
-            { name: "Младост 3", segment: "affordable", pricePerSqm: 2050, monthlyRent2Room: 510, avgSize2Room: 65 },
-            { name: "Младост 4", segment: "affordable", pricePerSqm: 2000, monthlyRent2Room: 500, avgSize2Room: 65 },
-            { name: "Студентски град", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 520, avgSize2Room: 60 },
-            { name: "Обеля", segment: "affordable", pricePerSqm: 2200, monthlyRent2Room: 500, avgSize2Room: 65 },
-            { name: "Горубляне", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 480, avgSize2Room: 65 },
-            { name: "Дружба 1", segment: "affordable", pricePerSqm: 1950, monthlyRent2Room: 480, avgSize2Room: 65 },
-            { name: "Дружба 2", segment: "affordable", pricePerSqm: 1900, monthlyRent2Room: 470, avgSize2Room: 65 },
-            { name: "Люлин 1-4", segment: "affordable", pricePerSqm: 1950, monthlyRent2Room: 480, avgSize2Room: 65 },
-            { name: "Люлин 5-10", segment: "affordable", pricePerSqm: 1850, monthlyRent2Room: 460, avgSize2Room: 65 },
-            { name: "Овча купел", segment: "affordable", pricePerSqm: 2000, monthlyRent2Room: 480, avgSize2Room: 65 },
-            { name: "Надежда", segment: "affordable", pricePerSqm: 1800, monthlyRent2Room: 450, avgSize2Room: 65 },
-            { name: "Левски Г", segment: "affordable", pricePerSqm: 1700, monthlyRent2Room: 420, avgSize2Room: 60 },
-            { name: "Хиподрума", segment: "affordable", pricePerSqm: 2050, monthlyRent2Room: 490, avgSize2Room: 65 },
-            { name: "Банишора", segment: "affordable", pricePerSqm: 1900, monthlyRent2Room: 460, avgSize2Room: 65 },
-            { name: "Сердика", segment: "affordable", pricePerSqm: 1850, monthlyRent2Room: 440, avgSize2Room: 65 },
-            { name: "Хаджи Димитър", segment: "affordable", pricePerSqm: 1800, monthlyRent2Room: 430, avgSize2Room: 65 },
-            { name: "Красно село", segment: "affordable", pricePerSqm: 2100, monthlyRent2Room: 500, avgSize2Room: 65 },
-            { name: "Славия", segment: "affordable", pricePerSqm: 2000, monthlyRent2Room: 480, avgSize2Room: 65 },
-        ];
+        // Select city
+        function selectCity(cityKey) {
+            currentCity = cityKey;
+            const city = cityData[cityKey];
+            currentNeighborhoods = city.neighborhoods;
+
+            // Update UI
+            document.getElementById('cityName').textContent = city.name;
+            document.getElementById('cityDescription').textContent = city.description;
+            document.getElementById('comparisonTitle').textContent = `Сравнение по квартали в ${city.name}`;
+
+            // Update tabs
+            document.querySelectorAll('.city-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tips
+            updateTips(city.tips);
+
+            // Repopulate
+            populateDropdown();
+            populateTable('all');
+
+            // Reset filters
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector('.filter-btn').classList.add('active');
+
+            // Update default values
+            document.getElementById('pricePerSqm').value = city.avgPrice;
+            document.getElementById('monthlyRent').value = city.avgRent;
+            calculateCapRate();
+        }
+
+        // Update investment tips
+        function updateTips(tips) {
+            const container = document.getElementById('investmentTips');
+            container.innerHTML = tips.map(tip => `
+                <div class="info-card">
+                    <h4>${tip.title}</h4>
+                    <p>${tip.text}</p>
+                </div>
+            `).join('');
+        }
 
         // Calculate derived values for each neighborhood
         function calculateNeighborhoodData(n) {
@@ -576,7 +925,8 @@
         // Populate dropdown
         function populateDropdown() {
             const select = document.getElementById('neighborhood');
-            neighborhoods.forEach(n => {
+            select.innerHTML = '<option value="">-- Изберете или въведете ръчно --</option>';
+            currentNeighborhoods.forEach(n => {
                 const option = document.createElement('option');
                 option.value = n.name;
                 option.textContent = n.name;
@@ -588,7 +938,7 @@
         function fillNeighborhoodData() {
             const selected = document.getElementById('neighborhood').value;
             if (selected) {
-                const n = neighborhoods.find(x => x.name === selected);
+                const n = currentNeighborhoods.find(x => x.name === selected);
                 if (n) {
                     document.getElementById('pricePerSqm').value = n.pricePerSqm;
                     document.getElementById('monthlyRent').value = n.monthlyRent2Room;
@@ -622,7 +972,7 @@
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
-            let data = neighborhoods.map(calculateNeighborhoodData);
+            let data = currentNeighborhoods.map(calculateNeighborhoodData);
 
             if (filter !== 'all') {
                 data = data.filter(n => n.segment === filter);
@@ -636,8 +986,8 @@
                 row.dataset.segment = n.segment;
                 row.onclick = () => selectNeighborhood(n.name);
 
-                const capRateClass = parseFloat(n.capRate) >= 4 ? 'cap-rate-high' :
-                                    parseFloat(n.capRate) >= 3.2 ? 'cap-rate-medium' : 'cap-rate-low';
+                const capRateClass = parseFloat(n.capRate) >= 5 ? 'cap-rate-high' :
+                                    parseFloat(n.capRate) >= 3.5 ? 'cap-rate-medium' : 'cap-rate-low';
 
                 const segmentClass = n.segment === 'premium' ? 'segment-premium' :
                                     n.segment === 'mid' ? 'segment-mid' : 'segment-affordable';
@@ -729,11 +1079,56 @@
             });
         }
 
+        // Populate city comparison table
+        function populateCityComparison() {
+            const tbody = document.getElementById('cityComparisonBody');
+            tbody.innerHTML = '';
+
+            const cityStats = Object.entries(cityData).map(([key, city]) => {
+                const avgCapRate = (city.avgRent * 12) / (city.avgPrice * 65) * 100;
+                const paybackYears = (city.avgPrice * 65) / (city.avgRent * 12);
+                return {
+                    key,
+                    name: city.name,
+                    avgPrice: city.avgPrice,
+                    avgRent: city.avgRent,
+                    capRate: avgCapRate.toFixed(2),
+                    paybackYears: paybackYears.toFixed(1)
+                };
+            });
+
+            // Sort by cap rate descending
+            cityStats.sort((a, b) => parseFloat(b.capRate) - parseFloat(a.capRate));
+
+            cityStats.forEach(city => {
+                const row = document.createElement('tr');
+                row.style.cursor = 'pointer';
+                row.onclick = () => {
+                    document.querySelector(`.city-tab[onclick="selectCity('${city.key}')"]`).click();
+                    document.querySelector('.city-tabs').scrollIntoView({ behavior: 'smooth' });
+                };
+
+                const capRateClass = parseFloat(city.capRate) >= 5 ? 'cap-rate-high' :
+                                    parseFloat(city.capRate) >= 4 ? 'cap-rate-medium' : 'cap-rate-low';
+
+                row.innerHTML = `
+                    <td><strong>${city.name}</strong></td>
+                    <td>${city.avgPrice.toLocaleString('de-DE')} EUR</td>
+                    <td>${city.avgRent} EUR</td>
+                    <td><span class="cap-rate-badge ${capRateClass}">${city.capRate}%</span></td>
+                    <td>${city.paybackYears} год.</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             populateDropdown();
             populateTable();
             calculateCapRate();
+            populateCityComparison();
+            updateTips(cityData.sofia.tips);
         });
     </script>
 </body>
