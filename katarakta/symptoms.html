@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Симптоми на катаракта - Информационен портал</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1a5276;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: #1a5276;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: #1a5276;
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .content-section h2 {
+            color: #1a5276;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 3px solid #2980b9;
+            padding-bottom: 10px;
+        }
+
+        .content-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .symptom-card {
+            background: #f8f9fa;
+            border-left: 4px solid #2980b9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .symptom-card h3 {
+            color: #1a5276;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .symptom-card h3 span {
+            font-size: 1.5em;
+        }
+
+        .symptom-card p {
+            margin: 0;
+            color: #555;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-left: 4px solid #f39c12;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .warning-box h3 {
+            color: #d68910;
+            margin-bottom: 10px;
+        }
+
+        .warning-box p {
+            margin: 0;
+            color: #7d6608;
+        }
+
+        .warning-box ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .warning-box li {
+            color: #7d6608;
+            margin-bottom: 5px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comparison-table th {
+            background: #1a5276;
+            color: white;
+        }
+
+        .comparison-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: #1a5276;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background: #1a5276;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-links a {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .comparison-table {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Катаракта БГ</div>
+            <div class="nav-links">
+                <a href="index.html">Начало</a>
+                <a href="what-is-cataract.html">Какво е?</a>
+                <a href="symptoms.html" class="active">Симптоми</a>
+                <a href="causes.html">Причини</a>
+                <a href="diagnosis.html">Диагностика</a>
+                <a href="treatment.html">Лечение</a>
+                <a href="surgery.html">Операция</a>
+                <a href="prevention.html">Превенция</a>
+                <a href="recovery.html">Възстановяване</a>
+                <a href="faq.html">ЧЗВ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Симптоми на катаракта</h1>
+        <p>Разпознайте ранните признаци на катаракта и разберете кога да потърсите медицинска помощ</p>
+    </div>
+
+    <div class="container">
+        <div class="content-section">
+            <h2>Основни симптоми</h2>
+            <p>Катарактата обикновено се развива бавно и в началото може да не причинява забележими симптоми. С напредването на заболяването симптомите стават по-изразени.</p>
+
+            <div class="symptom-card">
+                <h3><span>&#128064;</span> Замъглено или мъгливо зрение</h3>
+                <p>Това е най-честият симптом. Зрението изглежда като през замъглено стъкло или мъгла. Обектите изглеждат нефокусирани и неясни.</p>
+            </div>
+
+            <div class="symptom-card">
+                <h3><span>&#127774;</span> Повишена чувствителност към светлина</h3>
+                <p>Ярката светлина, особено слънчевата, може да причинява дискомфорт или заслепяване. Фаровете на колите нощем могат да изглеждат прекалено ярки.</p>
+            </div>
+
+            <div class="symptom-card">
+                <h3><span>&#127752;</span> Ореоли около светлините</h3>
+                <p>Около източници на светлина може да се появят цветни кръгове или ореоли, особено нощем. Това може да затрудни шофирането в тъмното.</p>
+            </div>
+
+            <div class="symptom-card">
+                <h3><span>&#127912;</span> Промени във възприемането на цветовете</h3>
+                <p>Цветовете може да изглеждат по-бледи или пожълтели. Някои хора забелязват, че сините цветове изглеждат по-тъмни.</p>
+            </div>
+
+            <div class="symptom-card">
+                <h3><span>&#128083;</span> Нужда от по-силна светлина</h3>
+                <p>Може да се наложи да използвате по-ярко осветление за четене или други близки дейности.</p>
+            </div>
+
+            <div class="symptom-card">
+                <h3><span>&#128466;</span> Двойно виждане в едното око</h3>
+                <p>Катарактата може да причини виждане на два образа с едно око, известно като монокулярна диплопия.</p>
+            </div>
+
+            <div class="symptom-card">
+                <h3><span>&#128084;</span> Чести промени в диоптъра</h3>
+                <p>Може да се наложи по-често да сменяте очилата, тъй като зрението се променя с развитието на катарактата.</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Как симптомите се развиват с времето</h2>
+
+            <table class="comparison-table">
+                <tr>
+                    <th>Стадий</th>
+                    <th>Характерни симптоми</th>
+                </tr>
+                <tr>
+                    <td><strong>Ранен стадий</strong></td>
+                    <td>Леко замъгляване, минимално влияние върху ежедневието, може да не се забелязва</td>
+                </tr>
+                <tr>
+                    <td><strong>Среден стадий</strong></td>
+                    <td>Забележимо влошаване на зрението, затруднено четене, шофирането нощем става трудно</td>
+                </tr>
+                <tr>
+                    <td><strong>Напреднал стадий</strong></td>
+                    <td>Значително ограничено зрение, трудно разпознаване на лица, невъзможност за изпълнение на ежедневни задачи</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="content-section">
+            <h2>Симптоми според вида катаракта</h2>
+            <p>Различните видове катаракта могат да се проявяват по различен начин:</p>
+
+            <div class="symptom-card">
+                <h3>Ядрена катаракта</h3>
+                <p>В началото може временно да подобри близкото зрение ("второ зрение"), но след това води до прогресивно замъгляване и пожълтяване на зрението.</p>
+            </div>
+
+            <div class="symptom-card">
+                <h3>Кортикална катаракта</h3>
+                <p>Предизвиква проблеми с отблясъци и контраст. Може да засегне както далечното, така и близкото зрение.</p>
+            </div>
+
+            <div class="symptom-card">
+                <h3>Задна субкапсуларна катаракта</h3>
+                <p>Засяга предимно четенето и виждането на ярка светлина. Може да причини значителни ореоли около светлините.</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="warning-box">
+                <h3>Кога да посетите очен лекар незабавно</h3>
+                <p>Потърсете спешна медицинска помощ, ако изпитвате:</p>
+                <ul>
+                    <li>Внезапна загуба на зрение</li>
+                    <li>Силна болка в окото</li>
+                    <li>Внезапна поява на светлинни проблясъци</li>
+                    <li>Рязко увеличаване на плаващите тела ("мушици")</li>
+                    <li>Виждане на "завеса" или "сянка" в периферното зрение</li>
+                </ul>
+                <p style="margin-top: 15px;"><strong>Тези симптоми може да показват други сериозни очни състояния, които изискват незабавно внимание.</strong></p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Самопроверка на зрението</h2>
+            <p>Ако забелязвате някои от следните промени, консултирайте се с очен лекар:</p>
+            <ul style="padding-left: 25px; margin: 15px 0;">
+                <li>Трудно четете дребен текст, дори с очила</li>
+                <li>Затруднявате се да разпознавате лица от разстояние</li>
+                <li>Избягвате шофиране нощем заради заслепяване</li>
+                <li>Нуждаете се от все по-ярка светлина за обичайни дейности</li>
+                <li>Цветовете изглеждат избледнели или жълтеникави</li>
+                <li>Един от очите ви вижда по-добре от другия</li>
+            </ul>
+            <p><strong>Препоръка:</strong> Редовните прегледи при очен лекар са най-добрият начин за ранно откриване на катаракта.</p>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="what-is-cataract.html" class="nav-btn">&#8592; Какво е катаракта</a>
+            <a href="causes.html" class="nav-btn">Причини &#8594;</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Информационен портал за катаракта. Информацията е с образователна цел и не заменя консултация с лекар.</p>
+    </footer>
+</body>
+</html>

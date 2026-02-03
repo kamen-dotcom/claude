@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Какво е катаракта? - Информационен портал</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1a5276;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: #1a5276;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: #1a5276;
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .content-section h2 {
+            color: #1a5276;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 3px solid #2980b9;
+            padding-bottom: 10px;
+        }
+
+        .content-section h3 {
+            color: #1a5276;
+            margin: 25px 0 15px;
+            font-size: 1.3em;
+        }
+
+        .content-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .content-section ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #e8f4f8, #d4e9f7);
+            border-left: 4px solid #2980b9;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .highlight-box p {
+            margin: 0;
+            color: #1a5276;
+        }
+
+        .image-placeholder {
+            background: linear-gradient(135deg, #1a5276, #2980b9);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .image-placeholder span {
+            font-size: 4em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: #1a5276;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background: #1a5276;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-links a {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Катаракта БГ</div>
+            <div class="nav-links">
+                <a href="index.html">Начало</a>
+                <a href="what-is-cataract.html" class="active">Какво е?</a>
+                <a href="symptoms.html">Симптоми</a>
+                <a href="causes.html">Причини</a>
+                <a href="diagnosis.html">Диагностика</a>
+                <a href="treatment.html">Лечение</a>
+                <a href="surgery.html">Операция</a>
+                <a href="prevention.html">Превенция</a>
+                <a href="recovery.html">Възстановяване</a>
+                <a href="faq.html">ЧЗВ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Какво е катаракта?</h1>
+        <p>Подробна информация за същността на катарактата и как тя засяга зрението</p>
+    </div>
+
+    <div class="container">
+        <div class="content-section">
+            <h2>Определение на катарактата</h2>
+            <p>Катарактата е помътняване на естествената леща на окото, която се намира зад ириса (цветната част на окото) и зеницата. Лещата на окото работи подобно на обектива на фотоапарат - тя фокусира светлината върху ретината в задната част на окото, за да се формира ясен образ.</p>
+
+            <div class="image-placeholder">
+                <span>&#128065;</span>
+                <p>Схема на окото с катаракта</p>
+            </div>
+
+            <p>Когато лещата се помътни, светлината не може да премине ефективно през нея, което води до замъглено или мъгливо зрение. Това е подобно на опит да гледате през мръсно или замъглено стъкло.</p>
+
+            <div class="highlight-box">
+                <p><strong>Важно:</strong> Катарактата не е израстък или плаващи тела в окото. Тя е физическа промяна в структурата на самата леща.</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Как се развива катарактата?</h2>
+            <p>Лещата на окото е съставена предимно от вода и протеини. С течение на времето тези протеини могат да започнат да се слепват, образувайки малки групи, които замъгляват части от лещата. Това е началото на катарактата.</p>
+
+            <h3>Етапи на развитие:</h3>
+            <ul>
+                <li><strong>Начален стадий:</strong> Малко помътняване, което може да не засяга зрението значително</li>
+                <li><strong>Незрял стадий:</strong> Помътняването се разширява, зрението започва да се влошава</li>
+                <li><strong>Зрял стадий:</strong> Цялата леща е помътнена, зрението е значително нарушено</li>
+                <li><strong>Хиперзрял стадий:</strong> Лещата може да се втвърди или втечни, възможни усложнения</li>
+            </ul>
+
+            <p>Развитието на катарактата обикновено е бавен процес, който може да отнеме години. При някои хора обаче тя може да прогресира по-бързо.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Видове катаракта</h2>
+
+            <h3>Според местоположението:</h3>
+            <ul>
+                <li><strong>Ядрена катаракта:</strong> Засяга центъра (ядрото) на лещата. Най-честият вид при възрастни хора.</li>
+                <li><strong>Кортикална катаракта:</strong> Започва в периферията на лещата и се разпространява към центъра. Характеризира се с бели, клиновидни замътнявания.</li>
+                <li><strong>Задна субкапсуларна катаракта:</strong> Започва в задната част на лещата, близо до капсулата. Може да прогресира по-бързо.</li>
+            </ul>
+
+            <h3>Според причината:</h3>
+            <ul>
+                <li><strong>Възрастова катаракта:</strong> Най-честият вид, свързан със стареенето</li>
+                <li><strong>Травматична катаракта:</strong> Резултат от нараняване на окото</li>
+                <li><strong>Вродена катаракта:</strong> Присъства при раждането или се развива в детството</li>
+                <li><strong>Вторична катаракта:</strong> Развива се в резултат на други заболявания или лекарства</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Засегнати групи</h2>
+            <p>Катарактата може да засегне всеки, но е най-често срещана при:</p>
+            <ul>
+                <li>Хора над 60-годишна възраст</li>
+                <li>Диабетици</li>
+                <li>Пушачи</li>
+                <li>Хора с фамилна история на катаракта</li>
+                <li>Тези, които са имали очни травми или операции</li>
+                <li>Хора, изложени продължително на слънчева светлина</li>
+            </ul>
+
+            <div class="highlight-box">
+                <p><strong>Статистика:</strong> Повече от половината от българите над 65 години имат катаракта или са преминали през операция за нейното отстраняване.</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn">&#8592; Начална страница</a>
+            <a href="symptoms.html" class="nav-btn">Симптоми &#8594;</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Информационен портал за катаракта. Информацията е с образователна цел и не заменя консултация с лекар.</p>
+    </footer>
+</body>
+</html>

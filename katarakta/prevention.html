@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Превенция на катаракта - Информационен портал</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1a5276;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: #1a5276;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: #1a5276;
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .content-section h2 {
+            color: #1a5276;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 3px solid #2980b9;
+            padding-bottom: 10px;
+        }
+
+        .content-section h3 {
+            color: #1a5276;
+            margin: 25px 0 15px;
+            font-size: 1.3em;
+        }
+
+        .content-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .prevention-card {
+            display: flex;
+            gap: 20px;
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            align-items: flex-start;
+        }
+
+        .prevention-icon {
+            font-size: 2.5em;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .prevention-content h3 {
+            color: #1a5276;
+            margin: 0 0 10px 0;
+        }
+
+        .prevention-content p {
+            margin: 0;
+            color: #555;
+        }
+
+        .prevention-content ul {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .prevention-content li {
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .food-item {
+            background: linear-gradient(135deg, #d5f5e3, #abebc6);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .food-item span {
+            font-size: 2em;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .food-item h4 {
+            color: #1e8449;
+            margin-bottom: 5px;
+        }
+
+        .food-item p {
+            color: #27ae60;
+            font-size: 0.9em;
+            margin: 0;
+        }
+
+        .checklist {
+            background: linear-gradient(135deg, #e8f4f8, #d4e9f7);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .checklist h3 {
+            color: #1a5276;
+            margin: 0 0 15px 0;
+        }
+
+        .checklist ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 10px 0 10px 35px;
+            position: relative;
+            border-bottom: 1px solid rgba(26, 82, 118, 0.1);
+        }
+
+        .checklist li::before {
+            content: "&#10004;";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-size: 1.2em;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #fef9e7, #fcf3cf);
+            border-left: 4px solid #f1c40f;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #7d6608;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: #1a5276;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background: #1a5276;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-links a {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .prevention-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Катаракта БГ</div>
+            <div class="nav-links">
+                <a href="index.html">Начало</a>
+                <a href="what-is-cataract.html">Какво е?</a>
+                <a href="symptoms.html">Симптоми</a>
+                <a href="causes.html">Причини</a>
+                <a href="diagnosis.html">Диагностика</a>
+                <a href="treatment.html">Лечение</a>
+                <a href="surgery.html">Операция</a>
+                <a href="prevention.html" class="active">Превенция</a>
+                <a href="recovery.html">Възстановяване</a>
+                <a href="faq.html">ЧЗВ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Превенция на катаракта</h1>
+        <p>Начини за намаляване на риска и забавяне на развитието на катаракта</p>
+    </div>
+
+    <div class="container">
+        <div class="content-section">
+            <h2>Може ли да се предотврати катарактата?</h2>
+            <p>Макар че катарактата не може да бъде напълно предотвратена, особено свързаната с възрастта, има много неща, които можете да направите, за да намалите риска и да забавите нейното развитие. Промените в начина на живот и защитата на очите могат да направят значителна разлика.</p>
+
+            <div class="info-box">
+                <p><strong>Важно:</strong> Дори ако вече имате ранна катаракта, тези мерки могат да помогнат за забавяне на прогресията й.</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Защита от слънчева светлина</h2>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#128374;</div>
+                <div class="prevention-content">
+                    <h3>Носете качествени слънчеви очила</h3>
+                    <p>UV лъчите са един от основните рискови фактори за катаракта. Изберете слънчеви очила, които:</p>
+                    <ul>
+                        <li>Блокират 99-100% от UV-A и UV-B лъчите</li>
+                        <li>Имат широки рамки или обгръщащ дизайн</li>
+                        <li>Са маркирани с "UV400" или "100% UV защита"</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#129506;</div>
+                <div class="prevention-content">
+                    <h3>Носете шапка с козирка</h3>
+                    <p>Шапката с широка периферия може да блокира до 50% от UV лъчите, които достигат до очите ви. Комбинирайте с качествени слънчеви очила за максимална защита.</p>
+                </div>
+            </div>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#9728;</div>
+                <div class="prevention-content">
+                    <h3>Избягвайте пиковите слънчеви часове</h3>
+                    <p>UV излъчването е най-силно между 10:00 и 16:00 часа. Ако е възможно, ограничете престоя на открито в това време или осигурете допълнителна защита.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Здравословно хранене</h2>
+            <p>Антиоксидантите играят важна роля в защитата на лещата от оксидативен стрес. Включете в диетата си храни, богати на:</p>
+
+            <div class="food-grid">
+                <div class="food-item">
+                    <span>&#129382;</span>
+                    <h4>Витамин C</h4>
+                    <p>Цитруси, киви, чушки, броколи</p>
+                </div>
+                <div class="food-item">
+                    <span>&#129365;</span>
+                    <h4>Витамин E</h4>
+                    <p>Ядки, семена, спанак, авокадо</p>
+                </div>
+                <div class="food-item">
+                    <span>&#129365;</span>
+                    <h4>Лутеин и зеаксантин</h4>
+                    <p>Зелени листни зеленчуци, яйца</p>
+                </div>
+                <div class="food-item">
+                    <span>&#127835;</span>
+                    <h4>Омега-3 мастни киселини</h4>
+                    <p>Сьомга, скумрия, орехи, ленено семе</p>
+                </div>
+                <div class="food-item">
+                    <span>&#129382;</span>
+                    <h4>Бета-каротин</h4>
+                    <p>Моркови, тиква, сладки картофи</p>
+                </div>
+                <div class="food-item">
+                    <span>&#127815;</span>
+                    <h4>Цинк</h4>
+                    <p>Месо, бобови, ядки</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Промени в начина на живот</h2>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#128684;</div>
+                <div class="prevention-content">
+                    <h3>Спрете цигарите</h3>
+                    <p>Тютюнопушенето удвоява риска от катаракта. Спирането на цигарите може значително да намали този риск. След 10 години без цигари, рискът се изравнява с този на непушач.</p>
+                </div>
+            </div>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#127863;</div>
+                <div class="prevention-content">
+                    <h3>Ограничете алкохола</h3>
+                    <p>Прекомерната консумация на алкохол е свързана с повишен риск от катаракта. Придържайте се към умерени количества - не повече от 1-2 питиета на ден.</p>
+                </div>
+            </div>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#127939;</div>
+                <div class="prevention-content">
+                    <h3>Поддържайте здравословно тегло</h3>
+                    <p>Затлъстяването увеличава риска от катаракта. Редовните упражнения и балансираната диета помагат за поддържане на здравословно тегло и намаляват риска.</p>
+                </div>
+            </div>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#128137;</div>
+                <div class="prevention-content">
+                    <h3>Контролирайте диабета</h3>
+                    <p>Ако имате диабет, поддържайте кръвната захар под контрол. Високите нива на глюкоза увреждат лещата и ускоряват развитието на катаракта.</p>
+                </div>
+            </div>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#128138;</div>
+                <div class="prevention-content">
+                    <h3>Внимание с лекарствата</h3>
+                    <p>Продължителната употреба на кортикостероиди може да увеличи риска от катаракта. Обсъдете с лекаря си алтернативи, ако е възможно.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Защита на очите</h2>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#129505;</div>
+                <div class="prevention-content">
+                    <h3>Носете предпазни очила</h3>
+                    <p>При работа с инструменти, химикали или при спорт, използвайте предпазни очила. Травмите на очите могат да доведат до травматична катаракта.</p>
+                </div>
+            </div>
+
+            <div class="prevention-card">
+                <div class="prevention-icon">&#128187;</div>
+                <div class="prevention-content">
+                    <h3>Защита от синя светлина</h3>
+                    <p>Въпреки че връзката между синята светлина и катарактата не е напълно доказана, използването на очила с филтър за синя светлина при работа с екрани може да намали напрежението на очите.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Контролен списък за превенция</h2>
+
+            <div class="checklist">
+                <h3>Ежедневни навици за здрави очи</h3>
+                <ul>
+                    <li>Носете слънчеви очила с UV защита на открито</li>
+                    <li>Яжте поне 5 порции плодове и зеленчуци дневно</li>
+                    <li>Не пушете или работете за спиране</li>
+                    <li>Ограничете алкохола до умерени количества</li>
+                    <li>Движете се поне 30 минути дневно</li>
+                    <li>Контролирайте кръвното налягане и захарта</li>
+                    <li>Правете редовни очни прегледи (поне веднъж на 2 години след 40г.)</li>
+                    <li>Използвайте предпазни очила при рискови дейности</li>
+                    <li>Почивайте очите си при продължителна работа с екран</li>
+                    <li>Спете достатъчно (7-8 часа на нощ)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Редовни очни прегледи</h2>
+            <p>Един от най-важните аспекти на превенцията е ранното откриване. Редовните прегледи при офталмолог позволяват:</p>
+            <ul style="padding-left: 25px; margin: 15px 0;">
+                <li>Ранно откриване на катаракта, преди да е причинила симптоми</li>
+                <li>Проследяване на прогресията на съществуваща катаракта</li>
+                <li>Откриване на други очни заболявания като глаукома и макулна дегенерация</li>
+                <li>Получаване на персонализирани съвети за грижа за очите</li>
+            </ul>
+
+            <div class="info-box">
+                <p><strong>Препоръка:</strong> След 40-годишна възраст правете пълен очен преглед поне веднъж на 2 години. След 60 години - всяка година.</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="surgery.html" class="nav-btn">&#8592; Операция</a>
+            <a href="recovery.html" class="nav-btn">Възстановяване &#8594;</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Информационен портал за катаракта. Информацията е с образователна цел и не заменя консултация с лекар.</p>
+    </footer>
+</body>
+</html>
