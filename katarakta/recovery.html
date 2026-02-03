@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Възстановяване след операция - Информационен портал</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1a5276;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: #1a5276;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: #1a5276;
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .content-section h2 {
+            color: #1a5276;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 3px solid #2980b9;
+            padding-bottom: 10px;
+        }
+
+        .content-section h3 {
+            color: #1a5276;
+            margin: 25px 0 15px;
+            font-size: 1.3em;
+        }
+
+        .content-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .content-section ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #1a5276, #2980b9);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -38px;
+            top: 25px;
+            width: 16px;
+            height: 16px;
+            background: #2980b9;
+            border-radius: 50%;
+            border: 4px solid white;
+        }
+
+        .timeline-item h3 {
+            color: #1a5276;
+            margin: 0 0 10px 0;
+        }
+
+        .timeline-item p {
+            margin: 0;
+            color: #555;
+        }
+
+        .do-dont {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .do-box, .dont-box {
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        .do-box {
+            background: #d5f5e3;
+            border-left: 4px solid #27ae60;
+        }
+
+        .do-box h3 {
+            color: #27ae60;
+            margin: 0 0 15px 0;
+        }
+
+        .dont-box {
+            background: #fadbd8;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .dont-box h3 {
+            color: #e74c3c;
+            margin: 0 0 15px 0;
+        }
+
+        .do-box ul, .dont-box ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .do-box li, .dont-box li {
+            margin-bottom: 8px;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-left: 4px solid #f39c12;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .warning-box h3 {
+            color: #d68910;
+            margin: 0 0 10px 0;
+        }
+
+        .warning-box ul {
+            margin: 10px 0 0 0;
+            padding-left: 20px;
+        }
+
+        .warning-box li {
+            color: #7d6608;
+            margin-bottom: 5px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e8f4f8, #d4e9f7);
+            border-left: 4px solid #2980b9;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #1a5276;
+        }
+
+        .drops-schedule {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .drops-schedule h3 {
+            color: #1a5276;
+            margin: 0 0 15px 0;
+        }
+
+        .drops-schedule table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .drops-schedule th, .drops-schedule td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .drops-schedule th {
+            background: #1a5276;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: #1a5276;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background: #1a5276;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-links a {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .do-dont {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Катаракта БГ</div>
+            <div class="nav-links">
+                <a href="index.html">Начало</a>
+                <a href="what-is-cataract.html">Какво е?</a>
+                <a href="symptoms.html">Симптоми</a>
+                <a href="causes.html">Причини</a>
+                <a href="diagnosis.html">Диагностика</a>
+                <a href="treatment.html">Лечение</a>
+                <a href="surgery.html">Операция</a>
+                <a href="prevention.html">Превенция</a>
+                <a href="recovery.html" class="active">Възстановяване</a>
+                <a href="faq.html">ЧЗВ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Възстановяване след операция</h1>
+        <p>Какво да очаквате и как да се грижите за очите си след операция за катаракта</p>
+    </div>
+
+    <div class="container">
+        <div class="content-section">
+            <h2>Какво да очаквате</h2>
+            <p>Възстановяването след операция за катаракта обикновено е бързо и безпроблемно. Повечето пациенти забелязват значително подобрение на зрението още в първите дни. Пълното възстановяване обикновено отнема от няколко седмици до месец.</p>
+
+            <div class="info-box">
+                <p><strong>Важно:</strong> Въпреки че ще можете да вършите много дейности скоро след операцията, е важно да следвате инструкциите на лекаря за оптимални резултати.</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Хронология на възстановяването</h2>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h3>Ден 1 (непосредствено след операцията)</h3>
+                    <p>Може да изпитате леко замъгляване, дискомфорт или сърбеж. Носете защитния капак за окото. Почивайте и избягвайте напрежение. Повечето хора вече забелязват подобрение на зрението.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h3>Дни 2-7 (първа седмица)</h3>
+                    <p>Зрението продължава да се подобрява. Посетете лекаря за контролен преглед. Продължавайте с капките по предписание. Може да се върнете към леки дейности. Избягвайте да триете окото.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h3>Седмици 2-4</h3>
+                    <p>Повечето ограничения отпадат. Зрението се стабилизира. Може да се върнете на работа и да шофирате (ако лекарят позволи). Продължавайте с капките според предписанието.</p>
+                </div>
+
+                <div class="timeline-item">
+                    <h3>1-2 месеца</h3>
+                    <p>Окончателно възстановяване. Ако се налага, ще ви бъдат предписани нови очила. Рутинните прегледи продължават според графика на лекаря.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Какво да правите и какво да избягвате</h2>
+
+            <div class="do-dont">
+                <div class="do-box">
+                    <h3>Правете</h3>
+                    <ul>
+                        <li>Използвайте предписаните капки редовно</li>
+                        <li>Носете защитния капак през нощта (първата седмица)</li>
+                        <li>Носете слънчеви очила на открито</li>
+                        <li>Мийте ръцете преди да докосвате окото</li>
+                        <li>Почивайте очите, когато са уморени</li>
+                        <li>Спете по гръб или от страната на неоперираното око</li>
+                        <li>Посещавайте контролните прегледи</li>
+                    </ul>
+                </div>
+
+                <div class="dont-box">
+                    <h3>Не правете</h3>
+                    <ul>
+                        <li>Не триете и не натискайте окото</li>
+                        <li>Не плувайте минимум 2 седмици</li>
+                        <li>Не вдигайте тежки предмети (над 5 кг)</li>
+                        <li>Не се навеждайте надолу</li>
+                        <li>Не използвайте грим за очи поне 2 седмици</li>
+                        <li>Не шофирайте без разрешение от лекаря</li>
+                        <li>Не допускайте вода да попадне в окото</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Използване на очни капки</h2>
+            <p>Капките са изключително важни за предотвратяване на инфекция и контролиране на възпалението. Следвайте стриктно инструкциите на лекаря.</p>
+
+            <div class="drops-schedule">
+                <h3>Типичен график (примерен)</h3>
+                <table>
+                    <tr>
+                        <th>Тип капки</th>
+                        <th>Честота</th>
+                        <th>Продължителност</th>
+                    </tr>
+                    <tr>
+                        <td>Антибиотични</td>
+                        <td>4 пъти дневно</td>
+                        <td>1-2 седмици</td>
+                    </tr>
+                    <tr>
+                        <td>Противовъзпалителни</td>
+                        <td>4 пъти дневно, намалявайки</td>
+                        <td>3-4 седмици</td>
+                    </tr>
+                    <tr>
+                        <td>Изкуствени сълзи</td>
+                        <td>По нужда</td>
+                        <td>Колкото е необходимо</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Как да поставяте капките правилно:</h3>
+            <ol style="padding-left: 25px; margin: 15px 0;">
+                <li>Измийте ръцете си добре</li>
+                <li>Легнете или наклонете главата назад</li>
+                <li>Издърпайте долния клепач надолу</li>
+                <li>Гледайте нагоре и поставете капката в "джоба"</li>
+                <li>Затворете окото за 1-2 минути</li>
+                <li>Притиснете леко вътрешния ъгъл на окото</li>
+                <li>Изчакайте 5-10 минути между различните капки</li>
+            </ol>
+        </div>
+
+        <div class="content-section">
+            <h2>Нормални симптоми след операция</h2>
+            <p>Следните симптоми са нормални и обикновено преминават в рамките на няколко дни до седмици:</p>
+            <ul>
+                <li>Леко замъгляване на зрението</li>
+                <li>Сърбеж или лек дискомфорт</li>
+                <li>Усещане за "песъчинка" в окото</li>
+                <li>Сълзене</li>
+                <li>Леко зачервяване</li>
+                <li>Чувствителност към светлина</li>
+                <li>Виждане на ореоли около светлините (временно)</li>
+            </ul>
+
+            <div class="warning-box">
+                <h3>Кога да се свържете с лекаря незабавно</h3>
+                <ul>
+                    <li>Внезапна загуба на зрение</li>
+                    <li>Силна или нарастваща болка (не се облекчава от обезболяващи)</li>
+                    <li>Силно зачервяване, което се влошава</li>
+                    <li>Гноен секрет от окото</li>
+                    <li>Множество светлинни проблясъци или плаващи тела</li>
+                    <li>Виждане на "завеса" или "сянка" в зрителното поле</li>
+                    <li>Висока температура</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Връщане към ежедневните дейности</h2>
+
+            <h3>Обикновено разрешено от първия ден:</h3>
+            <ul>
+                <li>Ходене и леки домашни дейности</li>
+                <li>Гледане на телевизия</li>
+                <li>Четене (с почивки)</li>
+                <li>Хранене нормално</li>
+            </ul>
+
+            <h3>След няколко дни до седмица:</h3>
+            <ul>
+                <li>Къпане (внимавайте да не влиза вода в окото)</li>
+                <li>Лека работа на компютър</li>
+                <li>Шофиране (след одобрение от лекаря)</li>
+                <li>Връщане на работа (офис работа)</li>
+            </ul>
+
+            <h3>След 2-4 седмици:</h3>
+            <ul>
+                <li>Плуване</li>
+                <li>Грим за очи</li>
+                <li>Физически упражнения</li>
+                <li>Вдигане на тежести</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Очила след операция</h2>
+            <p>Много пациенти се нуждаят от нови очила след операцията, особено за четене. Обикновено се чака 4-6 седмици след операцията, за да се стабилизира зрението, преди да се предписват нови очила.</p>
+
+            <div class="info-box">
+                <p><strong>Съвет:</strong> Ако имате катаракта и на двете очи, обикновено се изчаква първото око да се възстанови (1-4 седмици), преди да се оперира второто. Новите очила се предписват след възстановяването и на двете очи.</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="prevention.html" class="nav-btn">&#8592; Превенция</a>
+            <a href="faq.html" class="nav-btn">ЧЗВ &#8594;</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Информационен портал за катаракта. Информацията е с образователна цел и не заменя консултация с лекар.</p>
+    </footer>
+</body>
+</html>

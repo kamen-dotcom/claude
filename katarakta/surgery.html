@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Операция за катаракта - Информационен портал</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1a5276;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: #1a5276;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: #1a5276;
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .content-section h2 {
+            color: #1a5276;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 3px solid #2980b9;
+            padding-bottom: 10px;
+        }
+
+        .content-section h3 {
+            color: #1a5276;
+            margin: 25px 0 15px;
+            font-size: 1.3em;
+        }
+
+        .content-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .content-section ul, .content-section ol {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .procedure-steps {
+            counter-reset: procedure;
+            list-style: none;
+            padding: 0;
+        }
+
+        .procedure-steps li {
+            counter-increment: procedure;
+            padding: 20px 20px 20px 70px;
+            margin: 15px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .procedure-steps li::before {
+            content: counter(procedure);
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(135deg, #1a5276, #2980b9);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .lens-type {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 4px solid #2980b9;
+        }
+
+        .lens-type h3 {
+            color: #1a5276;
+            margin: 0 0 10px 0;
+        }
+
+        .lens-type p {
+            margin: 0;
+            color: #555;
+        }
+
+        .lens-type .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .pros, .cons {
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .pros {
+            background: #d5f5e3;
+        }
+
+        .pros h4 {
+            color: #27ae60;
+            margin-bottom: 8px;
+        }
+
+        .cons {
+            background: #fadbd8;
+        }
+
+        .cons h4 {
+            color: #e74c3c;
+            margin-bottom: 8px;
+        }
+
+        .pros ul, .cons ul {
+            margin: 0;
+            padding-left: 15px;
+            font-size: 0.9em;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e8f4f8, #d4e9f7);
+            border-left: 4px solid #2980b9;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #1a5276;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            background: linear-gradient(135deg, #1a5276, #2980b9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-item h3 {
+            font-size: 2em;
+            margin: 0 0 5px 0;
+            color: white;
+        }
+
+        .stat-item p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9em;
+            color: white;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: #1a5276;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background: #1a5276;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-links a {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .lens-type .pros-cons {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Катаракта БГ</div>
+            <div class="nav-links">
+                <a href="index.html">Начало</a>
+                <a href="what-is-cataract.html">Какво е?</a>
+                <a href="symptoms.html">Симптоми</a>
+                <a href="causes.html">Причини</a>
+                <a href="diagnosis.html">Диагностика</a>
+                <a href="treatment.html">Лечение</a>
+                <a href="surgery.html" class="active">Операция</a>
+                <a href="prevention.html">Превенция</a>
+                <a href="recovery.html">Възстановяване</a>
+                <a href="faq.html">ЧЗВ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Операция за катаракта</h1>
+        <p>Подробна информация за хирургичната процедура, видовете лещи и какво да очаквате</p>
+    </div>
+
+    <div class="container">
+        <div class="content-section">
+            <h2>Преглед на операцията</h2>
+            <p>Операцията за катаракта е една от най-често извършваните и безопасни хирургични процедури в света. Тя включва отстраняване на помътнената естествена леща и замяната й с прозрачна изкуствена леща (интраокуларна леща или ИОЛ).</p>
+
+            <div class="stats-row">
+                <div class="stat-item">
+                    <h3>10-20</h3>
+                    <p>минути продължителност</p>
+                </div>
+                <div class="stat-item">
+                    <h3>95%+</h3>
+                    <p>успеваемост</p>
+                </div>
+                <div class="stat-item">
+                    <h3>1 ден</h3>
+                    <p>амбулаторна процедура</p>
+                </div>
+                <div class="stat-item">
+                    <h3>1-2 седм.</h3>
+                    <p>пълно възстановяване</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Видове операции</h2>
+
+            <h3>Факоемулсификация (стандартен метод)</h3>
+            <p>Това е най-разпространената техника за операция на катаракта. Използва се ултразвукова енергия за разбиване на помътнената леща на малки фрагменти, които се изсмукват през миниатюрен разрез.</p>
+
+            <div class="info-box">
+                <p><strong>Предимства:</strong> Малък разрез (2-3 мм), бързо възстановяване, обикновено не се изискват конци, минимален риск от усложнения.</p>
+            </div>
+
+            <h3>Фемтосекундна лазерна хирургия</h3>
+            <p>Най-модерната технология, при която лазер извършва прецизни разрези и разделя катарактата преди да бъде отстранена. Предлага изключителна прецизност.</p>
+
+            <div class="info-box">
+                <p><strong>Предимства:</strong> По-голяма прецизност, по-малко ултразвукова енергия, потенциално по-бързо възстановяване. Може да е по-подходяща при астигматизъм.</p>
+            </div>
+
+            <h3>Екстракапсуларна екстракция</h3>
+            <p>По-стара техника, използвана при много напреднала катаракта. Изисква по-голям разрез и конци.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Етапи на операцията</h2>
+
+            <ol class="procedure-steps">
+                <li><strong>Анестезия:</strong> Поставят се капки за местна упойка. Няма да чувствате болка, но може да усетите лек натиск. В някои случаи се прави инжекция около окото.</li>
+                <li><strong>Разрез:</strong> Хирургът прави миниатюрен разрез (2-3 мм) в роговицата.</li>
+                <li><strong>Капсулотомия:</strong> Отваря се предната част на капсулата, която обгръща лещата.</li>
+                <li><strong>Факоемулсификация:</strong> Ултразвукова сонда разбива помътнената леща на малки парчета, които се изсмукват.</li>
+                <li><strong>Имплантация на ИОЛ:</strong> Сгънатата изкуствена леща се вкарва през разреза и се разгръща на място в капсулата.</li>
+                <li><strong>Затваряне:</strong> Малкият разрез обикновено се затваря сам, без конци.</li>
+            </ol>
+        </div>
+
+        <div class="content-section">
+            <h2>Видове изкуствени лещи (ИОЛ)</h2>
+
+            <div class="lens-type">
+                <h3>Монофокална леща</h3>
+                <p>Стандартната леща, която коригира зрението на едно разстояние - обикновено далечно. Покрива се от здравната каса.</p>
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Предимства</h4>
+                        <ul>
+                            <li>Покрита от касата</li>
+                            <li>Отлично далечно зрение</li>
+                            <li>Доказана надеждност</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Недостатъци</h4>
+                        <ul>
+                            <li>Нужда от очила за четене</li>
+                            <li>Фокус на едно разстояние</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lens-type">
+                <h3>Мултифокална леща</h3>
+                <p>Позволява ясно виждане на няколко разстояния - далечно, средно и близко. Намалява зависимостта от очила.</p>
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Предимства</h4>
+                        <ul>
+                            <li>По-малка нужда от очила</li>
+                            <li>Зрение на всички разстояния</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Недостатъци</h4>
+                        <ul>
+                            <li>Допълнително заплащане</li>
+                            <li>Възможни ореоли и отблясъци</li>
+                            <li>Период на адаптация</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lens-type">
+                <h3>Торична леща</h3>
+                <p>Специално проектирана за корекция на астигматизъм заедно с катарактата.</p>
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>Предимства</h4>
+                        <ul>
+                            <li>Коригира астигматизъм</li>
+                            <li>По-ясно зрение без допълнителни процедури</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>Недостатъци</h4>
+                        <ul>
+                            <li>Допълнително заплащане</li>
+                            <li>Може да изисква прецизно позициониране</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lens-type">
+                <h3>EDOF (Extended Depth of Focus) леща</h3>
+                <p>Разширява обхвата на ясно зрение без множество фокусни точки. Добър баланс между качество на зрението и намалена зависимост от очила.</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Подготовка за операцията</h2>
+            <ul>
+                <li>Направете всички предоперативни изследвания, назначени от лекаря</li>
+                <li>Информирайте лекаря за всички лекарства, които приемате</li>
+                <li>Може да се наложи да спрете някои лекарства (напр. кръворазреждащи)</li>
+                <li>Използвайте предписаните антибиотични капки ден-два преди операцията</li>
+                <li>Не яжте и не пийте 6-8 часа преди операцията (ако е под седация)</li>
+                <li>Осигурете придружител, който да ви откара вкъщи след процедурата</li>
+                <li>Подгответе удобни дрехи, които лесно се обличат</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Възможни рискове</h2>
+            <p>Макар и рядко, могат да възникнат следните усложнения:</p>
+            <ul>
+                <li><strong>Инфекция:</strong> Много рядко (около 0.05%), но сериозно усложнение</li>
+                <li><strong>Възпаление:</strong> Обикновено се контролира с капки</li>
+                <li><strong>Кръвоизлив:</strong> Рядко и обикновено се резорбира</li>
+                <li><strong>Оток на роговицата:</strong> Временен, обикновено преминава</li>
+                <li><strong>Отлепване на ретината:</strong> Много рядко</li>
+                <li><strong>Помътняване на задната капсула:</strong> Може да се появи месеци или години по-късно; лесно се лекува с лазер</li>
+            </ul>
+
+            <div class="info-box">
+                <p><strong>Важно:</strong> Рисковете са минимални при правилно изпълнена операция от опитен хирург. Повечето усложнения са лечими.</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="treatment.html" class="nav-btn">&#8592; Лечение</a>
+            <a href="prevention.html" class="nav-btn">Превенция &#8594;</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Информационен портал за катаракта. Информацията е с образователна цел и не заменя консултация с лекар.</p>
+    </footer>
+</body>
+</html>

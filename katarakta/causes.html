@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Причини за катаракта - Информационен портал</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a5276 0%, #2980b9 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1a5276;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav-links a {
+            color: #1a5276;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background: #1a5276;
+            color: white;
+        }
+
+        .page-header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .page-header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .content-section h2 {
+            color: #1a5276;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+            border-bottom: 3px solid #2980b9;
+            padding-bottom: 10px;
+        }
+
+        .content-section h3 {
+            color: #1a5276;
+            margin: 25px 0 15px;
+            font-size: 1.3em;
+        }
+
+        .content-section p {
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #444;
+        }
+
+        .content-section ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .content-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            color: #444;
+        }
+
+        .cause-card {
+            display: flex;
+            gap: 20px;
+            background: #f8f9fa;
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            align-items: flex-start;
+        }
+
+        .cause-icon {
+            font-size: 2.5em;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .cause-content h3 {
+            color: #1a5276;
+            margin: 0 0 10px 0;
+        }
+
+        .cause-content p {
+            margin: 0;
+            color: #555;
+        }
+
+        .risk-meter {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .risk-meter span {
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .risk-high {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .risk-medium {
+            background: #f39c12;
+            color: white;
+        }
+
+        .risk-low {
+            background: #27ae60;
+            color: white;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e8f4f8, #d4e9f7);
+            border-left: 4px solid #2980b9;
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #1a5276;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            gap: 20px;
+        }
+
+        .nav-btn {
+            background: #1a5276;
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-btn:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            background: #1a5276;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 40px;
+        }
+
+        footer p {
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .page-header h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-links a {
+                padding: 6px 10px;
+                font-size: 0.8em;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .cause-card {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">Катаракта БГ</div>
+            <div class="nav-links">
+                <a href="index.html">Начало</a>
+                <a href="what-is-cataract.html">Какво е?</a>
+                <a href="symptoms.html">Симптоми</a>
+                <a href="causes.html" class="active">Причини</a>
+                <a href="diagnosis.html">Диагностика</a>
+                <a href="treatment.html">Лечение</a>
+                <a href="surgery.html">Операция</a>
+                <a href="prevention.html">Превенция</a>
+                <a href="recovery.html">Възстановяване</a>
+                <a href="faq.html">ЧЗВ</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="page-header">
+        <h1>Причини за катаракта</h1>
+        <p>Разберете какво причинява помътняване на лещата и кои са рисковите фактори</p>
+    </div>
+
+    <div class="container">
+        <div class="content-section">
+            <h2>Основни причини</h2>
+            <p>Катарактата се развива, когато протеините в лещата на окото започват да се разграждат и слепват, причинявайки замътняване. Въпреки че точните механизми не са напълно изяснени, има няколко основни фактора, които допринасят за развитието на катаракта.</p>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#128116;</div>
+                <div class="cause-content">
+                    <h3>Възраст</h3>
+                    <p>Стареенето е най-честата причина за катаракта. С възрастта протеините в лещата се денатурират и натрупват, причинявайки помътняване. Този процес е естествен и засяга повечето хора над 60 години.</p>
+                    <div class="risk-meter">
+                        <span class="risk-high">Висок риск над 60г.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#127774;</div>
+                <div class="cause-content">
+                    <h3>UV радиация</h3>
+                    <p>Продължителното излагане на ултравиолетови лъчи (UV-A и UV-B) от слънцето може да увреди протеините в лещата и да ускори развитието на катаракта.</p>
+                    <div class="risk-meter">
+                        <span class="risk-medium">Среден риск</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#128684;</div>
+                <div class="cause-content">
+                    <h3>Тютюнопушене</h3>
+                    <p>Пушенето увеличава оксидативния стрес в окото и значително повишава риска от катаракта. Пушачите имат два до три пъти по-висок риск в сравнение с непушачите.</p>
+                    <div class="risk-meter">
+                        <span class="risk-high">Висок риск</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#127863;</div>
+                <div class="cause-content">
+                    <h3>Прекомерна употреба на алкохол</h3>
+                    <p>Редовната и прекомерна консумация на алкохол е свързана с повишен риск от развитие на катаракта поради токсичното въздействие върху лещата.</p>
+                    <div class="risk-meter">
+                        <span class="risk-medium">Среден риск</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Медицински рискови фактори</h2>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#128137;</div>
+                <div class="cause-content">
+                    <h3>Захарен диабет</h3>
+                    <p>Хората с диабет имат значително по-висок риск от катаракта. Високите нива на кръвна захар могат да причинят отоци в лещата и да ускорят помътняването. Диабетиците могат да развият катаракта на по-млада възраст.</p>
+                    <div class="risk-meter">
+                        <span class="risk-high">Висок риск</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#128138;</div>
+                <div class="cause-content">
+                    <h3>Продължителна употреба на кортикостероиди</h3>
+                    <p>Дългосрочната употреба на стероидни лекарства, независимо дали са под формата на таблетки, капки за очи или инхалатори, може да увеличи риска от задна субкапсуларна катаракта.</p>
+                    <div class="risk-meter">
+                        <span class="risk-high">Висок риск при дълга употреба</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#9889;</div>
+                <div class="cause-content">
+                    <h3>Лъчева терапия</h3>
+                    <p>Радиационната терапия в областта на главата или очите може да увреди лещата и да доведе до развитие на катаракта.</p>
+                    <div class="risk-meter">
+                        <span class="risk-medium">Среден риск</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#128065;</div>
+                <div class="cause-content">
+                    <h3>Предишни очни операции или травми</h3>
+                    <p>Травми на окото, възпаления или предишни хирургични интервенции могат да увеличат риска от развитие на катаракта, понякога години след събитието.</p>
+                    <div class="risk-meter">
+                        <span class="risk-medium">Среден риск</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Генетични и вродени фактори</h2>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#129516;</div>
+                <div class="cause-content">
+                    <h3>Наследственост</h3>
+                    <p>Ако имате близки роднини с катаракта, вашият риск може да бъде по-висок. Генетичните фактори могат да влияят на структурата и устойчивостта на протеините в лещата.</p>
+                </div>
+            </div>
+
+            <div class="cause-card">
+                <div class="cause-icon">&#128118;</div>
+                <div class="cause-content">
+                    <h3>Вродена катаракта</h3>
+                    <p>Някои деца се раждат с катаракта или я развиват в ранна детска възраст. Това може да се дължи на генетични мутации, вътреутробни инфекции (като рубеола) или метаболитни нарушения.</p>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <p><strong>Важно:</strong> Вродената катаракта изисква ранно откриване и лечение, за да се предотврати постоянно увреждане на зрението и развитието на амблиопия ("мързеливо око").</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Други рискови фактори</h2>
+            <ul>
+                <li><strong>Затлъстяване:</strong> Повишеното телесно тегло е свързано с по-висок риск от катаракта</li>
+                <li><strong>Високо кръвно налягане:</strong> Хипертонията може да допринесе за развитие на очни проблеми</li>
+                <li><strong>Миопия (късогледство):</strong> Хората с висока миопия имат повишен риск</li>
+                <li><strong>Предишен увеит:</strong> Възпалението в окото може да ускори образуването на катаракта</li>
+                <li><strong>Хормонална заместителна терапия:</strong> Някои изследвания показват леко повишен риск</li>
+            </ul>
+
+            <div class="info-box">
+                <p><strong>Съвет:</strong> Въпреки че някои рискови фактори като възрастта и генетиката не могат да бъдат променени, много други могат да се контролират чрез промени в начина на живот. Научете повече в раздела <a href="prevention.html" style="color: #1a5276;">Превенция</a>.</p>
+            </div>
+        </div>
+
+        <div class="nav-buttons">
+            <a href="symptoms.html" class="nav-btn">&#8592; Симптоми</a>
+            <a href="diagnosis.html" class="nav-btn">Диагностика &#8594;</a>
+        </div>
+    </div>
+
+    <footer>
+        <p>Информационен портал за катаракта. Информацията е с образователна цел и не заменя консултация с лекар.</p>
+    </footer>
+</body>
+</html>
