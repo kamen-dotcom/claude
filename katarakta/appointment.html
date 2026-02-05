@@ -192,6 +192,52 @@
             box-shadow: 0 5px 20px rgba(39, 174, 96, 0.4);
         }
 
+        .submit-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .submit-btn.loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .submit-btn.loading::after {
+            content: "";
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 3px solid #ffffff;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            display: none;
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border: 1px solid #dc3545;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
         .info-box {
             background: linear-gradient(135deg, #e8f4f8, #d4e9f7);
             border-left: 4px solid #2980b9;
@@ -327,6 +373,11 @@
                 <p>Вашата заявка беше изпратена успешно. Ще се свържем с Вас в рамките на 24 часа.</p>
             </div>
 
+            <div class="error-message" id="errorMessage">
+                <h3>Грешка!</h3>
+                <p>Възникна проблем при изпращането. Моля, опитайте отново или се свържете с нас по телефона.</p>
+            </div>
+
             <h2>Форма за записване</h2>
 
             <form id="appointmentForm">
@@ -435,20 +486,79 @@
     </footer>
 
     <script>
+        // =====================================================
+        // GOOGLE SHEETS CONFIGURATION
+        // Replace this URL with your Google Apps Script Web App URL
+        // See GOOGLE_SHEETS_SETUP.md for instructions
+        // =====================================================
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL_HERE';
+
         // Set minimum date to today
         document.getElementById('date').min = new Date().toISOString().split('T')[0];
 
-        document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+        // Service type mapping for readable values
+        const serviceTypes = {
+            'consultation': 'Първичен преглед / Консултация',
+            'diagnosis': 'Диагностика на катаракта',
+            'pre-surgery': 'Предоперативен преглед',
+            'post-surgery': 'Следоперативен преглед',
+            'second-opinion': 'Второ мнение',
+            'other': 'Друго'
+        };
+
+        document.getElementById('appointmentForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
-            // Show success message
-            document.getElementById('successMessage').classList.add('show');
+            const submitBtn = document.querySelector('.submit-btn');
+            const successMessage = document.getElementById('successMessage');
+            const errorMessage = document.getElementById('errorMessage');
 
-            // Reset form
-            this.reset();
+            // Hide any previous messages
+            successMessage.classList.remove('show');
+            errorMessage.classList.remove('show');
 
-            // Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // Show loading state
+            submitBtn.disabled = true;
+            submitBtn.classList.add('loading');
+
+            // Collect form data
+            const formData = {
+                timestamp: new Date().toLocaleString('bg-BG'),
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value || '-',
+                date: document.getElementById('date').value,
+                time: document.getElementById('time').value || '-',
+                service: serviceTypes[document.getElementById('service').value] || document.getElementById('service').value,
+                message: document.getElementById('message').value || '-'
+            };
+
+            try {
+                // Send data to Google Sheets
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                // Show success message (no-cors doesn't return response, so we assume success)
+                successMessage.classList.add('show');
+                this.reset();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.classList.add('show');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } finally {
+                // Remove loading state
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('loading');
+            }
         });
     </script>
 </body>
