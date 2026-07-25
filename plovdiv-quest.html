@@ -84,6 +84,11 @@ button:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
   max-width:88vw; text-align:center;
 }
 #toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+.opt{margin-top:8px; width:100%; padding:11px 12px; border-radius:9px; border:2px solid var(--line); background:#fff; color:var(--ink); font-size:14.5px; font-weight:700; text-align:left; cursor:pointer; font-family:inherit; letter-spacing:0}
+.opt:hover{border-color:var(--muted); background:#fff}
+.opt.correct{border-color:var(--green); background:#e8f4ec}
+.opt.wrong{border-color:var(--red); background:#fbe9e7}
+.badge{display:inline-block; margin:8px 6px 0 0; padding:4px 10px; border-radius:20px; background:#f0ece5; color:#6b5f4e; font-weight:800; font-size:12.5px}
 @media (prefers-reduced-motion: no-preference){
   .panel{animation:pop .22s ease-out}
   @keyframes pop{from{transform:scale(.94); opacity:0} to{transform:scale(1); opacity:1}}
@@ -96,6 +101,7 @@ button:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
   <div class="chip" id="time"><span class="lbl">Време</span><span class="val" id="timeVal">3:30</span></div>
   <div class="chip"><span class="lbl">Обекти</span><span class="val" id="cntVal">0/12</span></div>
   <div class="chip" id="target"><span class="lbl">Следваща цел</span><span class="val small" id="tgtVal">—</span></div>
+  <div class="chip" id="buff" style="display:none"><span class="lbl">Бонуси</span><span class="val small" id="buffVal"></span></div>
 </div>
 <canvas id="mini" width="172" height="122"></canvas>
 <div id="toast"></div>
@@ -145,18 +151,30 @@ const greens = [
 ];
 
 const marks = [
-  {x:1680,y:602, n:'Небет тепе',        en:'Nebet Tepe',            f:'Тук е започнал Пловдив — селище отпреди близо 8000 години. Смята се за един от най-старите постоянно обитавани градове в Европа.'},
-  {x:1615,y:772, n:'Античен театър',    en:'Ancient Roman Theatre', f:'Римският театър от II век побира около 5000 зрители и до днес е действаща сцена за опери и концерти под открито небе.'},
-  {x:1330,y:497, n:'Римски стадион',    en:'Roman Stadium',         f:'Стадионът от II век е събирал до 30 000 зрители. Днес северният му завой се вижда под площад Джумая.'},
-  {x:1372,y:588, n:'Джумая джамия',     en:'Dzhumaya Mosque',       f:'Една от най-старите османски джамии на Балканите, издигната през XIV–XV век в самото сърце на града.'},
-  {x:1472,y:462, n:'Капана',            en:'Kapana District',       f:'„Капанът“ — кварталът на занаятите: лабиринт от улички с галерии, ателиета и кафенета. Хванеш ли се — не излизаш.'},
-  {x:1012,y:988, n:'Пеещите фонтани',   en:'Singing Fountains',     f:'Езерото в Цар-Симеоновата градина, където вечер фонтаните „пеят“ със светлинно-музикално шоу.'},
-  {x:792, y:648, n:'Паметникът Альоша', en:'Alyosha Monument',      f:'11-метровият паметник на върха на Бунарджика (Хълма на освободителите) — една от най-хубавите панорами към града.'},
-  {x:1152,y:706, n:'Часовниковата кула',en:'Sahat Tepe Clock Tower',f:'Кулата на Сахат тепе (Данов хълм) е от XVI век — сред най-старите действащи часовникови кули в Източна Европа.'},
-  {x:1230,y:232, n:'Пешеходният мост',  en:'Covered Bridge',        f:'Покритият пешеходен мост над Марица свързва центъра със северния бряг още от възрожденско време.'},
-  {x:1820,y:118, n:'Международен панаир',en:'International Fair',   f:'Пловдивският панаир води началото си от Първото българско изложение през 1892 г. — най-старият на Балканите.'},
-  {x:1245,y:1568,n:'Централна гара',    en:'Central Station',       f:'Гарата е открита през 1873 г. по линията на барон Хирш — една от първите железници по българските земи.'},
-  {x:602, y:1188,n:'Джендем тепе',      en:'Dzhendem Tepe',         f:'Младежкият хълм е най-високото от пловдивските тепета — оттук се вижда целият град чак до Родопите.'},
+  {x:1680,y:602, n:'Небет тепе',        en:'Nebet Tepe',            f:'Тук е започнал Пловдив — селище отпреди близо 8000 години. Смята се за един от най-старите постоянно обитавани градове в Европа.',
+   q:'Отпреди колко години е селището на Небет тепе?', o:['Около 1200 години','Около 3000 години','Около 8000 години'], a:2},
+  {x:1615,y:772, n:'Античен театър',    en:'Ancient Roman Theatre', f:'Римският театър от II век побира около 5000 зрители и до днес е действаща сцена за опери и концерти под открито небе.',
+   q:'Колко зрители побира Античният театър?', o:['Около 500','Около 5000','Около 50 000'], a:1},
+  {x:1330,y:497, n:'Римски стадион',    en:'Roman Stadium',         f:'Стадионът от II век е събирал до 30 000 зрители. Днес северният му завой се вижда под площад Джумая.',
+   q:'Колко зрители е събирал Римският стадион?', o:['До 30 000','До 3000','До 300'], a:0},
+  {x:1372,y:588, n:'Джумая джамия',     en:'Dzhumaya Mosque',       f:'Една от най-старите османски джамии на Балканите, издигната през XIV–XV век в самото сърце на града.',
+   q:'От кой период е Джумая джамия?', o:['XIX век','XIV–XV век','VI век'], a:1},
+  {x:1472,y:462, n:'Капана',            en:'Kapana District',       f:'„Капанът“ — кварталът на занаятите: лабиринт от улички с галерии, ателиета и кафенета. Хванеш ли се — не излизаш.',
+   q:'Като квартал на какво е известен „Капана“?', o:['На банките','На занаятите','На музеите'], a:1},
+  {x:1012,y:988, n:'Пеещите фонтани',   en:'Singing Fountains',     f:'Езерото в Цар-Симеоновата градина, където вечер фонтаните „пеят“ със светлинно-музикално шоу.',
+   q:'Какво правят фонтаните в Цар-Симеоновата градина вечер?', o:['Пеят със светлинно шоу','Замръзват','Сменят си цвета веднъж годишно'], a:0},
+  {x:792, y:648, n:'Паметникът Альоша', en:'Alyosha Monument',      f:'11-метровият паметник на върха на Бунарджика (Хълма на освободителите) — една от най-хубавите панорами към града.',
+   q:'Колко метра е висок паметникът Альоша?', o:['3 метра','11 метра','50 метра'], a:1},
+  {x:1152,y:706, n:'Часовниковата кула',en:'Sahat Tepe Clock Tower',f:'Кулата на Сахат тепе (Данов хълм) е от XVI век — сред най-старите действащи часовникови кули в Източна Европа.',
+   q:'От кой век е Часовниковата кула на Сахат тепе?', o:['XVI век','XX век','X век'], a:0},
+  {x:1230,y:232, n:'Пешеходният мост',  en:'Covered Bridge',        f:'Покритият пешеходен мост над Марица свързва центъра със северния бряг още от възрожденско време.',
+   q:'Над коя река минава Покритият мост?', o:['Искър','Дунав','Марица'], a:2},
+  {x:1820,y:118, n:'Международен панаир',en:'International Fair',   f:'Пловдивският панаир води началото си от Първото българско изложение през 1892 г. — най-старият на Балканите.',
+   q:'От коя година води началото си Пловдивският панаир?', o:['1892 г.','1992 г.','1789 г.'], a:0},
+  {x:1245,y:1568,n:'Централна гара',    en:'Central Station',       f:'Гарата е открита през 1873 г. по линията на барон Хирш — една от първите железници по българските земи.',
+   q:'През коя година е открита Централна гара Пловдив?', o:['1944 г.','1873 г.','1901 г.'], a:1},
+  {x:602, y:1188,n:'Джендем тепе',      en:'Dzhendem Tepe',         f:'Младежкият хълм е най-високото от пловдивските тепета — оттук се вижда целият град чак до Родопите.',
+   q:'Кое е най-високото от пловдивските тепета?', o:['Небет тепе','Сахат тепе','Джендем тепе'], a:2},
 ];
 
 const labels = [
@@ -322,7 +340,12 @@ addEventListener('resize',resize); resize();
 const P={x:1345,y:800,r:11,dir:0};
 let state='start', tLeft=210, found=marks.map(()=>false), foundCnt=0, elapsed=0;
 let foundOrder=[], invuln=0, lockIdx=-1;
-const BONUS=10, START_T=210;
+let speedT=0, shield=false, night=0, nightToasted=false, catchCnt=0, recoveredCnt=0;
+let cardAnswer=null, cardAnswered=false;
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const fmtT=s=>`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+const Q_RIGHT=15, Q_WRONG=3, START_T=180;
 
 /* evil Sofia tourists */
 function freeSpot(x0,y0){
@@ -345,15 +368,55 @@ function farSpawn(){
   for(const s of sorted) if(!foes.some(f=>Math.hypot(f.x-s[0],f.y-s[1])<60)) return s;
   return sorted[0];
 }
-function makeFoe(sp){ return {x:sp[0],y:sp[1],r:11,dir:0,tx:sp[0],ty:sp[1],retarget:0,chasing:false,lx:sp[0],ly:sp[1],stuck:0,unstick:0,ua:0}; }
+function makeFoe(sp){ return {x:sp[0],y:sp[1],r:11,dir:0,tx:sp[0],ty:sp[1],retarget:0,chasing:false,lx:sp[0],ly:sp[1],stuck:0,unstick:0,ua:0,thiefI:null,thiefT:0,ping:0}; }
+function sendHome(f){ const sp=farSpawn(); f.x=sp[0]; f.y=sp[1]; f.tx=sp[0]; f.ty=sp[1]; f.chasing=false; f.unstick=0; }
+
+/* pickups: айрян (спринт) и бъклица (щит) */
+const PICKS=[[1340,860,'a'],[700,470,'a'],[1600,1200,'a'],[420,700,'a'],[1010,880,'b'],[1900,600,'b']];
+let pickups=[];
+function initPickups(){ pickups=PICKS.map(p=>{const [x,y]=freeSpot(p[0],p[1]); return {x,y,type:p[2],on:true,rt:0};}); }
+function updatePickups(dt){
+  for(const p of pickups){
+    if(!p.on){ p.rt-=dt; if(p.rt<=0)p.on=true; continue; }
+    if(Math.hypot(p.x-P.x,p.y-P.y)<26){
+      p.on=false; p.rt=25; sPickup();
+      if(p.type==='a'){ speedT=6; toast('🥛 Айрян! Спринт за 6 секунди'); }
+      else{ shield=true; toast('🍶 Бъклица! Ще те спаси от едно хващане'); }
+    }
+  }
+}
+
 function updateFoes(dt){
   while(foes.length<activeFoes()) foes.push(makeFoe(farSpawn()));
   for(const f of foes){
-    const dp=Math.hypot(P.x-f.x,P.y-f.y);
-    f.chasing = dp<CHASE_R && invuln<=0;
+    const dp=Math.hypot(P.x-f.x,P.y-f.y)||1;
+    if(f.ping>0) f.ping-=dt;
     let ax,ay,sp;
-    if(f.unstick>0){ f.unstick-=dt; ax=Math.cos(f.ua); ay=Math.sin(f.ua); sp=CHASE_SP; }
-    else if(f.chasing){ ax=(P.x-f.x)/dp; ay=(P.y-f.y)/dp; sp=CHASE_SP; }
+    if(f.thiefI!=null){
+      // fleeing with a stolen landmark
+      f.thiefT-=dt; f.chasing=false;
+      if(f.thiefArm>0) f.thiefArm-=dt;
+      if(state==='play' && f.thiefArm<=0 && dp<CATCH_R+3){
+        const i=f.thiefI; f.thiefI=null;
+        found[i]=true; foundCnt++; foundOrder.push(i); lockIdx=-1; recoveredCnt++;
+        sendHome(f); sCollect(); buzz(60); invuln=1.2;
+        toast(`🎉 Настигна крадеца и си върна „${marks[i].n}“!`);
+        continue;
+      }
+      if(f.thiefT<=0){
+        const i=f.thiefI; f.thiefI=null; sendHome(f);
+        toast(`💨 Крадецът избяга! „${marks[i].n}“ те чака отново на мястото си.`);
+        continue;
+      }
+      if(f.unstick>0){ f.unstick-=dt; ax=Math.cos(f.ua); ay=Math.sin(f.ua); }
+      else{ ax=(f.x-P.x)/dp; ay=(f.y-P.y)/dp; }
+      sp=198;
+    }
+    else if(f.unstick>0){ f.unstick-=dt; ax=Math.cos(f.ua); ay=Math.sin(f.ua); sp=CHASE_SP; }
+    else if((()=>{ const was=f.chasing; f.chasing = dp<CHASE_R && invuln<=0;
+                   if(f.chasing&&!was&&f.ping<=0){ sPing(); f.ping=6; } return f.chasing; })()){
+      ax=(P.x-f.x)/dp; ay=(P.y-f.y)/dp; sp=CHASE_SP;
+    }
     else{
       f.retarget-=dt;
       const dt2=Math.hypot(f.tx-f.x,f.ty-f.y);
@@ -382,7 +445,7 @@ function updateFoes(dt){
       f.lx=f.x; f.ly=f.y; f.stuck=0;
     }
     // caught!
-    if(state==='play' && invuln<=0 && Math.hypot(P.x-f.x,P.y-f.y)<CATCH_R) caught(f);
+    if(f.thiefI==null && state==='play' && invuln<=0 && Math.hypot(P.x-f.x,P.y-f.y)<CATCH_R) caught(f);
   }
 }
 let toastT=null;
@@ -392,14 +455,20 @@ function toast(msg){
   clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2600);
 }
 function caught(f){
-  sCaught(); invuln=2.5;
-  const sp=farSpawn(); f.x=sp[0]; f.y=sp[1]; f.tx=sp[0]; f.ty=sp[1]; f.chasing=false;
+  catchCnt++; buzz(150);
+  if(shield){
+    shield=false; invuln=2; sPickup(); sendHome(f);
+    toast('🍶 Бъклицата те спаси от софиянеца!');
+    return;
+  }
+  sCaught(); invuln=1.6;
   if(foundOrder.length){
     const i=foundOrder.pop();
     found[i]=false; foundCnt--; lockIdx=i;
-    toast(`😱 Хвана те зъл софиянец! Загуби „${marks[i].n}“ — намери я пак!`);
+    f.thiefI=i; f.thiefT=8; f.thiefArm=0.5; f.unstick=0;
+    toast(`😱 Софиянец ти открадна „${marks[i].n}“! Настигни го — 8 сек!`);
   }else{
-    tLeft=Math.max(0,tLeft-15);
+    tLeft=Math.max(0,tLeft-15); sendHome(f);
     toast('😱 Хвана те зъл софиянец! –15 секунди');
   }
 }
@@ -407,6 +476,9 @@ function caught(f){
 const keys={};
 addEventListener('keydown',e=>{
   keys[e.key.toLowerCase()]=true;
+  if(state==='card'&&!cardAnswered&&['1','2','3'].includes(e.key)&&cardAnswer){
+    cardAnswer(+e.key-1); e.preventDefault(); return;
+  }
   if((e.key===' '||e.key==='Enter')){
     if(state==='card') closeCard();
     else if(state!=='play') startGame();
@@ -448,6 +520,9 @@ const sCollect=()=>{tone(660,0,0.12,'triangle');tone(880,0.10,0.22,'triangle');}
 const sWin=()=>{[523,659,784,1047].forEach((f,i)=>tone(f,i*0.13,0.3,'triangle',0.2));};
 const sLose=()=>{tone(220,0,0.5,'sawtooth',0.1);tone(165,0.2,0.7,'sawtooth',0.1);};
 const sCaught=()=>{tone(330,0,0.1,'square',0.12);tone(247,0.09,0.12,'square',0.12);tone(185,0.19,0.25,'square',0.12);};
+const sPing=()=>{tone(1200,0,0.07,'square',0.07);tone(1600,0.07,0.09,'square',0.07);};
+const sPickup=()=>{tone(520,0,0.08,'triangle',0.15);tone(780,0.07,0.12,'triangle',0.15);};
+const buzz=p=>{try{navigator.vibrate&&navigator.vibrate(p);}catch(e){}};
 
 /* ================= movement & collision ================= */
 function onBridge(x){ return bridges.some(b=>x>b.x1+6&&x<b.x2-6); }
@@ -478,7 +553,7 @@ function move(dt){
   if(l<0.01) return;
   if(l>1){dx/=l; dy/=l;}
   P.dir=Math.atan2(dy,dx);
-  let sp=235*(inHill(P.x,P.y)?0.62:1)*dt;
+  let sp=235*(speedT>0?1.5:1)*(inHill(P.x,P.y)?0.62:1)*dt;
   let nx=P.x+dx*sp, ny=P.y+dy*sp;
   nx=Math.max(P.r,Math.min(WW-P.r,nx)); ny=Math.max(P.r,Math.min(WH-P.r,ny));
   if(!hitsBlock(nx,P.y,P.r)&&!hitsRiver(nx,P.y,P.r)) P.x=nx;
@@ -498,9 +573,11 @@ function startScreen(){
     <div class="rule"></div>
     <p>Ти си турист с карта в ръка. Обиколи стилизирания център на Пловдив и намери всичките <b>12 забележителности</b>, преди времето да изтече.</p>
     <div class="hint"><b>⌨</b> Движение със стрелките / WASD, или задръж и влачи с пръст.</div>
-    <div class="hint"><b>⛰</b> По тепетата се върви по-бавно. Реката се минава само по мостовете.</div>
-    <div class="hint"><b>⏱</b> Всяка намерена забележителност дава +${BONUS} секунди.</div>
-    <div class="hint"><b>😈</b> Пази се от злите софийски туристи (жълтите)! Хванат ли те, губиш последната си забележителност. Колкото повече събираш, толкова повече стават.</div>
+    <div class="hint"><b>❓</b> Всяка забележителност ти задава въпрос: верен отговор +${Q_RIGHT} сек, грешен +${Q_WRONG} сек.</div>
+    <div class="hint"><b>😈</b> Злите софийски туристи (жълтите) крадат последната ти забележителност — настигни крадеца до 8 секунди, за да си я върнеш!</div>
+    <div class="hint"><b>🥛</b> Айрянът дава спринт, бъклицата 🍶 те пази от едно хващане.</div>
+    <div class="hint"><b>🌙</b> В последната минута пада нощ… Реката се минава само по мостовете, по тепетата се върви бавно.</div>
+    ${lsGet('pq-best')?`<span class="badge">🏅 Личен рекорд: ${fmtT(+lsGet('pq-best'))}</span>`:''}
     <button id="btn">Тръгвай! (интервал)</button>`);
   document.getElementById('btn').onclick=startGame;
 }
@@ -508,37 +585,70 @@ function startGame(){
   audio();
   tLeft=START_T; found=marks.map(()=>false); foundCnt=0; elapsed=0;
   foundOrder=[]; invuln=0; foes=[]; lockIdx=-1;
+  speedT=0; shield=false; night=0; nightToasted=false; catchCnt=0; recoveredCnt=0;
+  initPickups();
   P.x=1345; P.y=800;
   state='play'; hide();
 }
 let cardIdx=-1;
 function openCard(i){
-  state='card'; cardIdx=i; sCollect();
+  state='card'; cardIdx=i; cardAnswered=false; sCollect();
   const m=marks[i];
   show(`
     <div class="numrow"><div class="num">${i+1}</div>
       <div><h2>${m.n}</h2><div class="sub">${m.en}</div></div></div>
-    <p>${m.f}</p>
-    <span class="bonus">+${BONUS} сек · ${foundCnt}/12 намерени</span>
-    <button id="btn">Продължи (интервал)</button>`);
-  document.getElementById('btn').onclick=closeCard;
+    <p style="font-weight:700">${m.q}</p>
+    <div id="opts">${m.o.map((o,k)=>`<button class="opt" data-k="${k}">${k+1}. ${o}</button>`).join('')}</div>
+    <div id="factwrap" style="display:none">
+      <div class="rule"></div>
+      <p>${m.f}</p>
+      <span class="bonus" id="bres"></span>
+      <button id="btn">Продължи (интервал)</button>
+    </div>`);
+  cardAnswer=k=>{
+    if(cardAnswered||state!=='card') return;
+    cardAnswered=true;
+    const ok=k===m.a, add=ok?Q_RIGHT:Q_WRONG;
+    tLeft+=add;
+    panel.querySelectorAll('.opt').forEach((b,j)=>{
+      b.disabled=true;
+      if(j===m.a) b.classList.add('correct');
+      else if(j===k) b.classList.add('wrong');
+    });
+    const el=document.getElementById('bres');
+    el.textContent = ok?`Вярно! +${Q_RIGHT} сек · ${foundCnt}/12 намерени`:`Почти! +${Q_WRONG} сек · ${foundCnt}/12 намерени`;
+    if(!ok){ el.style.background='#fdeee9'; el.style.color='#c03f31'; }
+    document.getElementById('factwrap').style.display='block';
+    document.getElementById('btn').onclick=closeCard;
+    ok?sCollect():tone(220,0,0.25,'sine',0.1);
+  };
+  panel.querySelectorAll('.opt').forEach(b=>b.onclick=()=>cardAnswer(+b.dataset.k));
 }
 function closeCard(){
-  if(state!=='card') return;
+  if(state!=='card'||!cardAnswered) return;
   state='play'; hide();
   if(foundCnt===12) winScreen();
 }
 function winScreen(){
-  state='win'; sWin();
-  const mm=Math.floor(tLeft/60), ss=String(Math.floor(tLeft%60)).padStart(2,'0');
-  const tot=Math.floor(elapsed);
+  state='win'; sWin(); buzz([60,40,60]);
+  const secs=Math.floor(elapsed);
+  const prev=+lsGet('pq-best')||0;
+  const newRec=!prev||secs<prev;
+  if(newRec) lsSet('pq-best',secs);
+  const badges=[];
+  if(newRec) badges.push('🏅 НОВ ЛИЧЕН РЕКОРД!');
+  if(catchCnt===0) badges.push('🏆 Недосегаем — нито едно хващане');
+  if(secs<150) badges.push('⚡ Спринтьор — под 2:30');
+  if(recoveredCnt>=2) badges.push('🕵 Ловец на крадци');
   show(`
     <div class="eyebrow">Браво!</div>
     <h2>Обиколи целия град 🎉</h2>
     <div class="rule"></div>
     <p>Намери всичките 12 забележителности от картата на Пловдив.</p>
-    <div class="stat">Оставащо време: <b>${mm}:${ss}</b></div>
-    <div class="stat">Обиколка за: <b>${Math.floor(tot/60)}:${String(tot%60).padStart(2,'0')} мин</b></div>
+    <div class="stat">Обиколка за: <b>${fmtT(secs)}</b> · Оставащо време: <b>${fmtT(tLeft)}</b></div>
+    <div class="stat">Хващания: <b>${catchCnt}</b> · Върнати от крадци: <b>${recoveredCnt}</b></div>
+    <div class="stat">Личен рекорд: <b>${fmtT(newRec?secs:prev)}</b></div>
+    <div>${badges.map(b=>`<span class="badge">${b}</span>`).join('')}</div>
     <button id="btn">Нова обиколка</button>`);
   document.getElementById('btn').onclick=startGame;
 }
@@ -571,6 +681,28 @@ function draw(now){
   ctx.drawImage(stat,0,0,WW,WH);
 
   const t=now/1000;
+  // night falls in the last minute
+  if(night>0.02){
+    const g1=ctx.createRadialGradient(P.x,P.y,130,P.x,P.y,340);
+    g1.addColorStop(0,'rgba(14,18,38,0)');
+    g1.addColorStop(1,`rgba(14,18,38,${(0.78*night).toFixed(3)})`);
+    ctx.fillStyle=g1; ctx.fillRect(0,0,WW,WH);
+    const fm=marks[5];
+    const g2=ctx.createRadialGradient(fm.x,fm.y,0,fm.x,fm.y,150);
+    g2.addColorStop(0,`rgba(120,190,255,${(0.35*night).toFixed(3)})`);
+    g2.addColorStop(1,'rgba(120,190,255,0)');
+    ctx.fillStyle=g2; ctx.fillRect(fm.x-150,fm.y-150,300,300);
+  }
+  // pickups
+  for(const p of pickups){
+    if(!p.on) continue;
+    const bp=reduceMotion?0:Math.sin(t*3+p.x)*3;
+    ctx.beginPath(); ctx.arc(p.x,p.y+bp,13,0,7);
+    ctx.fillStyle='rgba(255,253,249,.92)'; ctx.fill();
+    ctx.strokeStyle=p.type==='a'?'#7db0d8':'#b08948'; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.font='14px system-ui,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(p.type==='a'?'🥛':'🍶', p.x, p.y+bp+1);
+  }
   // landmarks
   for(let i=0;i<12;i++){
     const m=marks[i], d=Math.hypot(m.x-P.x,m.y-P.y);
@@ -605,7 +737,17 @@ function draw(now){
       ctx.lineTo(ex+2*Math.cos(f.dir+Math.PI/2)*s, ey+2*Math.sin(f.dir+Math.PI/2)*s-1);
       ctx.strokeStyle='#33261a'; ctx.lineWidth=1.6; ctx.stroke();
     }
-    if(f.chasing){
+    if(f.thiefI!=null){
+      const bb=reduceMotion?0:Math.sin(t*6)*2;
+      ctx.beginPath(); ctx.arc(f.x,f.y-27+bb,10,0,7);
+      ctx.fillStyle='#d5493a'; ctx.fill();
+      ctx.strokeStyle='#fffdf9'; ctx.lineWidth=2; ctx.stroke();
+      ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.font='800 11px system-ui,sans-serif';
+      ctx.fillText(String(f.thiefI+1), f.x, f.y-27+bb);
+      ctx.fillStyle='#c03f31'; ctx.font='900 12px system-ui,sans-serif';
+      ctx.fillText(Math.ceil(f.thiefT)+'с', f.x, f.y-45+bb);
+    }else if(f.chasing){
       ctx.fillStyle='#d5493a'; ctx.textAlign='center'; ctx.textBaseline='middle';
       ctx.font='900 16px system-ui,sans-serif';
       ctx.fillText('!', f.x, f.y-22-(reduceMotion?0:Math.abs(Math.sin(t*8))*3));
@@ -624,13 +766,16 @@ function draw(now){
     ctx.beginPath(); ctx.arc(P.x+Math.cos(P.dir)*7,P.y+Math.sin(P.dir)*7,3.2,0,7);
     ctx.fillStyle='#fffdf9'; ctx.fill();
   }
-  // compass to nearest
+  // compass: points at the thief while one is fleeing, otherwise at the nearest target
+  const thf=foes.find(f=>f.thiefI!=null);
   const nm=nearestMark();
-  if(nm.i>=0&&nm.d>120&&state==='play'){
-    const a=Math.atan2(marks[nm.i].y-P.y,marks[nm.i].x-P.x);
-    ctx.save(); ctx.translate(P.x+Math.cos(a)*44,P.y+Math.sin(a)*44); ctx.rotate(a);
+  let ca=null, cc='#d5493a';
+  if(thf&&state==='play'){ ca=Math.atan2(thf.y-P.y,thf.x-P.x); cc='#e6b83c'; }
+  else if(nm.i>=0&&nm.d>120&&state==='play'){ ca=Math.atan2(marks[nm.i].y-P.y,marks[nm.i].x-P.x); }
+  if(ca!=null){
+    ctx.save(); ctx.translate(P.x+Math.cos(ca)*44,P.y+Math.sin(ca)*44); ctx.rotate(ca);
     ctx.beginPath(); ctx.moveTo(10,0); ctx.lineTo(-6,-7); ctx.lineTo(-2,0); ctx.lineTo(-6,7); ctx.closePath();
-    ctx.fillStyle='#d5493a'; ctx.fill();
+    ctx.fillStyle=cc; ctx.fill();
     ctx.strokeStyle='#fffdf9'; ctx.lineWidth=1.5; ctx.stroke();
     ctx.restore();
   }
@@ -662,9 +807,10 @@ function drawMini(){
     mctx.fillStyle=found[i]?'#3f9d6d':'#d5493a'; mctx.fill();
   }
   for(const f of foes){
-    mctx.beginPath(); mctx.arc(f.x*sc,f.y*sc,2.6,0,7);
-    mctx.fillStyle='#e6b83c'; mctx.fill();
-    mctx.strokeStyle='#8a6d1c'; mctx.lineWidth=0.8; mctx.stroke();
+    const th=f.thiefI!=null;
+    mctx.beginPath(); mctx.arc(f.x*sc,f.y*sc,th?3.4:2.6,0,7);
+    mctx.fillStyle=th?'#d5493a':'#e6b83c'; mctx.fill();
+    mctx.strokeStyle=th?'#e6b83c':'#8a6d1c'; mctx.lineWidth=th?1.4:0.8; mctx.stroke();
   }
   mctx.beginPath(); mctx.arc(P.x*sc,P.y*sc,3.4,0,7);
   mctx.fillStyle='#2b6cb0'; mctx.fill();
@@ -678,14 +824,17 @@ function frame(now){
   if(state==='play'){
     move(dt);
     if(invuln>0) invuln-=dt;
+    if(speedT>0) speedT-=dt;
     updateFoes(dt);
+    updatePickups(dt);
+    if(tLeft<60&&!nightToasted){ nightToasted=true; toast('🌙 Свечерява се над Пловдив!'); }
     elapsed+=dt; tLeft-=dt;
     if(tLeft<=0){ tLeft=0; loseScreen(); }
     for(let i=0;i<12;i++){
       const dm=Math.hypot(marks[i].x-P.x,marks[i].y-P.y);
       if(i===lockIdx){ if(dm>60) lockIdx=-1; else continue; }
       if(!found[i]&&dm<34){
-        found[i]=true; foundCnt++; foundOrder.push(i); tLeft+=BONUS; openCard(i);
+        found[i]=true; foundCnt++; foundOrder.push(i); openCard(i);
       }
     }
   }
@@ -693,8 +842,17 @@ function frame(now){
   timeEl.textContent=`${mm}:${ss}`;
   timeChip.classList.toggle('low', tLeft<30);
   cntEl.textContent=`${foundCnt}/12`;
+  night+=((tLeft<60?1:0)-night)*Math.min(1,dt*1.5);
+  const th=foes.find(f=>f.thiefI!=null);
   const nm=nearestMark();
-  tgtEl.textContent = nm.i<0 ? 'Готово!' : `${nm.i+1}. ${marks[nm.i].n} · ${Math.round(nm.d)} м`;
+  tgtEl.textContent = th ? `⚠ Дръж крадеца! ${Math.ceil(th.thiefT)} сек`
+    : (nm.i<0 ? 'Готово!' : `${nm.i+1}. ${marks[nm.i].n} · ${Math.round(nm.d)} м`);
+  const bf=[];
+  if(speedT>0) bf.push(`🥛 ${Math.ceil(speedT)}с`);
+  if(shield) bf.push('🍶 щит');
+  const buffChip=document.getElementById('buff');
+  buffChip.style.display=bf.length?'flex':'none';
+  document.getElementById('buffVal').textContent=bf.join(' · ');
   draw(now);
   requestAnimationFrame(frame);
 }
