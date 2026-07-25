@@ -325,14 +325,25 @@ let foundOrder=[], invuln=0, lockIdx=-1;
 const BONUS=10, START_T=210;
 
 /* evil Sofia tourists */
-const SPAWNS=[[2060,420],[450,1000],[1660,1350],[900,170]];
-const CHASE_R=270, CATCH_R=23, CHASE_SP=204, WANDER_SP=88;
+function freeSpot(x0,y0){
+  if(!hitsBlock(x0,y0,13)&&!hitsRiver(x0,y0,13)) return [x0,y0];
+  for(let r=16;r<420;r+=16){
+    for(let a=0;a<14;a++){
+      const x=x0+Math.cos(a/14*6.283)*r, y=y0+Math.sin(a/14*6.283)*r;
+      if(x>16&&x<WW-16&&y>16&&y<WH-16&&!hitsBlock(x,y,13)&&!hitsRiver(x,y,13)) return [x,y];
+    }
+  }
+  return [1345,700];
+}
+const SPAWNS=[[2060,420],[450,1000],[1660,1350],[880,420]].map(s=>freeSpot(s[0],s[1]));
+const CHASE_R=320, CATCH_R=23, CHASE_SP=204, WANDER_SP=118;
 let foes=[];
 function activeFoes(){ return 2 + (foundCnt>=4?1:0) + (foundCnt>=8?1:0); }
 function farSpawn(){
-  let best=SPAWNS[0], bd=-1;
-  for(const s of SPAWNS){ const d=Math.hypot(s[0]-P.x,s[1]-P.y); if(d>bd){bd=d; best=s;} }
-  return best;
+  const sorted=[...SPAWNS].sort((a,b)=>
+    Math.hypot(b[0]-P.x,b[1]-P.y)-Math.hypot(a[0]-P.x,a[1]-P.y));
+  for(const s of sorted) if(!foes.some(f=>Math.hypot(f.x-s[0],f.y-s[1])<60)) return s;
+  return sorted[0];
 }
 function makeFoe(sp){ return {x:sp[0],y:sp[1],r:11,dir:0,tx:sp[0],ty:sp[1],retarget:0,chasing:false,lx:sp[0],ly:sp[1],stuck:0,unstick:0,ua:0}; }
 function updateFoes(dt){
@@ -347,11 +358,14 @@ function updateFoes(dt){
       f.retarget-=dt;
       const dt2=Math.hypot(f.tx-f.x,f.ty-f.y);
       if(f.retarget<=0||dt2<20){
+        const toP=Math.atan2(P.y-f.y,P.x-f.x);
         for(let k=0;k<12;k++){
-          const a=rnd()*7, d=120+rnd()*260, nx=f.x+Math.cos(a)*d, ny=f.y+Math.sin(a)*d;
+          // hunt: 60% of patrol legs head roughly toward the player
+          const a = rnd()<0.6 ? toP+(rnd()-0.5)*1.3 : rnd()*7;
+          const d=140+rnd()*260, nx=f.x+Math.cos(a)*d, ny=f.y+Math.sin(a)*d;
           if(nx>20&&nx<WW-20&&ny>20&&ny<WH-20&&!hitsBlock(nx,ny,f.r)&&!hitsRiver(nx,ny,f.r)){f.tx=nx;f.ty=ny;break;}
         }
-        f.retarget=2.5+rnd()*2.5;
+        f.retarget=2+rnd()*2;
       }
       ax=(f.tx-f.x)/(dt2||1); ay=(f.ty-f.y)/(dt2||1); sp=WANDER_SP;
     }
@@ -361,10 +375,10 @@ function updateFoes(dt){
     nx=Math.max(f.r,Math.min(WW-f.r,nx)); ny=Math.max(f.r,Math.min(WH-f.r,ny));
     if(!hitsBlock(nx,f.y,f.r)&&!hitsRiver(nx,f.y,f.r)) f.x=nx;
     if(!hitsBlock(f.x,ny,f.r)&&!hitsRiver(f.x,ny,f.r)) f.y=ny;
-    // unstick when cornered mid-chase
+    // unstick when cornered (chasing or wandering into a wall)
     f.stuck+=dt;
     if(f.stuck>0.9){
-      if(f.chasing && Math.hypot(f.x-f.lx,f.y-f.ly)<12){ f.unstick=0.7; f.ua=rnd()*7; }
+      if(Math.hypot(f.x-f.lx,f.y-f.ly)<12){ f.unstick=0.8; f.ua=rnd()*7; f.retarget=0; }
       f.lx=f.x; f.ly=f.y; f.stuck=0;
     }
     // caught!
