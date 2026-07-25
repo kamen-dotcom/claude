@@ -76,6 +76,14 @@ button:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
 }
 .stat{font-size:15px; margin-top:6px}
 .stat b{font-variant-numeric:tabular-nums}
+#toast{
+  position:fixed; top:64px; left:50%; transform:translateX(-50%) translateY(-8px);
+  background:#33393f; color:#fff; font-weight:700; font-size:14px;
+  padding:10px 18px; border-radius:9px; box-shadow:0 6px 18px rgba(0,0,0,.3);
+  opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:8;
+  max-width:88vw; text-align:center;
+}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
 @media (prefers-reduced-motion: no-preference){
   .panel{animation:pop .22s ease-out}
   @keyframes pop{from{transform:scale(.94); opacity:0} to{transform:scale(1); opacity:1}}
@@ -90,6 +98,7 @@ button:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
   <div class="chip" id="target"><span class="lbl">Следваща цел</span><span class="val small" id="tgtVal">—</span></div>
 </div>
 <canvas id="mini" width="172" height="122"></canvas>
+<div id="toast"></div>
 <div id="ov"><div class="panel" id="panel"></div></div>
 
 <script>
@@ -312,7 +321,74 @@ addEventListener('resize',resize); resize();
 
 const P={x:1345,y:800,r:11,dir:0};
 let state='start', tLeft=210, found=marks.map(()=>false), foundCnt=0, elapsed=0;
+let foundOrder=[], invuln=0, lockIdx=-1;
 const BONUS=10, START_T=210;
+
+/* evil Sofia tourists */
+const SPAWNS=[[2060,420],[450,1000],[1660,1350],[900,170]];
+const CHASE_R=270, CATCH_R=23, CHASE_SP=204, WANDER_SP=88;
+let foes=[];
+function activeFoes(){ return 2 + (foundCnt>=4?1:0) + (foundCnt>=8?1:0); }
+function farSpawn(){
+  let best=SPAWNS[0], bd=-1;
+  for(const s of SPAWNS){ const d=Math.hypot(s[0]-P.x,s[1]-P.y); if(d>bd){bd=d; best=s;} }
+  return best;
+}
+function makeFoe(sp){ return {x:sp[0],y:sp[1],r:11,dir:0,tx:sp[0],ty:sp[1],retarget:0,chasing:false,lx:sp[0],ly:sp[1],stuck:0,unstick:0,ua:0}; }
+function updateFoes(dt){
+  while(foes.length<activeFoes()) foes.push(makeFoe(farSpawn()));
+  for(const f of foes){
+    const dp=Math.hypot(P.x-f.x,P.y-f.y);
+    f.chasing = dp<CHASE_R && invuln<=0;
+    let ax,ay,sp;
+    if(f.unstick>0){ f.unstick-=dt; ax=Math.cos(f.ua); ay=Math.sin(f.ua); sp=CHASE_SP; }
+    else if(f.chasing){ ax=(P.x-f.x)/dp; ay=(P.y-f.y)/dp; sp=CHASE_SP; }
+    else{
+      f.retarget-=dt;
+      const dt2=Math.hypot(f.tx-f.x,f.ty-f.y);
+      if(f.retarget<=0||dt2<20){
+        for(let k=0;k<12;k++){
+          const a=rnd()*7, d=120+rnd()*260, nx=f.x+Math.cos(a)*d, ny=f.y+Math.sin(a)*d;
+          if(nx>20&&nx<WW-20&&ny>20&&ny<WH-20&&!hitsBlock(nx,ny,f.r)&&!hitsRiver(nx,ny,f.r)){f.tx=nx;f.ty=ny;break;}
+        }
+        f.retarget=2.5+rnd()*2.5;
+      }
+      ax=(f.tx-f.x)/(dt2||1); ay=(f.ty-f.y)/(dt2||1); sp=WANDER_SP;
+    }
+    f.dir=Math.atan2(ay,ax);
+    const step=sp*(inHill(f.x,f.y)?0.62:1)*dt;
+    let nx=f.x+ax*step, ny=f.y+ay*step;
+    nx=Math.max(f.r,Math.min(WW-f.r,nx)); ny=Math.max(f.r,Math.min(WH-f.r,ny));
+    if(!hitsBlock(nx,f.y,f.r)&&!hitsRiver(nx,f.y,f.r)) f.x=nx;
+    if(!hitsBlock(f.x,ny,f.r)&&!hitsRiver(f.x,ny,f.r)) f.y=ny;
+    // unstick when cornered mid-chase
+    f.stuck+=dt;
+    if(f.stuck>0.9){
+      if(f.chasing && Math.hypot(f.x-f.lx,f.y-f.ly)<12){ f.unstick=0.7; f.ua=rnd()*7; }
+      f.lx=f.x; f.ly=f.y; f.stuck=0;
+    }
+    // caught!
+    if(state==='play' && invuln<=0 && Math.hypot(P.x-f.x,P.y-f.y)<CATCH_R) caught(f);
+  }
+}
+let toastT=null;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastT); toastT=setTimeout(()=>el.classList.remove('show'),2600);
+}
+function caught(f){
+  sCaught(); invuln=2.5;
+  const sp=farSpawn(); f.x=sp[0]; f.y=sp[1]; f.tx=sp[0]; f.ty=sp[1]; f.chasing=false;
+  if(foundOrder.length){
+    const i=foundOrder.pop();
+    found[i]=false; foundCnt--; lockIdx=i;
+    toast(`😱 Хвана те зъл софиянец! Загуби „${marks[i].n}“ — намери я пак!`);
+  }else{
+    tLeft=Math.max(0,tLeft-15);
+    toast('😱 Хвана те зъл софиянец! –15 секунди');
+  }
+}
 
 const keys={};
 addEventListener('keydown',e=>{
@@ -357,6 +433,7 @@ function tone(f,t0,dur,type='sine',vol=0.18){
 const sCollect=()=>{tone(660,0,0.12,'triangle');tone(880,0.10,0.22,'triangle');};
 const sWin=()=>{[523,659,784,1047].forEach((f,i)=>tone(f,i*0.13,0.3,'triangle',0.2));};
 const sLose=()=>{tone(220,0,0.5,'sawtooth',0.1);tone(165,0.2,0.7,'sawtooth',0.1);};
+const sCaught=()=>{tone(330,0,0.1,'square',0.12);tone(247,0.09,0.12,'square',0.12);tone(185,0.19,0.25,'square',0.12);};
 
 /* ================= movement & collision ================= */
 function onBridge(x){ return bridges.some(b=>x>b.x1+6&&x<b.x2-6); }
@@ -409,12 +486,14 @@ function startScreen(){
     <div class="hint"><b>⌨</b> Движение със стрелките / WASD, или задръж и влачи с пръст.</div>
     <div class="hint"><b>⛰</b> По тепетата се върви по-бавно. Реката се минава само по мостовете.</div>
     <div class="hint"><b>⏱</b> Всяка намерена забележителност дава +${BONUS} секунди.</div>
+    <div class="hint"><b>😈</b> Пази се от злите софийски туристи (жълтите)! Хванат ли те, губиш последната си забележителност. Колкото повече събираш, толкова повече стават.</div>
     <button id="btn">Тръгвай! (интервал)</button>`);
   document.getElementById('btn').onclick=startGame;
 }
 function startGame(){
   audio();
   tLeft=START_T; found=marks.map(()=>false); foundCnt=0; elapsed=0;
+  foundOrder=[]; invuln=0; foes=[]; lockIdx=-1;
   P.x=1345; P.y=800;
   state='play'; hide();
 }
@@ -455,7 +534,7 @@ function loseScreen(){
     <div class="eyebrow">Времето изтече</div>
     <h2>Градът е по-голям, отколкото изглежда…</h2>
     <div class="rule"></div>
-    <p>Успя да намериш <b>${foundCnt} от 12</b> забележителности. Следвай червената стрелка около туриста — тя сочи най-близката цел.</p>
+    <p>Успя да намериш <b>${foundCnt} от 12</b> забележителности. Следвай червената стрелка около туриста — и гледай жълтите софиянци да не те докопат.</p>
     <button id="btn">Опитай пак</button>`);
   document.getElementById('btn').onclick=startGame;
 }
@@ -496,13 +575,41 @@ function draw(now){
     ctx.font='800 14px system-ui,sans-serif';
     ctx.fillText(found[i]?'✓':String(i+1), m.x, y-15.5);
   }
-  // player
-  ctx.beginPath(); ctx.ellipse(P.x,P.y+9,10,4,0,0,7); ctx.fillStyle='rgba(50,40,30,.25)'; ctx.fill();
-  ctx.beginPath(); ctx.arc(P.x,P.y,P.r,0,7);
-  ctx.fillStyle='#2b6cb0'; ctx.fill();
-  ctx.strokeStyle='#fffdf9'; ctx.lineWidth=3; ctx.stroke();
-  ctx.beginPath(); ctx.arc(P.x+Math.cos(P.dir)*7,P.y+Math.sin(P.dir)*7,3.2,0,7);
-  ctx.fillStyle='#fffdf9'; ctx.fill();
+  // evil Sofia tourists
+  for(const f of foes){
+    ctx.beginPath(); ctx.ellipse(f.x,f.y+9,10,4,0,0,7); ctx.fillStyle='rgba(50,40,30,.25)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(f.x,f.y,f.r,0,7);
+    ctx.fillStyle='#e6b83c'; ctx.fill();
+    ctx.strokeStyle='#8a6d1c'; ctx.lineWidth=2.5; ctx.stroke();
+    // angry face turned toward heading
+    const fx=Math.cos(f.dir)*3.5, fy=Math.sin(f.dir)*3.5;
+    for(const s of [-1,1]){
+      const ex=f.x+fx+s*3.6*Math.cos(f.dir+Math.PI/2), ey=f.y+fy+s*3.6*Math.sin(f.dir+Math.PI/2);
+      ctx.beginPath(); ctx.arc(ex,ey,1.9,0,7); ctx.fillStyle='#33261a'; ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(ex-3*Math.cos(f.dir+Math.PI/2)*s, ey-3*Math.sin(f.dir+Math.PI/2)*s-3);
+      ctx.lineTo(ex+2*Math.cos(f.dir+Math.PI/2)*s, ey+2*Math.sin(f.dir+Math.PI/2)*s-1);
+      ctx.strokeStyle='#33261a'; ctx.lineWidth=1.6; ctx.stroke();
+    }
+    if(f.chasing){
+      ctx.fillStyle='#d5493a'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.font='900 16px system-ui,sans-serif';
+      ctx.fillText('!', f.x, f.y-22-(reduceMotion?0:Math.abs(Math.sin(t*8))*3));
+    }else{
+      ctx.fillStyle='#8a6d1c'; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.font='800 8px system-ui,sans-serif';
+      ctx.fillText('СФ', f.x, f.y-16);
+    }
+  }
+  // player (blinks while invulnerable)
+  if(invuln<=0 || Math.floor(t*10)%2===0){
+    ctx.beginPath(); ctx.ellipse(P.x,P.y+9,10,4,0,0,7); ctx.fillStyle='rgba(50,40,30,.25)'; ctx.fill();
+    ctx.beginPath(); ctx.arc(P.x,P.y,P.r,0,7);
+    ctx.fillStyle='#2b6cb0'; ctx.fill();
+    ctx.strokeStyle='#fffdf9'; ctx.lineWidth=3; ctx.stroke();
+    ctx.beginPath(); ctx.arc(P.x+Math.cos(P.dir)*7,P.y+Math.sin(P.dir)*7,3.2,0,7);
+    ctx.fillStyle='#fffdf9'; ctx.fill();
+  }
   // compass to nearest
   const nm=nearestMark();
   if(nm.i>=0&&nm.d>120&&state==='play'){
@@ -540,6 +647,11 @@ function drawMini(){
     mctx.beginPath(); mctx.arc(marks[i].x*sc,marks[i].y*sc,2.6,0,7);
     mctx.fillStyle=found[i]?'#3f9d6d':'#d5493a'; mctx.fill();
   }
+  for(const f of foes){
+    mctx.beginPath(); mctx.arc(f.x*sc,f.y*sc,2.6,0,7);
+    mctx.fillStyle='#e6b83c'; mctx.fill();
+    mctx.strokeStyle='#8a6d1c'; mctx.lineWidth=0.8; mctx.stroke();
+  }
   mctx.beginPath(); mctx.arc(P.x*sc,P.y*sc,3.4,0,7);
   mctx.fillStyle='#2b6cb0'; mctx.fill();
   mctx.strokeStyle='#fff'; mctx.lineWidth=1.2; mctx.stroke();
@@ -551,11 +663,15 @@ function frame(now){
   const dt=Math.min(0.05,(now-last)/1000||0); last=now;
   if(state==='play'){
     move(dt);
+    if(invuln>0) invuln-=dt;
+    updateFoes(dt);
     elapsed+=dt; tLeft-=dt;
     if(tLeft<=0){ tLeft=0; loseScreen(); }
     for(let i=0;i<12;i++){
-      if(!found[i]&&Math.hypot(marks[i].x-P.x,marks[i].y-P.y)<34){
-        found[i]=true; foundCnt++; tLeft+=BONUS; openCard(i);
+      const dm=Math.hypot(marks[i].x-P.x,marks[i].y-P.y);
+      if(i===lockIdx){ if(dm>60) lockIdx=-1; else continue; }
+      if(!found[i]&&dm<34){
+        found[i]=true; foundCnt++; foundOrder.push(i); tLeft+=BONUS; openCard(i);
       }
     }
   }
