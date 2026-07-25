@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Пловдив: Игра по картата</title>
+<style>
+:root{
+  --paper:#f4f1ec; --block:#dcd5cc; --ink:#33393f; --muted:#82878d;
+  --red:#d5493a; --green:#3f9d6d; --river:#a3c6e4; --line:#c9c1b7; --card:#fffdf9;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{height:100%; overflow:hidden; overscroll-behavior:none}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  -webkit-user-select:none; user-select:none; touch-action:none;
+}
+#game{position:fixed; inset:0; touch-action:none; display:block}
+/* ---------- HUD ---------- */
+#hud{
+  position:fixed; top:10px; left:10px; right:10px; display:flex; gap:8px;
+  align-items:flex-start; pointer-events:none; flex-wrap:wrap; z-index:5;
+}
+.chip{
+  background:var(--card); border:1px solid var(--line); border-radius:8px;
+  padding:6px 12px; box-shadow:0 2px 6px rgba(60,50,40,.12);
+  display:flex; flex-direction:column; gap:1px; min-width:64px;
+}
+.chip .lbl{font-size:9px; font-weight:700; letter-spacing:.14em; color:var(--muted); text-transform:uppercase}
+.chip .val{font-size:19px; font-weight:800; font-variant-numeric:tabular-nums; line-height:1.15}
+.chip .val.small{font-size:14px; font-weight:700}
+#time.low .val{color:var(--red)}
+#target .val{white-space:nowrap; max-width:56vw; overflow:hidden; text-overflow:ellipsis}
+#mini{
+  position:fixed; right:10px; bottom:10px; z-index:5;
+  border:2px solid var(--ink); border-radius:4px; background:var(--paper);
+  box-shadow:0 3px 10px rgba(60,50,40,.25); pointer-events:none;
+}
+/* ---------- overlays ---------- */
+#ov{
+  position:fixed; inset:0; z-index:10; display:flex; align-items:center; justify-content:center;
+  background:rgba(51,57,63,.45); backdrop-filter:blur(2px); padding:18px;
+}
+#ov.hide{display:none}
+.panel{
+  background:var(--card); border:1px solid var(--line); border-radius:14px;
+  max-width:470px; width:100%; padding:26px 26px 22px;
+  box-shadow:0 14px 44px rgba(40,32,24,.35);
+  max-height:88vh; overflow-y:auto;
+}
+.eyebrow{font-size:10px; font-weight:800; letter-spacing:.22em; color:var(--red); text-transform:uppercase; margin-bottom:8px}
+h1{font-size:44px; font-weight:900; letter-spacing:.02em; line-height:1; text-wrap:balance}
+h1 .pin{color:var(--red)}
+h2{font-size:24px; font-weight:800; line-height:1.15; text-wrap:balance}
+.sub{color:var(--muted); font-size:13px; font-weight:600; margin-top:3px}
+.rule{height:1px; background:var(--line); margin:14px 0}
+.panel p{font-size:14.5px; line-height:1.55}
+.hint{display:flex; gap:10px; align-items:baseline; font-size:13.5px; line-height:1.45; margin-top:8px}
+.hint b{flex:none; color:var(--red); font-weight:800}
+button{
+  margin-top:18px; width:100%; padding:13px; border:none; border-radius:9px;
+  background:var(--red); color:#fff; font-size:16px; font-weight:800; letter-spacing:.05em;
+  cursor:pointer; font-family:inherit;
+}
+button:hover{background:#c03f31}
+button:focus-visible{outline:3px solid var(--ink); outline-offset:2px}
+.numrow{display:flex; gap:12px; align-items:center; margin-bottom:10px}
+.num{
+  flex:none; width:38px; height:38px; border-radius:50%; background:var(--red); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:17px;
+}
+.bonus{
+  display:inline-block; margin-top:12px; padding:4px 10px; border-radius:20px;
+  background:#e8f4ec; color:var(--green); font-weight:800; font-size:13px;
+}
+.stat{font-size:15px; margin-top:6px}
+.stat b{font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion: no-preference){
+  .panel{animation:pop .22s ease-out}
+  @keyframes pop{from{transform:scale(.94); opacity:0} to{transform:scale(1); opacity:1}}
+}
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div id="hud">
+  <div class="chip" id="time"><span class="lbl">Време</span><span class="val" id="timeVal">3:30</span></div>
+  <div class="chip"><span class="lbl">Обекти</span><span class="val" id="cntVal">0/12</span></div>
+  <div class="chip" id="target"><span class="lbl">Следваща цел</span><span class="val small" id="tgtVal">—</span></div>
+</div>
+<canvas id="mini" width="172" height="122"></canvas>
+<div id="ov"><div class="panel" id="panel"></div></div>
+
+<script>
+'use strict';
+/* ================= world data ================= */
+const WW=2400, WH=1700;
+const rnd = (s=>()=>{ s+=0x6D2B79F5; let t=s; t=Math.imul(t^(t>>>15), t|1); t^=t+Math.imul(t^(t>>>7), t|61); return ((t^(t>>>14))>>>0)/4294967296; })(20260725>>>0);
+
+const riverC = x => 232 + 24*Math.sin(x*0.004+1.2) + 14*Math.sin(x*0.0013);
+const RHW = 52;
+const bridges = [
+  {x1:664, x2:736, name:''},
+  {x1:1192,x2:1268,name:'Пешеходен мост', covered:true},
+  {x1:1722,x2:1798,name:''}
+];
+
+const roads = [
+  {pts:[[0,315],[2400,308]], w:46},
+  {pts:[[0,545],[1150,540],[1750,520],[2400,515]], w:40},
+  {pts:[[1760,300],[1610,900],[1585,1450],[1570,1700]], w:48, name:'БУЛ. ЦАР БОРИС III ОБЕДИНИТЕЛ'},
+  {pts:[[1390,468],[1340,700],[1300,960]], w:34, name:'ГЛАВНАТА', ped:true},
+  {pts:[[700,300],[700,1700]], w:40},
+  {pts:[[380,300],[380,1520]], w:36},
+  {pts:[[0,1300],[2400,1290]], w:46},
+  {pts:[[0,880],[950,880]], w:34},
+  {pts:[[1610,1130],[2400,1235]], w:36},
+  {pts:[[860,1492],[1960,1488]], w:38},
+  {pts:[[1000,300],[1010,835]], w:34},
+  {pts:[[2010,300],[2060,1130]], w:36},
+  {pts:[[550,120],[2110,118]], w:40},
+  {pts:[[700,60],[700,330]], w:40},
+  {pts:[[1230,60],[1230,330]], w:40},
+  {pts:[[1760,60],[1760,330]], w:40},
+];
+
+const greens = [
+  {cx:1010,cy:980, rx:165,ry:132, park:true,  label:'ЦАР-СИМЕОНОВА ГРАДИНА'},
+  {cx:790, cy:640, rx:132,ry:112, hill:true,  label:'БУНАРДЖИКА'},
+  {cx:1150,cy:702, rx:92, ry:86,  hill:true,  label:'САХАТ ТЕПЕ'},
+  {cx:1660,cy:660, rx:155,ry:150, hill:true, old:true, label:'СТАРИНЕН ПЛОВДИВ'},
+  {cx:600, cy:1180,rx:185,ry:152, hill:true,  label:'МЛАДЕЖКИ ХЪЛМ'},
+  {cx:1520,cy:362, rx:72, ry:42,  park:true},
+  {cx:330, cy:430, rx:110,ry:70,  park:true},
+];
+
+const marks = [
+  {x:1680,y:602, n:'Небет тепе',        en:'Nebet Tepe',            f:'Тук е започнал Пловдив — селище отпреди близо 8000 години. Смята се за един от най-старите постоянно обитавани градове в Европа.'},
+  {x:1615,y:772, n:'Античен театър',    en:'Ancient Roman Theatre', f:'Римският театър от II век побира около 5000 зрители и до днес е действаща сцена за опери и концерти под открито небе.'},
+  {x:1330,y:497, n:'Римски стадион',    en:'Roman Stadium',         f:'Стадионът от II век е събирал до 30 000 зрители. Днес северният му завой се вижда под площад Джумая.'},
+  {x:1372,y:588, n:'Джумая джамия',     en:'Dzhumaya Mosque',       f:'Една от най-старите османски джамии на Балканите, издигната през XIV–XV век в самото сърце на града.'},
+  {x:1472,y:462, n:'Капана',            en:'Kapana District',       f:'„Капанът“ — кварталът на занаятите: лабиринт от улички с галерии, ателиета и кафенета. Хванеш ли се — не излизаш.'},
+  {x:1012,y:988, n:'Пеещите фонтани',   en:'Singing Fountains',     f:'Езерото в Цар-Симеоновата градина, където вечер фонтаните „пеят“ със светлинно-музикално шоу.'},
+  {x:792, y:648, n:'Паметникът Альоша', en:'Alyosha Monument',      f:'11-метровият паметник на върха на Бунарджика (Хълма на освободителите) — една от най-хубавите панорами към града.'},
+  {x:1152,y:706, n:'Часовниковата кула',en:'Sahat Tepe Clock Tower',f:'Кулата на Сахат тепе (Данов хълм) е от XVI век — сред най-старите действащи часовникови кули в Източна Европа.'},
+  {x:1230,y:232, n:'Пешеходният мост',  en:'Covered Bridge',        f:'Покритият пешеходен мост над Марица свързва центъра със северния бряг още от възрожденско време.'},
+  {x:1820,y:118, n:'Международен панаир',en:'International Fair',   f:'Пловдивският панаир води началото си от Първото българско изложение през 1892 г. — най-старият на Балканите.'},
+  {x:1245,y:1568,n:'Централна гара',    en:'Central Station',       f:'Гарата е открита през 1873 г. по линията на барон Хирш — една от първите железници по българските земи.'},
+  {x:602, y:1188,n:'Джендем тепе',      en:'Dzhendem Tepe',         f:'Младежкият хълм е най-високото от пловдивските тепета — оттук се вижда целият град чак до Родопите.'},
+];
+
+const labels = [
+  {x:1470,y:432, t:'КАПАНА', s:15},
+  {x:1660,y:548, t:'СТАРИНЕН ПЛОВДИВ', s:16},
+  {x:1195,y:862, t:'ЦЕНТЪР', s:17},
+  {x:1010,y:1085,t:'ЦАР-СИМЕОНОВА ГРАДИНА', s:12},
+  {x:790, y:548, t:'БУНАРДЖИКА', s:13},
+  {x:1150,y:648, t:'САХАТ ТЕПЕ', s:11},
+  {x:600, y:1068,t:'МЛАДЕЖКИ ХЪЛМ', s:14},
+  {x:1245,y:1636,t:'ЦЕНТРАЛНА ЖП ГАРА', s:13},
+  {x:1820,y:78,  t:'МЕЖДУНАРОДЕН ПАНАИР', s:12},
+  {x:2130,y:760, t:'КВ. КАМЕНИЦА', s:12},
+  {x:340, y:760, t:'КВ. ЦАР СИМЕОН', s:12},
+];
+
+/* ================= block generation ================= */
+function segDist(px,py,ax,ay,bx,by){
+  const dx=bx-ax, dy=by-ay, l2=dx*dx+dy*dy;
+  let t=l2? ((px-ax)*dx+(py-ay)*dy)/l2 : 0; t=Math.max(0,Math.min(1,t));
+  const x=ax+t*dx, y=ay+t*dy; return Math.hypot(px-x,py-y);
+}
+function rectSamples(r){
+  const out=[];
+  for(let i=0;i<=4;i++) for(let j=0;j<=4;j++) out.push([r.x+r.w*i/4, r.y+r.h*j/4]);
+  return out;
+}
+const blocks=[];
+(function genBlocks(){
+  const cw=108, ch=86, st=30;
+  for(let gy=0; gy<Math.floor(WH/ch); gy++){
+    for(let gx=0; gx<Math.floor(WW/cw); gx++){
+      const jx=(rnd()-0.5)*8, jy=(rnd()-0.5)*6;
+      const r={x:gx*cw+st/2+jx, y:gy*ch+st/2+jy, w:cw-st+(rnd()-0.5)*10, h:ch-st+(rnd()-0.5)*8};
+      const pts=rectSamples(r);
+      // river
+      let bad=false;
+      for(const [x,y] of pts){ const c=riverC(x); if(y>c-RHW-22 && y<c+RHW+22){bad=true;break;} }
+      if(bad) continue;
+      // greens
+      for(const g of greens){ for(const [x,y] of pts){
+        const d=((x-g.cx)/(g.rx+14))**2+((y-g.cy)/(g.ry+14))**2;
+        if(d<1){bad=true;break;} } if(bad)break; }
+      if(bad) continue;
+      // roads
+      for(const rd of roads){ for(let i=0;i<rd.pts.length-1;i++){
+        const [ax,ay]=rd.pts[i], [bx,by]=rd.pts[i+1];
+        for(const [x,y] of pts){ if(segDist(x,y,ax,ay,bx,by)<rd.w/2+10){bad=true;break;} }
+        if(bad)break; } if(bad)break; }
+      if(bad) continue;
+      // landmark plazas
+      for(const m of marks){ const cx=Math.max(r.x,Math.min(m.x,r.x+r.w)), cy=Math.max(r.y,Math.min(m.y,r.y+r.h));
+        if(Math.hypot(m.x-cx,m.y-cy)<62){bad=true;break;} }
+      if(bad) continue;
+      // rail yard
+      if(r.y+r.h>1555 && r.y<1665 && r.x+r.w>850 && r.x<2110) continue;
+      if(rnd()<0.06) continue; // random plazas
+      blocks.push(r);
+    }
+  }
+})();
+
+/* ================= static map layer ================= */
+const S=1.5;
+const stat=document.createElement('canvas');
+stat.width=WW*S; stat.height=WH*S;
+(function paint(){
+  const c=stat.getContext('2d'); c.scale(S,S);
+  c.fillStyle='#f4f1ec'; c.fillRect(0,0,WW,WH);
+  // greens
+  for(const g of greens){
+    const base=g.old?'#c9cfa8':(g.hill?'#b7d29a':'#c5dcaa');
+    for(let i=3;i>=1;i--){
+      c.fillStyle=i===3?base:(i===2?'rgba(255,255,255,.10)':'rgba(120,150,90,.16)');
+      if(i===3){c.beginPath(); c.ellipse(g.cx,g.cy,g.rx,g.ry,0,0,7); c.fill();}
+      else{c.beginPath(); c.ellipse(g.cx,g.cy,g.rx*(i*0.31),g.ry*(i*0.31),0,0,7); c.fill();}
+    }
+    c.strokeStyle='rgba(110,140,85,.35)'; c.lineWidth=1.5;
+    c.beginPath(); c.ellipse(g.cx,g.cy,g.rx*0.66,g.ry*0.66,0,0,7); c.stroke();
+    // trees
+    const n=Math.floor(g.rx*g.ry/900);
+    for(let i=0;i<n;i++){
+      const a=rnd()*7, rr=Math.sqrt(rnd());
+      const x=g.cx+Math.cos(a)*g.rx*rr*0.92, y=g.cy+Math.sin(a)*g.ry*rr*0.92;
+      c.fillStyle=rnd()<0.5?'#8fb573':'#a3c489';
+      c.beginPath(); c.arc(x,y,2.5+rnd()*2.5,0,7); c.fill();
+    }
+  }
+  // blocks
+  for(const b of blocks){
+    const t=rnd();
+    c.fillStyle=t<0.33?'#ddd6cd':(t<0.66?'#d9d2c9':'#e0dad2');
+    c.beginPath(); c.roundRect(b.x,b.y,b.w,b.h,7); c.fill();
+    c.strokeStyle='rgba(120,110,98,.22)'; c.lineWidth=1; c.stroke();
+  }
+  // main roads over blocks
+  for(const rd of roads){
+    c.lineCap='round'; c.lineJoin='round';
+    c.strokeStyle='rgba(150,142,130,.5)'; c.lineWidth=rd.w+3;
+    c.beginPath(); c.moveTo(...rd.pts[0]); for(const p of rd.pts.slice(1)) c.lineTo(...p); c.stroke();
+    c.strokeStyle=rd.ped?'#efe6d6':'#fbfaf7'; c.lineWidth=rd.w;
+    c.beginPath(); c.moveTo(...rd.pts[0]); for(const p of rd.pts.slice(1)) c.lineTo(...p); c.stroke();
+  }
+  // rail yard
+  c.save(); c.strokeStyle='#b9b2a8'; c.lineWidth=2;
+  for(let i=0;i<5;i++){ c.beginPath(); c.moveTo(850,1585+i*14); c.lineTo(2110,1580+i*14); c.stroke(); }
+  c.restore();
+  // river
+  c.beginPath(); c.moveTo(0,riverC(0)-RHW);
+  for(let x=0;x<=WW;x+=24) c.lineTo(x,riverC(x)-RHW);
+  for(let x=WW;x>=0;x-=24) c.lineTo(x,riverC(x)+RHW);
+  c.closePath();
+  c.fillStyle='#a3c6e4'; c.fill();
+  c.strokeStyle='#8db3d6'; c.lineWidth=3; c.stroke();
+  c.strokeStyle='rgba(255,255,255,.4)'; c.lineWidth=8;
+  c.beginPath(); for(let x=0;x<=WW;x+=24){ const y=riverC(x); x===0?c.moveTo(x,y):c.lineTo(x,y);} c.stroke();
+  // bridges
+  for(const b of bridges){
+    const mx=(b.x1+b.x2)/2, top=riverC(mx)-RHW-10, bot=riverC(mx)+RHW+10;
+    c.fillStyle=b.covered?'#e5d9c4':'#eeeae3';
+    c.strokeStyle='#8a8377'; c.lineWidth=2;
+    c.beginPath(); c.roundRect(b.x1+8,top,(b.x2-b.x1)-16,bot-top,5); c.fill(); c.stroke();
+    if(b.covered){ c.strokeStyle='#b09a76'; c.lineWidth=2;
+      for(let y=top+10;y<bot-6;y+=12){ c.beginPath(); c.moveTo(b.x1+12,y); c.lineTo(b.x2-12,y); c.stroke(); } }
+  }
+  // labels
+  c.textAlign='center'; c.textBaseline='middle';
+  try{c.letterSpacing='3px';}catch(e){}
+  for(const L of labels){
+    c.font=`700 ${L.s}px system-ui,sans-serif`;
+    c.fillStyle='rgba(255,255,255,.65)';
+    c.fillText(L.t, L.x, L.y+1);
+    c.fillStyle='#8b8f7a';
+    c.fillText(L.t, L.x, L.y);
+  }
+  c.save(); c.translate(430,riverC(430)); c.rotate(Math.atan2(riverC(470)-riverC(390),80));
+  c.font='italic 700 20px Georgia,serif'; c.fillStyle='rgba(255,255,255,.9)';
+  c.fillText('река Марица',0,0); c.restore();
+  c.save(); c.translate(1668,860); c.rotate(1.30);
+  c.font='700 12px system-ui,sans-serif'; c.fillStyle='#9a948a';
+  c.fillText('БУЛ. ЦАР БОРИС III ОБЕДИНИТЕЛ',0,0); c.restore();
+  try{c.letterSpacing='0px';}catch(e){}
+})();
+
+/* ================= game state ================= */
+const cv=document.getElementById('game'), ctx=cv.getContext('2d');
+const mini=document.getElementById('mini'), mctx=mini.getContext('2d');
+const ov=document.getElementById('ov'), panel=document.getElementById('panel');
+const timeEl=document.getElementById('timeVal'), timeChip=document.getElementById('time');
+const cntEl=document.getElementById('cntVal'), tgtEl=document.getElementById('tgtVal');
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+let W=0,H=0,dpr=1,zoom=1;
+function resize(){
+  dpr=Math.min(devicePixelRatio||1,2);
+  W=innerWidth; H=innerHeight;
+  cv.width=W*dpr; cv.height=H*dpr;
+  cv.style.width=W+'px'; cv.style.height=H+'px';
+  zoom=Math.max(0.68, Math.min(1.25, Math.min(W/950, H/720)));
+}
+addEventListener('resize',resize); resize();
+
+const P={x:1345,y:800,r:11,dir:0};
+let state='start', tLeft=210, found=marks.map(()=>false), foundCnt=0, elapsed=0;
+const BONUS=10, START_T=210;
+
+const keys={};
+addEventListener('keydown',e=>{
+  keys[e.key.toLowerCase()]=true;
+  if((e.key===' '||e.key==='Enter')){
+    if(state==='card') closeCard();
+    else if(state!=='play') startGame();
+    e.preventDefault();
+  }
+});
+addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
+
+/* joystick */
+let joy=null;
+cv.addEventListener('pointerdown',e=>{
+  if(state!=='play') return;
+  audio();
+  joy={id:e.pointerId, x0:e.clientX, y0:e.clientY, dx:0, dy:0};
+});
+addEventListener('pointermove',e=>{
+  if(!joy||e.pointerId!==joy.id) return;
+  let dx=e.clientX-joy.x0, dy=e.clientY-joy.y0;
+  const d=Math.hypot(dx,dy); if(d>52){dx*=52/d; dy*=52/d;}
+  joy.dx=dx; joy.dy=dy;
+});
+const endJoy=e=>{ if(joy&&e.pointerId===joy.id) joy=null; };
+addEventListener('pointerup',endJoy); addEventListener('pointercancel',endJoy);
+
+/* ================= audio ================= */
+let AC=null;
+function audio(){ if(!AC){ try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){} } if(AC&&AC.state==='suspended')AC.resume(); }
+function tone(f,t0,dur,type='sine',vol=0.18){
+  if(!AC) return;
+  const o=AC.createOscillator(), g=AC.createGain();
+  o.type=type; o.frequency.value=f;
+  g.gain.setValueAtTime(0.0001,AC.currentTime+t0);
+  g.gain.exponentialRampToValueAtTime(vol,AC.currentTime+t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,AC.currentTime+t0+dur);
+  o.connect(g).connect(AC.destination);
+  o.start(AC.currentTime+t0); o.stop(AC.currentTime+t0+dur+0.05);
+}
+const sCollect=()=>{tone(660,0,0.12,'triangle');tone(880,0.10,0.22,'triangle');};
+const sWin=()=>{[523,659,784,1047].forEach((f,i)=>tone(f,i*0.13,0.3,'triangle',0.2));};
+const sLose=()=>{tone(220,0,0.5,'sawtooth',0.1);tone(165,0.2,0.7,'sawtooth',0.1);};
+
+/* ================= movement & collision ================= */
+function onBridge(x){ return bridges.some(b=>x>b.x1+6&&x<b.x2-6); }
+function hitsRiver(x,y,r){
+  const c=riverC(x);
+  if(y+r>c-RHW-4 && y-r<c+RHW+4) return !onBridge(x);
+  return false;
+}
+function hitsBlock(x,y,r){
+  for(const b of blocks){
+    const cx=Math.max(b.x,Math.min(x,b.x+b.w)), cy=Math.max(b.y,Math.min(y,b.y+b.h));
+    if((x-cx)**2+(y-cy)**2 < r*r) return true;
+  }
+  return false;
+}
+function inHill(x,y){
+  for(const g of greens) if(g.hill && ((x-g.cx)/g.rx)**2+((y-g.cy)/g.ry)**2<1) return true;
+  return false;
+}
+function move(dt){
+  let dx=0,dy=0;
+  if(keys['arrowleft']||keys['a']||keys['ф'])dx-=1;
+  if(keys['arrowright']||keys['d']||keys['в'])dx+=1;
+  if(keys['arrowup']||keys['w']||keys['у'])dy-=1;
+  if(keys['arrowdown']||keys['s']||keys['я'])dy+=1;
+  if(joy&&(joy.dx||joy.dy)){ dx=joy.dx/52; dy=joy.dy/52; }
+  const l=Math.hypot(dx,dy);
+  if(l<0.01) return;
+  if(l>1){dx/=l; dy/=l;}
+  P.dir=Math.atan2(dy,dx);
+  let sp=235*(inHill(P.x,P.y)?0.62:1)*dt;
+  let nx=P.x+dx*sp, ny=P.y+dy*sp;
+  nx=Math.max(P.r,Math.min(WW-P.r,nx)); ny=Math.max(P.r,Math.min(WH-P.r,ny));
+  if(!hitsBlock(nx,P.y,P.r)&&!hitsRiver(nx,P.y,P.r)) P.x=nx;
+  if(!hitsBlock(P.x,ny,P.r)&&!hitsRiver(P.x,ny,P.r)) P.y=ny;
+}
+
+/* ================= UI panels ================= */
+function show(html){ panel.innerHTML=html; ov.classList.remove('hide'); }
+function hide(){ ov.classList.add('hide'); }
+
+function startScreen(){
+  state='start';
+  show(`
+    <div class="eyebrow">Игра по туристическата карта</div>
+    <h1>ПЛ<span class="pin">О</span>ВДИВ</h1>
+    <div class="sub">Градът на тепетата · Древен и вечен</div>
+    <div class="rule"></div>
+    <p>Ти си турист с карта в ръка. Обиколи стилизирания център на Пловдив и намери всичките <b>12 забележителности</b>, преди времето да изтече.</p>
+    <div class="hint"><b>⌨</b> Движение със стрелките / WASD, или задръж и влачи с пръст.</div>
+    <div class="hint"><b>⛰</b> По тепетата се върви по-бавно. Реката се минава само по мостовете.</div>
+    <div class="hint"><b>⏱</b> Всяка намерена забележителност дава +${BONUS} секунди.</div>
+    <button id="btn">Тръгвай! (интервал)</button>`);
+  document.getElementById('btn').onclick=startGame;
+}
+function startGame(){
+  audio();
+  tLeft=START_T; found=marks.map(()=>false); foundCnt=0; elapsed=0;
+  P.x=1345; P.y=800;
+  state='play'; hide();
+}
+let cardIdx=-1;
+function openCard(i){
+  state='card'; cardIdx=i; sCollect();
+  const m=marks[i];
+  show(`
+    <div class="numrow"><div class="num">${i+1}</div>
+      <div><h2>${m.n}</h2><div class="sub">${m.en}</div></div></div>
+    <p>${m.f}</p>
+    <span class="bonus">+${BONUS} сек · ${foundCnt}/12 намерени</span>
+    <button id="btn">Продължи (интервал)</button>`);
+  document.getElementById('btn').onclick=closeCard;
+}
+function closeCard(){
+  if(state!=='card') return;
+  state='play'; hide();
+  if(foundCnt===12) winScreen();
+}
+function winScreen(){
+  state='win'; sWin();
+  const mm=Math.floor(tLeft/60), ss=String(Math.floor(tLeft%60)).padStart(2,'0');
+  const tot=Math.floor(elapsed);
+  show(`
+    <div class="eyebrow">Браво!</div>
+    <h2>Обиколи целия град 🎉</h2>
+    <div class="rule"></div>
+    <p>Намери всичките 12 забележителности от картата на Пловдив.</p>
+    <div class="stat">Оставащо време: <b>${mm}:${ss}</b></div>
+    <div class="stat">Обиколка за: <b>${Math.floor(tot/60)}:${String(tot%60).padStart(2,'0')} мин</b></div>
+    <button id="btn">Нова обиколка</button>`);
+  document.getElementById('btn').onclick=startGame;
+}
+function loseScreen(){
+  state='lose'; sLose();
+  show(`
+    <div class="eyebrow">Времето изтече</div>
+    <h2>Градът е по-голям, отколкото изглежда…</h2>
+    <div class="rule"></div>
+    <p>Успя да намериш <b>${foundCnt} от 12</b> забележителности. Следвай червената стрелка около туриста — тя сочи най-близката цел.</p>
+    <button id="btn">Опитай пак</button>`);
+  document.getElementById('btn').onclick=startGame;
+}
+
+/* ================= render ================= */
+function nearestMark(){
+  let bi=-1,bd=1e9;
+  for(let i=0;i<12;i++){ if(found[i])continue;
+    const d=Math.hypot(marks[i].x-P.x,marks[i].y-P.y);
+    if(d<bd){bd=d;bi=i;} }
+  return {i:bi,d:bd};
+}
+function draw(now){
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  ctx.fillStyle='#e9e5df'; ctx.fillRect(0,0,W,H);
+  const camX=Math.max(W/(2*zoom),Math.min(WW-W/(2*zoom),P.x));
+  const camY=Math.max(H/(2*zoom),Math.min(WH-H/(2*zoom),P.y));
+  ctx.setTransform(dpr*zoom,0,0,dpr*zoom, dpr*(W/2-camX*zoom), dpr*(H/2-camY*zoom));
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+  ctx.drawImage(stat,0,0,WW,WH);
+
+  const t=now/1000;
+  // landmarks
+  for(let i=0;i<12;i++){
+    const m=marks[i], d=Math.hypot(m.x-P.x,m.y-P.y);
+    const bob=(!reduceMotion&&!found[i])?Math.sin(t*3+i)*2.5:0;
+    const y=m.y+bob;
+    if(!found[i]&&d<300&&!reduceMotion){
+      ctx.beginPath(); ctx.arc(m.x,m.y,26+8*Math.sin(t*4),0,7);
+      ctx.strokeStyle='rgba(213,73,58,.4)'; ctx.lineWidth=3; ctx.stroke();
+    }
+    ctx.beginPath(); ctx.moveTo(m.x,y+4); ctx.lineTo(m.x-7,y-8); ctx.lineTo(m.x+7,y-8); ctx.closePath();
+    ctx.fillStyle=found[i]?'#3f9d6d':'#d5493a'; ctx.fill();
+    ctx.beginPath(); ctx.arc(m.x,y-16,15,0,7);
+    ctx.fillStyle=found[i]?'#3f9d6d':'#d5493a'; ctx.fill();
+    ctx.strokeStyle='#fffdf9'; ctx.lineWidth=2.5; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.font='800 14px system-ui,sans-serif';
+    ctx.fillText(found[i]?'✓':String(i+1), m.x, y-15.5);
+  }
+  // player
+  ctx.beginPath(); ctx.ellipse(P.x,P.y+9,10,4,0,0,7); ctx.fillStyle='rgba(50,40,30,.25)'; ctx.fill();
+  ctx.beginPath(); ctx.arc(P.x,P.y,P.r,0,7);
+  ctx.fillStyle='#2b6cb0'; ctx.fill();
+  ctx.strokeStyle='#fffdf9'; ctx.lineWidth=3; ctx.stroke();
+  ctx.beginPath(); ctx.arc(P.x+Math.cos(P.dir)*7,P.y+Math.sin(P.dir)*7,3.2,0,7);
+  ctx.fillStyle='#fffdf9'; ctx.fill();
+  // compass to nearest
+  const nm=nearestMark();
+  if(nm.i>=0&&nm.d>120&&state==='play'){
+    const a=Math.atan2(marks[nm.i].y-P.y,marks[nm.i].x-P.x);
+    ctx.save(); ctx.translate(P.x+Math.cos(a)*44,P.y+Math.sin(a)*44); ctx.rotate(a);
+    ctx.beginPath(); ctx.moveTo(10,0); ctx.lineTo(-6,-7); ctx.lineTo(-2,0); ctx.lineTo(-6,7); ctx.closePath();
+    ctx.fillStyle='#d5493a'; ctx.fill();
+    ctx.strokeStyle='#fffdf9'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.restore();
+  }
+  // joystick
+  if(joy){
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    ctx.beginPath(); ctx.arc(joy.x0,joy.y0,52,0,7);
+    ctx.fillStyle='rgba(51,57,63,.10)'; ctx.fill();
+    ctx.strokeStyle='rgba(51,57,63,.30)'; ctx.lineWidth=2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(joy.x0+joy.dx,joy.y0+joy.dy,22,0,7);
+    ctx.fillStyle='rgba(43,108,176,.85)'; ctx.fill();
+  }
+  drawMini();
+}
+function drawMini(){
+  const sc=mini.width/WW;
+  mctx.clearRect(0,0,mini.width,mini.height);
+  mctx.fillStyle='#f4f1ec'; mctx.fillRect(0,0,mini.width,mini.height);
+  for(const g of greens){
+    mctx.fillStyle=g.hill?'#b7d29a':'#c5dcaa';
+    mctx.beginPath(); mctx.ellipse(g.cx*sc,g.cy*sc,g.rx*sc,g.ry*sc,0,0,7); mctx.fill();
+  }
+  mctx.strokeStyle='#a3c6e4'; mctx.lineWidth=7;
+  mctx.beginPath();
+  for(let x=0;x<=WW;x+=60){ const y=riverC(x); x===0?mctx.moveTo(x*sc,y*sc):mctx.lineTo(x*sc,y*sc); }
+  mctx.stroke();
+  for(let i=0;i<12;i++){
+    mctx.beginPath(); mctx.arc(marks[i].x*sc,marks[i].y*sc,2.6,0,7);
+    mctx.fillStyle=found[i]?'#3f9d6d':'#d5493a'; mctx.fill();
+  }
+  mctx.beginPath(); mctx.arc(P.x*sc,P.y*sc,3.4,0,7);
+  mctx.fillStyle='#2b6cb0'; mctx.fill();
+  mctx.strokeStyle='#fff'; mctx.lineWidth=1.2; mctx.stroke();
+}
+
+/* ================= main loop ================= */
+let last=0;
+function frame(now){
+  const dt=Math.min(0.05,(now-last)/1000||0); last=now;
+  if(state==='play'){
+    move(dt);
+    elapsed+=dt; tLeft-=dt;
+    if(tLeft<=0){ tLeft=0; loseScreen(); }
+    for(let i=0;i<12;i++){
+      if(!found[i]&&Math.hypot(marks[i].x-P.x,marks[i].y-P.y)<34){
+        found[i]=true; foundCnt++; tLeft+=BONUS; openCard(i);
+      }
+    }
+  }
+  const mm=Math.floor(tLeft/60), ss=String(Math.floor(tLeft%60)).padStart(2,'0');
+  timeEl.textContent=`${mm}:${ss}`;
+  timeChip.classList.toggle('low', tLeft<30);
+  cntEl.textContent=`${foundCnt}/12`;
+  const nm=nearestMark();
+  tgtEl.textContent = nm.i<0 ? 'Готово!' : `${nm.i+1}. ${marks[nm.i].n} · ${Math.round(nm.d)} м`;
+  draw(now);
+  requestAnimationFrame(frame);
+}
+startScreen();
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
