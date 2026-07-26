@@ -180,6 +180,8 @@ const marks = [
    q:'Кое е най-високото от пловдивските тепета?', o:['Небет тепе','Сахат тепе','Джендем тепе'], a:2},
 ];
 
+const ICONS=['🏰','🎭','🏟️','🕌','🎨','⛲','🗿','🕐','🌉','🎪','🚂','⛰️'];
+
 const labels = [
   {x:1470,y:432, t:'КАПАНА', s:15},
   {x:1660,y:548, t:'СТАРИНЕН ПЛОВДИВ', s:16},
@@ -717,14 +719,23 @@ function draw(now){
       ctx.beginPath(); ctx.arc(m.x,m.y,26+8*Math.sin(t*4),0,7);
       ctx.strokeStyle='rgba(213,73,58,.4)'; ctx.lineWidth=3; ctx.stroke();
     }
-    ctx.beginPath(); ctx.moveTo(m.x,y+4); ctx.lineTo(m.x-7,y-8); ctx.lineTo(m.x+7,y-8); ctx.closePath();
-    ctx.fillStyle=found[i]?'#3f9d6d':'#d5493a'; ctx.fill();
-    ctx.beginPath(); ctx.arc(m.x,y-16,15,0,7);
-    ctx.fillStyle=found[i]?'#3f9d6d':'#d5493a'; ctx.fill();
-    ctx.strokeStyle='#fffdf9'; ctx.lineWidth=2.5; ctx.stroke();
-    ctx.fillStyle='#fff'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.font='800 14px system-ui,sans-serif';
-    ctx.fillText(found[i]?'✓':String(i+1), m.x, y-15.5);
+    const col=found[i]?'#3f9d6d':'#d5493a';
+    ctx.beginPath(); ctx.moveTo(m.x,y+5); ctx.lineTo(m.x-8,y-9); ctx.lineTo(m.x+8,y-9); ctx.closePath();
+    ctx.fillStyle=col; ctx.fill();
+    ctx.beginPath(); ctx.arc(m.x,y-18,16,0,7);
+    ctx.fillStyle='#fffdf9'; ctx.fill();
+    ctx.strokeStyle=col; ctx.lineWidth=3; ctx.stroke();
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.font='17px system-ui,sans-serif';
+    ctx.globalAlpha=found[i]?0.55:1;
+    ctx.fillText(ICONS[i], m.x, y-17);
+    ctx.globalAlpha=1;
+    // number badge
+    ctx.beginPath(); ctx.arc(m.x+12,y-28,7.5,0,7);
+    ctx.fillStyle=col; ctx.fill();
+    ctx.strokeStyle='#fffdf9'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='800 9px system-ui,sans-serif';
+    ctx.fillText(found[i]?'✓':String(i+1), m.x+12, y-27.5);
   }
   // evil Sofia tourists
   for(const f of foes){
@@ -851,7 +862,7 @@ function frame(now){
   const th=foes.find(f=>f.thiefI!=null);
   const nm=nearestMark();
   tgtEl.textContent = th ? `⚠ Дръж крадеца! ${Math.ceil(th.thiefT)} сек`
-    : (nm.i<0 ? 'Готово!' : `${nm.i+1}. ${marks[nm.i].n} · ${Math.round(nm.d)} м`);
+    : (nm.i<0 ? 'Готово!' : `${ICONS[nm.i]} ${nm.i+1}. ${marks[nm.i].n} · ${Math.round(nm.d)} м`);
   const bf=[];
   if(speedT>0) bf.push(`🥛 ${Math.ceil(speedT)}с`);
   if(shield) bf.push('🍶 щит');
