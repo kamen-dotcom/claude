@@ -1,4 +1,4 @@
-# klimaticiplovdiv.com
+# plovdivklimatici.com
 
 Статичен сайт за климатична техника в Пловдив — монтаж, сервиз, профилактика.
 

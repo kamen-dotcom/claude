@@ -1,12 +1,12 @@
-name: Deploy klimaticiplovdiv.com
+name: Deploy plovdivklimatici.com
 
 on:
   push:
     branches:
-      - claude/klimaticiplovdiv-website-4opbbj
+      - claude/plovdivklimatici-website-4opbbj
     paths:
-      - 'klimaticiplovdiv/**'
-      - '.github/workflows/deploy-klimaticiplovdiv.yml'
+      - 'plovdivklimatici/**'
+      - '.github/workflows/deploy-plovdivklimatici.yml'
   workflow_dispatch:
 
 jobs:
@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: klimaticiplovdiv
+        working-directory: plovdivklimatici
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -48,5 +48,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          workingDirectory: klimaticiplovdiv
+          workingDirectory: plovdivklimatici
           command: deploy

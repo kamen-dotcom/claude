@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "plovdivklimatici",
+  "compatibility_date": "2026-08-01",
+  "assets": {
+    "directory": "./public",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  "routes": [
+    { "pattern": "plovdivklimatici.com", "custom_domain": true },
+    { "pattern": "www.plovdivklimatici.com", "custom_domain": true }
+  ]
+}

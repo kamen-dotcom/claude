@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static site builder for klimaticiplovdiv.com.
+"""Static site builder for plovdivklimatici.com.
 
 Reads the unique body copy of each page from src/<slug>.html and wraps it in the
 shared head / header / footer so the markup stays in one place.
@@ -13,11 +13,11 @@ ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src")
 OUT = os.path.join(ROOT, "public")
 
-SITE = "https://klimaticiplovdiv.com"
+SITE = "https://plovdivklimatici.com"
 BRAND = "Климатици Пловдив"
 PHONE = "0898 228 193"
 PHONE_INTL = "+359898228193"
-EMAIL = "info@klimaticiplovdiv.com"
+EMAIL = "info@plovdivklimatici.com"
 
 PAGES = [
     # slug, nav label, title, meta description, h1, lead, hero image
