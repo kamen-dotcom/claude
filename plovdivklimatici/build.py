@@ -9,6 +9,8 @@ import os
 import re
 import shutil
 
+import locations
+
 ROOT = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(ROOT, "src")
 OUT = os.path.join(ROOT, "public")
@@ -70,10 +72,16 @@ PAGES = [
      "Разделяме производителите на три ясни класа, обясняваме за какво плащате в премиума и кога бюджетният модел е напълно достатъчен.",
      "marki-hero"),
     ("kvartali", "Квартали",
-     "Климатици по квартали в Пловдив и околните села",
-     "Монтаж и сервиз на климатици в Тракия, Кючук Париж, Каршияка, Смирненски, Центъра, Остромила, Прослав, Коматево и околните села. Излизане в рамките на деня.",
+     "Климатици по квартали в Пловдив — 20 квартала, отделна страница за всеки",
+     "Монтаж и сервиз на климатици по квартали в Пловдив ❄ Тракия, Кючук Париж, Каршияка, Центъра, Остромила, Прослав, Коматево и още. Изберете своя квартал.",
      "Работим във всички квартали на Пловдив",
-     "Всеки квартал има своите особености — панел, тухла, ново строителство или паметник на културата. Ето какво ни очаква на всеки адрес.",
+     "Всеки квартал има своите особености — панел, тухла, ново строителство или паметник на културата. Изберете квартала си и вижте какво ни очаква на вашия адрес.",
+     "kvartali-hero"),
+    ("sela", "Села",
+     "Климатици в селата около Пловдив — монтаж и сервиз на място",
+     "Климатици в селата край Пловдив ❄ Марково, Брестник, Първенец, Царацово, Войводиново, Крумово, Труд и още. Монтаж, отопление с климатик и термопомпи.",
+     "Климатици в селата около Пловдив",
+     "Излизаме извън града при предварителна заявка. В селата разговорът почти винаги включва и отоплението през зимата, а не само лятното охлаждане.",
      "kvartali-hero"),
     ("vaprosi", "Въпроси",
      "Често задавани въпроси за климатици — отговори от техник",
@@ -368,6 +376,116 @@ def breadcrumb_schema(slug, label):
     ]}
 
 
+def loc_breadcrumb_schema(entry):
+    hub, hub_label = locations.HUBS[entry["kind"]]
+    return {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Начало", "item": SITE + "/"},
+        {"@type": "ListItem", "position": 2, "name": hub_label, "item": f"{SITE}/{hub}/"},
+        {"@type": "ListItem", "position": 3, "name": entry["name"],
+         "item": SITE + locations.url(entry)},
+    ]}
+
+
+def loc_service_schema(entry):
+    """A Service offered in this specific place, tied to the one business @id."""
+    return {
+        "@context": "https://schema.org",
+        "@type": "Service",
+        "name": f"Монтаж и сервиз на климатици — {entry['name']}",
+        "serviceType": "Монтаж, сервиз и профилактика на климатици",
+        "provider": {"@id": SITE + "/#business"},
+        "areaServed": {
+            "@type": "Place",
+            "name": entry["name"],
+            "address": {"@type": "PostalAddress", "addressLocality":
+                        "Пловдив" if entry["kind"] == "kvartal" else entry["name"],
+                        "addressRegion": "Пловдив", "addressCountry": "BG"},
+        },
+        "url": SITE + locations.url(entry),
+    }
+
+
+def loc_hero(entry):
+    hub, hub_label = locations.HUBS[entry["kind"]]
+    h1 = f"Климатици {entry['name']} — монтаж, сервиз и профилактика"
+    return f"""<section class="hero"><div class="wrap"><div class="crumbs">
+<a href="/">Начало</a> › <a href="/{hub}/">{hub_label}</a> › <span>{entry['name']}</span>
+</div></div><div class="wrap">
+<h1>{h1}</h1>
+<p class="lead">Излизаме {entry['loc']} за монтаж на нови машини, ремонт на повредени и
+годишна профилактика. Кажете ни адреса и какво ви трябва — в повечето случаи ще получите
+цена още по телефона.</p>
+<div class="cta">
+<a class="btn" href="tel:{PHONE_INTL}">☎ Обадете се: {PHONE}</a>
+<a class="btn btn-ghost" href="/tseni/">Виж цените</a>
+</div>
+<div class="badges">
+<span class="badge">✔ Безплатен оглед</span>
+<span class="badge">✔ Гаранция на труда</span>
+<span class="badge">✔ Работим и в почивните дни</span>
+</div>
+<div class="hero-media"><img src="/img/{entry['img']}.webp" width="1200" height="675"
+ alt="Típична застройка {entry['loc']}, Пловдив" fetchpriority="high" decoding="async"></div>
+</div></section>
+""", h1
+
+
+def loc_nearby(entry):
+    """Link to the other locations of the same kind, for crawlability."""
+    hub, hub_label = locations.HUBS[entry["kind"]]
+    sibs = [e for e in locations.by_kind(entry["kind"]) if e["slug"] != entry["slug"]]
+    chips = "".join(
+        f'<a class="chip" href="{locations.url(e)}">{e["name"]}</a>' for e in sibs)
+    other_hub, other_label = locations.HUBS["selo" if entry["kind"] == "kvartal" else "kvartal"]
+    return f"""<section class="section alt"><div class="wrap">
+<h2>Обслужваме и съседните места</h2>
+<p class="sub">Ако вашият адрес е наблизо, но не е в списъка, просто се обадете — районът ни
+покрива целия град и близките населени места.</p>
+<div class="chips">{chips}</div>
+<p style="margin-top:14px"><a href="/{other_hub}/">Вижте и {other_label.lower()} →</a></p>
+</div></section>
+"""
+
+
+def build_locations(css):
+    for entry in locations.ALL:
+        body = open(os.path.join(SRC, "loc", entry["slug"] + ".html"),
+                    encoding="utf-8").read()
+        canonical = SITE + locations.url(entry)
+        html = HEAD_TPL.format(title=entry["title"], desc=entry["desc"], canonical=canonical,
+                               brand=BRAND, site=SITE, css=css, hero=entry["img"])
+        html += header_html(locations.HUBS[entry["kind"]][0])
+        hero, h1 = loc_hero(entry)
+        html += hero + body + loc_nearby(entry)
+        html += FOOTER_TPL.format(brand=BRAND, phone=PHONE, phone_intl=PHONE_INTL,
+                                  email=EMAIL, year=2026)
+        blobs = [local_business_schema(), loc_breadcrumb_schema(entry),
+                 loc_service_schema(entry)]
+        f = faq_schema(body)
+        if f:
+            blobs.append(f)
+        ld = "".join('<script type="application/ld+json">' +
+                     json.dumps(b, ensure_ascii=False) + "</script>" for b in blobs)
+        html = html.replace("</body></html>", ld + "</body></html>")
+
+        hub = locations.HUBS[entry["kind"]][0]
+        d = os.path.join(OUT, hub, entry["slug"])
+        os.makedirs(d, exist_ok=True)
+        open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(html)
+    print(f"built {len(locations.ALL)} location pages "
+          f"({len(locations.by_kind('kvartal'))} квартала, "
+          f"{len(locations.by_kind('selo'))} села)")
+
+
+def hub_grid(kind):
+    """Card grid injected into the /kvartali/ and /sela/ hub pages."""
+    cards = "".join(
+        f'<a class="card" href="{locations.url(e)}"><h3>{e["name"]}</h3>'
+        f'<p>Монтаж, сервиз и профилактика {e["loc"]} →</p></a>'
+        for e in locations.by_kind(kind))
+    return f'<div class="grid">{cards}</div>'
+
+
 def build():
     if os.path.exists(OUT):
         shutil.rmtree(OUT)
@@ -377,6 +495,10 @@ def build():
 
     for slug, label, title, desc, h1, lead, hero in PAGES:
         body = open(os.path.join(SRC, (slug or "index") + ".html"), encoding="utf-8").read()
+        if slug == "kvartali":
+            body = body.replace("{{GRID}}", hub_grid("kvartal"))
+        elif slug == "sela":
+            body = body.replace("{{GRID}}", hub_grid("selo"))
         canonical = SITE + url(slug)
         html = HEAD_TPL.format(title=title, desc=desc, canonical=canonical, brand=BRAND,
                                site=SITE, css=css, hero=hero)
@@ -406,6 +528,8 @@ def build():
         open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(html)
         print(f"built {url(slug):16s} {len(html):>7,} bytes")
 
+    build_locations(css)
+
     # favicon
     open(os.path.join(OUT, "favicon.svg"), "w", encoding="utf-8").write(
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'
@@ -424,6 +548,9 @@ def build():
         f"<url><loc>{SITE}{url(s)}</loc><changefreq>monthly</changefreq>"
         f"<priority>{'1.0' if s == '' else '0.8'}</priority></url>"
         for s, *_ in PAGES)
+    urls += "".join(
+        f"<url><loc>{SITE}{locations.url(e)}</loc><changefreq>monthly</changefreq>"
+        f"<priority>0.6</priority></url>" for e in locations.ALL)
     open(os.path.join(OUT, "sitemap.xml"), "w", encoding="utf-8").write(
         '<?xml version="1.0" encoding="UTF-8"?>'
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' + urls + "</urlset>")
