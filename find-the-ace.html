@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find the ACE</title>
+    <script src="https://cdn.jsdelivr.net/npm/motion@11/dist/motion.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a472a 0%, #0d2818 50%, #0a1f13 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .game-container {
+            text-align: center;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: #ffd700;
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .score-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .score-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .score-value {
+            color: #ffd700;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .cards-area {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px auto;
+            perspective: 1000px;
+            min-height: 280px;
+            align-items: center;
+        }
+
+        .card {
+            width: 160px;
+            height: 220px;
+            position: relative;
+            transform-style: preserve-3d;
+            cursor: pointer;
+            border-radius: 15px;
+        }
+
+        .card.disabled {
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #c41e3a 0%, #8b0000 100%);
+            border: 3px solid #ffd700;
+        }
+
+        .card-back::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 10px;
+        }
+
+        .card-back-pattern {
+            font-size: 4em;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, #ffffff 0%, #f0f0f0 100%);
+            transform: rotateY(180deg);
+            flex-direction: column;
+            border: 3px solid #333;
+        }
+
+        .card-value {
+            font-size: 5em;
+            font-weight: bold;
+        }
+
+        .card-suit {
+            font-size: 2em;
+            margin-top: -10px;
+        }
+
+        .card.ace .card-value,
+        .card.ace .card-suit,
+        .card.ace .card-corner {
+            color: #c41e3a;
+        }
+
+        .card:not(.ace) .card-value,
+        .card:not(.ace) .card-suit,
+        .card:not(.ace) .card-corner {
+            color: #333;
+        }
+
+        .card-corner {
+            position: absolute;
+            font-size: 1.2em;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .card-corner.top-left {
+            top: 10px;
+            left: 12px;
+        }
+
+        .card-corner.bottom-right {
+            bottom: 10px;
+            right: 12px;
+            transform: rotate(180deg);
+        }
+
+        .controls {
+            margin-top: 30px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+            color: #1a472a;
+            border: none;
+            padding: 15px 50px;
+            font-size: 1.2em;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .message {
+            font-size: 2em;
+            margin: 20px 0;
+            min-height: 50px;
+            font-weight: bold;
+        }
+
+        .message.win {
+            color: #4ade80;
+            text-shadow: 0 0 20px rgba(74, 222, 128, 0.5);
+        }
+
+        .message.lose {
+            color: #f87171;
+            text-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
+        }
+
+        .message.shuffle {
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .instructions {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            pointer-events: none;
+        }
+
+        .card.winner::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background: linear-gradient(45deg, #ffd700, #4ade80, #ffd700);
+            border-radius: 18px;
+            z-index: -1;
+            animation: glow 1s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { opacity: 0.5; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            h1 { font-size: 2em; }
+            .cards-area { gap: 15px; }
+            .card { width: 100px; height: 140px; }
+            .card-value { font-size: 3em; }
+            .card-suit { font-size: 1.5em; }
+            .card-back-pattern { font-size: 2.5em; }
+            .score-board { gap: 20px; }
+            .score-item { padding: 10px 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>Find the ACE</h1>
+        <p class="subtitle">Watch the shuffle, then pick the ACE of Hearts!</p>
+
+        <div class="score-board">
+            <div class="score-item">
+                <div class="score-label">Wins</div>
+                <div class="score-value" id="wins">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Losses</div>
+                <div class="score-value" id="losses">0</div>
+            </div>
+            <div class="score-item">
+                <div class="score-label">Streak</div>
+                <div class="score-value" id="streak">0</div>
+            </div>
+        </div>
+
+        <div class="message" id="message"></div>
+
+        <div class="cards-area" id="cardsArea"></div>
+
+        <div class="controls">
+            <button class="btn" id="playBtn">Start Game</button>
+        </div>
+
+        <p class="instructions">Click on a card to reveal it after the shuffle</p>
+    </div>
+
+    <script>
+        const { animate, spring } = Motion;
+
+        // Game state
+        const gameState = {
+            wins: 0,
+            losses: 0,
+            streak: 0,
+            isPlaying: false,
+            canPick: false
+        };
+
+        // Cards array - will be shuffled
+        let cards = [
+            { id: 'ace', value: 'A', suit: '♥', isAce: true },
+            { id: 'king', value: 'K', suit: '♠', isAce: false },
+            { id: 'queen', value: 'Q', suit: '♦', isAce: false }
+        ];
+
+        // Sleep helper
+        const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+        // Get gap between cards
+        function getGap() {
+            return window.innerWidth <= 600 ? 115 : 190;
+        }
+
+        // Create card HTML
+        function createCardElement(cardData, index) {
+            const card = document.createElement('div');
+            card.className = `card ${cardData.isAce ? 'ace' : ''} disabled`;
+            card.dataset.id = cardData.id;
+            card.dataset.index = index;
+            card.innerHTML = `
+                <div class="card-face card-back">
+                    <span class="card-back-pattern">?</span>
+                </div>
+                <div class="card-face card-front">
+                    <span class="card-corner top-left">${cardData.value}<br>${cardData.suit}</span>
+                    <span class="card-value">${cardData.value}</span>
+                    <span class="card-suit">${cardData.suit}</span>
+                    <span class="card-corner bottom-right">${cardData.value}<br>${cardData.suit}</span>
+                </div>
+            `;
+            return card;
+        }
+
+        // Render cards
+        function renderCards() {
+            const area = document.getElementById('cardsArea');
+            area.innerHTML = '';
+            cards.forEach((cardData, i) => {
+                const card = createCardElement(cardData, i);
+                card.addEventListener('click', () => pickCard(card, cardData));
+                area.appendChild(card);
+            });
+        }
+
+        // Swap two cards with animation
+        async function swapCardsAnimation(index1, index2) {
+            const cardEls = document.querySelectorAll('.card');
+            const card1 = cardEls[index1];
+            const card2 = cardEls[index2];
+            const gap = getGap();
+
+            // Calculate distance to move
+            const distance = (index2 - index1) * gap;
+
+            // Animate card1 moving right/left and up
+            const anim1 = animate(card1,
+                {
+                    x: [0, distance, distance],
+                    y: [0, -80, 0],
+                    zIndex: [1, 10, 1]
+                },
+                { duration: 0.4, easing: [0.4, 0, 0.2, 1] }
+            );
+
+            // Animate card2 moving left/right and down
+            const anim2 = animate(card2,
+                {
+                    x: [0, -distance, -distance],
+                    y: [0, 80, 0],
+                    zIndex: [1, 5, 1]
+                },
+                { duration: 0.4, easing: [0.4, 0, 0.2, 1] }
+            );
+
+            await Promise.all([anim1.finished, anim2.finished]);
+
+            // Reset transforms
+            card1.style.transform = '';
+            card2.style.transform = '';
+
+            // Swap in the array
+            [cards[index1], cards[index2]] = [cards[index2], cards[index1]];
+
+            // Re-render to reflect new order
+            renderCards();
+        }
+
+        // Shuffle cards
+        async function shuffleCards() {
+            const numShuffles = 5 + Math.floor(Math.random() * 4); // 5-8 shuffles
+
+            for (let i = 0; i < numShuffles; i++) {
+                const pattern = Math.floor(Math.random() * 3);
+
+                if (pattern === 0) {
+                    await swapCardsAnimation(0, 1);
+                } else if (pattern === 1) {
+                    await swapCardsAnimation(1, 2);
+                } else {
+                    await swapCardsAnimation(0, 2);
+                }
+
+                await sleep(100);
+            }
+        }
+
+        // Flip all cards up
+        async function flipAllUp() {
+            const cardEls = document.querySelectorAll('.card');
+            const promises = [];
+            cardEls.forEach((card, i) => {
+                promises.push(
+                    animate(card, { rotateY: 180 }, {
+                        duration: 0.5,
+                        delay: i * 0.1,
+                        easing: spring({ stiffness: 200, damping: 20 })
+                    }).finished
+                );
+            });
+            await Promise.all(promises);
+        }
+
+        // Flip all cards down
+        async function flipAllDown() {
+            const cardEls = document.querySelectorAll('.card');
+            const promises = [];
+            cardEls.forEach((card, i) => {
+                promises.push(
+                    animate(card, { rotateY: 0 }, {
+                        duration: 0.5,
+                        delay: i * 0.1,
+                        easing: spring({ stiffness: 200, damping: 20 })
+                    }).finished
+                );
+            });
+            await Promise.all(promises);
+        }
+
+        // Start game
+        async function startGame() {
+            if (gameState.isPlaying) return;
+
+            gameState.isPlaying = true;
+            gameState.canPick = false;
+
+            const btn = document.getElementById('playBtn');
+            btn.disabled = true;
+            btn.textContent = 'Shuffling...';
+
+            // Reset cards to original order
+            cards = [
+                { id: 'ace', value: 'A', suit: '♥', isAce: true },
+                { id: 'king', value: 'K', suit: '♠', isAce: false },
+                { id: 'queen', value: 'Q', suit: '♦', isAce: false }
+            ];
+
+            renderCards();
+            setMessage('Watch the cards...', 'shuffle');
+
+            await sleep(300);
+
+            // Show cards
+            await flipAllUp();
+            await sleep(1500);
+
+            // Hide cards
+            await flipAllDown();
+            await sleep(400);
+
+            setMessage('Shuffling...', 'shuffle');
+
+            // Shuffle
+            await shuffleCards();
+
+            setMessage('Pick the ACE!', 'shuffle');
+            gameState.canPick = true;
+
+            // Enable clicking
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('disabled'));
+            btn.textContent = 'Pick a Card';
+        }
+
+        // Pick a card
+        async function pickCard(cardEl, cardData) {
+            if (!gameState.canPick || !gameState.isPlaying) return;
+            gameState.canPick = false;
+
+            // Disable all cards
+            document.querySelectorAll('.card').forEach(c => c.classList.add('disabled'));
+
+            // Flip picked card
+            await animate(cardEl, { rotateY: 180, scale: 1.1 }, {
+                duration: 0.5,
+                easing: spring({ stiffness: 200, damping: 15 })
+            }).finished;
+
+            if (cardData.isAce) {
+                // WIN
+                gameState.wins++;
+                gameState.streak++;
+                cardEl.classList.add('winner');
+                setMessage('YOU WIN! 🎉', 'win');
+                updateScore();
+                createConfetti();
+
+                animate(cardEl, { y: [0, -30, 0, -15, 0] }, { duration: 0.6 });
+            } else {
+                // LOSE
+                gameState.losses++;
+                gameState.streak = 0;
+                setMessage('Wrong card! 😢', 'lose');
+                updateScore();
+
+                animate(cardEl, { x: [0, -15, 15, -15, 15, 0] }, { duration: 0.4 });
+
+                // Show ace
+                await sleep(500);
+                const aceEl = document.querySelector('.card.ace');
+                if (aceEl) {
+                    await animate(aceEl, { rotateY: 180, scale: 1.05 }, {
+                        duration: 0.5,
+                        easing: spring({ stiffness: 200, damping: 20 })
+                    }).finished;
+                }
+            }
+
+            // Reset for next game
+            await sleep(2000);
+            gameState.isPlaying = false;
+            const btn = document.getElementById('playBtn');
+            btn.disabled = false;
+            btn.textContent = 'Play Again';
+            setMessage('', '');
+        }
+
+        // Update score
+        function updateScore() {
+            document.getElementById('wins').textContent = gameState.wins;
+            document.getElementById('losses').textContent = gameState.losses;
+            document.getElementById('streak').textContent = gameState.streak;
+
+            animate('#wins', { scale: [1, 1.3, 1] }, { duration: 0.3 });
+            animate('#losses', { scale: [1, 1.3, 1] }, { duration: 0.3 });
+            animate('#streak', { scale: [1, 1.3, 1] }, { duration: 0.3 });
+        }
+
+        // Set message
+        function setMessage(text, type) {
+            const msg = document.getElementById('message');
+            msg.textContent = text;
+            msg.className = `message ${type}`;
+            if (text) {
+                animate(msg, { scale: [0.8, 1.1, 1], opacity: [0, 1] }, { duration: 0.4 });
+            }
+        }
+
+        // Confetti
+        function createConfetti() {
+            const colors = ['#ffd700', '#4ade80', '#ff6b6b', '#60a5fa', '#f472b6'];
+            for (let i = 0; i < 50; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = `${Math.random() * 100}vw`;
+                c.style.top = '-10px';
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                c.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                c.style.width = `${5 + Math.random() * 10}px`;
+                c.style.height = c.style.width;
+                document.body.appendChild(c);
+
+                animate(c, {
+                    y: [0, window.innerHeight + 50],
+                    x: [(Math.random() - 0.5) * 200],
+                    rotate: [0, Math.random() * 720],
+                    opacity: [1, 0]
+                }, { duration: 2 + Math.random(), easing: 'ease-out' })
+                .finished.then(() => c.remove());
+            }
+        }
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards();
+            document.getElementById('playBtn').addEventListener('click', startGame);
+            animate('.game-container', { opacity: [0, 1], y: [30, 0] }, { duration: 0.6 });
+        });
+    </script>
+</body>
+</html>
