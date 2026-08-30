@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фаро - Класическа Карточна Игра</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --felt-green: #1a4d1a;
+            --gold: #ffd700;
+            --copper: #cd7f32;
+        }
+
+        body {
+            background: linear-gradient(135deg, #2c1810 0%, #4a2c17 50%, #2c1810 100%);
+            min-height: 100vh;
+        }
+
+        .hero.is-dark {
+            background: transparent;
+        }
+
+        /* Betting Layout */
+        .betting-table {
+            background: var(--felt-green);
+            border: 4px solid #8b6914;
+            border-radius: 15px;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .bet-card {
+            width: 55px;
+            height: 78px;
+            background: #fff;
+            border-radius: 8px;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            border: 3px solid #ddd;
+            font-weight: bold;
+            margin: 4px;
+        }
+
+        .bet-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.4);
+        }
+
+        .bet-card.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .bet-card .rank {
+            font-size: 1.5em;
+            color: #000;
+        }
+
+        .bet-card .suit {
+            font-size: 1em;
+            color: #000;
+        }
+
+        .bet-chip {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            min-width: 26px;
+            height: 26px;
+            background: linear-gradient(135deg, var(--gold), #ffab00);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.65em;
+            font-weight: bold;
+            color: #2c1810;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            padding: 0 4px;
+        }
+
+        .bet-chip.coppered {
+            background: linear-gradient(135deg, var(--copper), #8b4513);
+            color: #fff;
+        }
+
+        .copper-penny {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            background: var(--copper);
+            border-radius: 50%;
+            border: 2px solid #8b4513;
+            opacity: 0.9;
+        }
+
+        /* Dealer Cards */
+        .dealt-card {
+            width: 90px;
+            height: 126px;
+            background: #fff;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #ddd;
+            font-weight: bold;
+        }
+
+        .dealt-card.face-down {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 100%);
+            border: 3px solid #3949ab;
+        }
+
+        .dealt-card.face-down::before {
+            content: '';
+            width: 60%;
+            height: 80%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+        }
+
+        .dealt-card .rank {
+            font-size: 2.2em;
+        }
+
+        .dealt-card .suit {
+            font-size: 1.6em;
+        }
+
+        .dealt-card.red .rank,
+        .dealt-card.red .suit {
+            color: #c62828;
+        }
+
+        .dealt-card.black .rank,
+        .dealt-card.black .suit {
+            color: #000;
+        }
+
+        .dealt-card.loser-highlight {
+            box-shadow: 0 0 25px #ff6b6b;
+            border-color: #ff6b6b;
+        }
+
+        .dealt-card.winner-highlight {
+            box-shadow: 0 0 25px #4caf50;
+            border-color: #4caf50;
+        }
+
+        /* Case Keeper */
+        .case-bead {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #333;
+            border: 2px solid #555;
+            display: inline-block;
+            margin: 0 2px;
+            transition: all 0.3s;
+        }
+
+        .case-bead.used {
+            background: var(--gold);
+            border-color: #ffab00;
+            box-shadow: 0 0 5px var(--gold);
+        }
+
+        .case-bead.dead {
+            background: #c62828;
+            border-color: #e53935;
+        }
+
+        /* High Card Bet */
+        .high-card-box {
+            border: 2px dashed var(--gold);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .high-card-box:hover {
+            background: rgba(255, 215, 0, 0.15);
+        }
+
+        .high-card-box.has-bet {
+            background: rgba(255, 215, 0, 0.25);
+            border-style: solid;
+        }
+
+        /* Copper Toggle */
+        .copper-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--copper);
+            border: 2px solid #fff;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        /* Message Log */
+        .message-log {
+            max-height: 180px;
+            overflow-y: auto;
+        }
+
+        .message-log .win {
+            color: #48c78e;
+        }
+
+        .message-log .lose {
+            color: #f14668;
+        }
+
+        .message-log .split {
+            color: #ffe08a;
+        }
+
+        .message-log .info {
+            color: #3e8ed0;
+        }
+
+        /* Animations */
+        @keyframes cardFlip {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(0deg); }
+        }
+
+        .flipping {
+            animation: cardFlip 0.4s ease-in-out;
+        }
+
+        @keyframes winPulse {
+            0%, 100% { box-shadow: 0 0 20px #4caf50; }
+            50% { box-shadow: 0 0 40px #4caf50, 0 0 60px #4caf50; }
+        }
+
+        @keyframes losePulse {
+            0%, 100% { box-shadow: 0 0 20px #ff6b6b; }
+            50% { box-shadow: 0 0 40px #ff6b6b, 0 0 60px #ff6b6b; }
+        }
+
+        .winner-pulse {
+            animation: winPulse 0.5s ease-in-out 2;
+        }
+
+        .loser-pulse {
+            animation: losePulse 0.5s ease-in-out 2;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .bet-card {
+                width: 45px;
+                height: 65px;
+            }
+            .bet-card .rank {
+                font-size: 1.2em;
+            }
+            .bet-card .suit {
+                font-size: 0.9em;
+            }
+            .dealt-card {
+                width: 70px;
+                height: 98px;
+            }
+            .dealt-card .rank {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Header -->
+    <section class="hero is-dark">
+        <div class="hero-body py-4">
+            <div class="container has-text-centered">
+                <h1 class="title has-text-warning">
+                    <i class="fas fa-crown"></i> Фаро
+                </h1>
+                <p class="subtitle has-text-grey-light is-size-6">
+                    Класическата карточна игра от Дивия Запад
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section pt-4">
+        <div class="container">
+            <div class="columns">
+                <!-- Main Game Area -->
+                <div class="column is-8">
+                    <!-- Bank & Controls Bar -->
+                    <div class="box has-background-dark mb-4">
+                        <div class="level is-mobile">
+                            <div class="level-left">
+                                <div class="level-item">
+                                    <div>
+                                        <p class="heading has-text-grey-light">Баланс</p>
+                                        <p class="title has-text-warning is-4">
+                                            <span id="bankAmount">100</span> лв.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="level-item">
+                                <div class="field has-addons">
+                                    <p class="control">
+                                        <span class="button is-static is-small">Залог</span>
+                                    </p>
+                                    <p class="control">
+                                        <span class="select is-warning is-small">
+                                            <select id="betAmount">
+                                                <option value="1">1 лв.</option>
+                                                <option value="5" selected>5 лв.</option>
+                                                <option value="10">10 лв.</option>
+                                                <option value="25">25 лв.</option>
+                                            </select>
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="level-right">
+                                <div class="level-item">
+                                    <button class="button is-small" id="copperToggle" onclick="toggleCopper()">
+                                        <span class="copper-indicator"></span>
+                                        <span>Обратен</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Betting Layout -->
+                    <div class="box betting-table mb-4">
+                        <p class="has-text-centered has-text-warning is-uppercase mb-3" style="letter-spacing: 2px;">
+                            <i class="fas fa-coins"></i> Направете Залозите
+                        </p>
+                        <div class="has-text-centered" id="bettingLayout">
+                            <!-- Cards generated by JS -->
+                        </div>
+                        <hr style="background-color: rgba(255,255,255,0.2);">
+                        <div class="has-text-centered">
+                            <div class="high-card-box is-inline-block px-5 py-3" id="highCardBet" onclick="placeHighCardBet()">
+                                <span class="has-text-warning">
+                                    <i class="fas fa-arrow-up"></i> Висока Карта
+                                </span>
+                                <span class="has-text-warning ml-2" id="highCardAmount"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dealer Section -->
+                    <div class="box has-background-dark">
+                        <p class="has-text-centered has-text-warning is-uppercase mb-4" style="letter-spacing: 2px;">
+                            <i class="fas fa-hand-holding"></i> Тегленето
+                        </p>
+
+                        <div class="columns is-mobile is-centered mb-4">
+                            <div class="column is-narrow has-text-centered">
+                                <p class="tag is-danger mb-2">Губеща</p>
+                                <div class="dealt-card face-down" id="loserCard"></div>
+                            </div>
+                            <div class="column is-narrow has-text-centered">
+                                <p class="tag is-success mb-2">Печеливша</p>
+                                <div class="dealt-card face-down" id="winnerCard"></div>
+                            </div>
+                        </div>
+
+                        <div class="buttons is-centered">
+                            <button class="button is-success" id="dealBtn" onclick="dealTurn()">
+                                <span class="icon"><i class="fas fa-play"></i></span>
+                                <span>Тегли</span>
+                            </button>
+                            <button class="button is-warning is-light" onclick="clearBets()">
+                                <span class="icon"><i class="fas fa-eraser"></i></span>
+                                <span>Изчисти</span>
+                            </button>
+                            <button class="button is-danger is-light" onclick="newGame()">
+                                <span class="icon"><i class="fas fa-redo"></i></span>
+                                <span>Нова Игра</span>
+                            </button>
+                        </div>
+
+                        <p class="has-text-centered has-text-grey-light is-size-7 mt-3">
+                            Карти: <strong id="cardsRemaining">51</strong> |
+                            Ход: <strong id="turnNumber">0</strong>/25
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Side Panel -->
+                <div class="column is-4">
+                    <!-- Case Keeper -->
+                    <div class="box has-background-dark mb-4">
+                        <p class="has-text-warning is-uppercase is-size-7 mb-3" style="letter-spacing: 1px;">
+                            <i class="fas fa-abacus"></i> Брояч на Карти
+                        </p>
+                        <div id="caseKeeperContent">
+                            <!-- Generated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Game Log -->
+                    <div class="box has-background-dark mb-4">
+                        <p class="has-text-warning is-uppercase is-size-7 mb-3" style="letter-spacing: 1px;">
+                            <i class="fas fa-scroll"></i> История
+                        </p>
+                        <div class="message-log is-size-7" id="messageLog">
+                            <p class="info">Добре дошли във Фаро! Направете залог и теглете.</p>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="box has-background-dark mb-4">
+                        <p class="has-text-warning is-uppercase is-size-7 mb-3" style="letter-spacing: 1px;">
+                            <i class="fas fa-chart-bar"></i> Статистика
+                        </p>
+                        <table class="table is-fullwidth is-size-7 has-background-dark has-text-light">
+                            <tbody>
+                                <tr>
+                                    <td>Изиграни ходове</td>
+                                    <td class="has-text-warning has-text-right" id="turnsPlayed">0</td>
+                                </tr>
+                                <tr>
+                                    <td>Общо спечелено</td>
+                                    <td class="has-text-success has-text-right" id="totalWon">0 лв.</td>
+                                </tr>
+                                <tr>
+                                    <td>Общо загубено</td>
+                                    <td class="has-text-danger has-text-right" id="totalLost">0 лв.</td>
+                                </tr>
+                                <tr>
+                                    <td>Сплитове</td>
+                                    <td class="has-text-warning has-text-right" id="splitsHit">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="box has-background-dark">
+                        <p class="has-text-warning is-uppercase is-size-7 mb-3" style="letter-spacing: 1px;">
+                            <i class="fas fa-question-circle"></i> Как се играе
+                        </p>
+                        <div class="content is-size-7 has-text-grey-light">
+                            <ul>
+                                <li>Кликнете върху карта за залог</li>
+                                <li>Включете "Обратен" за залог, че картата ще ЗАГУБИ</li>
+                                <li>Първата карта = Губеща, втората = Печеливша</li>
+                                <li>Сплит (еднакви карти) = къщата взема половината</li>
+                                <li>Висока Карта печели ако Печеливша > Губеща</li>
+                                <li>Десен клик за премахване на залог</li>
+                            </ul>
+                            <p class="mt-2">
+                                <span class="tag is-dark">Space</span> Тегли
+                                <span class="tag is-dark ml-2">C</span> Обратен
+                                <span class="tag is-dark ml-2">N</span> Нова Игра
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Over Modal -->
+    <div class="modal" id="gameOverModal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+            <div class="box has-text-centered">
+                <h2 class="title is-2" id="overlayTitle">Край на Играта</h2>
+                <p class="subtitle" id="finalBank"></p>
+                <button class="button is-success is-large" onclick="newGame()">
+                    <span class="icon"><i class="fas fa-redo"></i></span>
+                    <span>Играй Отново</span>
+                </button>
+            </div>
+        </div>
+        <button class="modal-close is-large" onclick="closeModal()"></button>
+    </div>
+
+    <script>
+        // Game Constants
+        const RANKS = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+        const SUITS = ['♠', '♥', '♦', '♣'];
+        const STARTING_BANK = 100;
+
+        // Game State
+        let deck = [];
+        let bank = STARTING_BANK;
+        let bets = {};
+        let highCardBet = { amount: 0, coppered: false };
+        let caseKeeper = {};
+        let isDealing = false;
+        let copperMode = false;
+        let turnNumber = 0;
+        let sodaCard = null;
+        let totalWon = 0;
+        let totalLost = 0;
+        let splitsHit = 0;
+
+        // Initialize
+        function init() {
+            createBettingLayout();
+            createCaseKeeper();
+            newGame();
+        }
+
+        // Create betting layout
+        function createBettingLayout() {
+            const layout = document.getElementById('bettingLayout');
+            layout.innerHTML = '';
+
+            RANKS.forEach(rank => {
+                const card = document.createElement('div');
+                card.className = 'bet-card';
+                card.id = `bet-${rank}`;
+                card.innerHTML = `
+                    <span class="rank">${rank}</span>
+                    <span class="suit">♠</span>
+                `;
+                card.onclick = () => placeBet(rank);
+                card.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    removeBet(rank);
+                };
+                layout.appendChild(card);
+            });
+        }
+
+        // Create case keeper
+        function createCaseKeeper() {
+            const keeper = document.getElementById('caseKeeperContent');
+            keeper.innerHTML = '';
+
+            RANKS.forEach(rank => {
+                const row = document.createElement('div');
+                row.className = 'level is-mobile mb-1';
+                row.innerHTML = `
+                    <div class="level-left">
+                        <span class="has-text-light has-text-weight-bold" style="width: 25px;">${rank}</span>
+                    </div>
+                    <div class="level-right" id="case-${rank}">
+                        <span class="case-bead"></span>
+                        <span class="case-bead"></span>
+                        <span class="case-bead"></span>
+                        <span class="case-bead"></span>
+                    </div>
+                `;
+                keeper.appendChild(row);
+            });
+        }
+
+        // Create shuffled deck
+        function createDeck() {
+            deck = [];
+            for (let suit of SUITS) {
+                for (let rank of RANKS) {
+                    deck.push({ rank, suit });
+                }
+            }
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+
+        // New game
+        function newGame() {
+            createDeck();
+            bank = STARTING_BANK;
+            bets = {};
+            highCardBet = { amount: 0, coppered: false };
+            caseKeeper = {};
+            RANKS.forEach(r => caseKeeper[r] = 0);
+            turnNumber = 0;
+            totalWon = 0;
+            totalLost = 0;
+            splitsHit = 0;
+            sodaCard = null;
+            isDealing = false;
+            copperMode = false;
+
+            sodaCard = deck.pop();
+            caseKeeper[sodaCard.rank]++;
+
+            updateUI();
+            updateCaseKeeper();
+            clearBetDisplay();
+            resetDealerCards();
+            closeModal();
+
+            document.getElementById('copperToggle').classList.remove('is-warning');
+            addMessage(`Ново тесте. Първа карта: ${sodaCard.rank}${sodaCard.suit}`, 'info');
+        }
+
+        // Place bet
+        function placeBet(rank) {
+            if (isDealing) return;
+            if (caseKeeper[rank] >= 4) {
+                addMessage(`${rank} е мъртва карта!`, 'info');
+                return;
+            }
+
+            const betAmount = parseInt(document.getElementById('betAmount').value);
+            if (bank < betAmount) {
+                addMessage('Нямате достатъчно пари!', 'lose');
+                return;
+            }
+
+            if (!bets[rank]) {
+                bets[rank] = { amount: 0, coppered: copperMode };
+            }
+
+            if (bets[rank].coppered !== copperMode && bets[rank].amount > 0) {
+                bank += bets[rank].amount;
+                bets[rank] = { amount: 0, coppered: copperMode };
+            }
+
+            bets[rank].amount += betAmount;
+            bets[rank].coppered = copperMode;
+            bank -= betAmount;
+
+            updateUI();
+            updateBetDisplay(rank);
+        }
+
+        // Remove bet
+        function removeBet(rank) {
+            if (isDealing) return;
+            if (bets[rank] && bets[rank].amount > 0) {
+                bank += bets[rank].amount;
+                delete bets[rank];
+                updateUI();
+                updateBetDisplay(rank);
+            }
+        }
+
+        // Place high card bet
+        function placeHighCardBet() {
+            if (isDealing) return;
+            const betAmount = parseInt(document.getElementById('betAmount').value);
+            if (bank < betAmount) {
+                addMessage('Нямате достатъчно пари!', 'lose');
+                return;
+            }
+
+            highCardBet.amount += betAmount;
+            highCardBet.coppered = copperMode;
+            bank -= betAmount;
+
+            updateUI();
+            updateHighCardDisplay();
+        }
+
+        // Clear all bets
+        function clearBets() {
+            if (isDealing) return;
+            for (let rank in bets) {
+                bank += bets[rank].amount;
+            }
+            bank += highCardBet.amount;
+
+            bets = {};
+            highCardBet = { amount: 0, coppered: false };
+
+            updateUI();
+            clearBetDisplay();
+        }
+
+        // Toggle copper mode
+        function toggleCopper() {
+            copperMode = !copperMode;
+            document.getElementById('copperToggle').classList.toggle('is-warning', copperMode);
+        }
+
+        // Deal turn
+        function dealTurn() {
+            if (isDealing || deck.length < 2) return;
+
+            const hasBets = Object.keys(bets).length > 0 || highCardBet.amount > 0;
+            if (!hasBets) {
+                addMessage('Първо направете залог!', 'info');
+                return;
+            }
+
+            isDealing = true;
+            document.getElementById('dealBtn').disabled = true;
+            resetDealerCards();
+
+            setTimeout(() => {
+                const loserCard = deck.pop();
+                const winnerCard = deck.pop();
+
+                turnNumber++;
+                caseKeeper[loserCard.rank]++;
+                caseKeeper[winnerCard.rank]++;
+
+                showDealerCard('loserCard', loserCard, 'loser');
+
+                setTimeout(() => {
+                    showDealerCard('winnerCard', winnerCard, 'winner');
+
+                    setTimeout(() => {
+                        processResults(loserCard, winnerCard);
+                        updateUI();
+                        updateCaseKeeper();
+                        updateBettingLayoutStatus();
+
+                        if (deck.length < 2) {
+                            setTimeout(() => endGame(), 1500);
+                        }
+
+                        isDealing = false;
+                        document.getElementById('dealBtn').disabled = false;
+                    }, 600);
+                }, 400);
+            }, 300);
+        }
+
+        // Show dealer card
+        function showDealerCard(elementId, card, type) {
+            const element = document.getElementById(elementId);
+            const isRed = card.suit === '♥' || card.suit === '♦';
+
+            element.className = `dealt-card ${isRed ? 'red' : 'black'} flipping`;
+            element.innerHTML = `
+                <span class="rank">${card.rank}</span>
+                <span class="suit">${card.suit}</span>
+            `;
+
+            setTimeout(() => {
+                element.classList.remove('flipping');
+                element.classList.add(type === 'loser' ? 'loser-highlight' : 'winner-highlight');
+            }, 400);
+        }
+
+        // Reset dealer cards
+        function resetDealerCards() {
+            ['loserCard', 'winnerCard'].forEach(id => {
+                const card = document.getElementById(id);
+                card.className = 'dealt-card face-down';
+                card.innerHTML = '';
+            });
+        }
+
+        // Process results
+        function processResults(loserCard, winnerCard) {
+            let turnWinnings = 0;
+            let turnLosses = 0;
+            const messages = [];
+
+            const isSplit = loserCard.rank === winnerCard.rank;
+
+            if (isSplit) {
+                splitsHit++;
+                messages.push(`СПЛИТ на ${loserCard.rank}! Къщата взема половината.`);
+            }
+
+            for (let rank in bets) {
+                const bet = bets[rank];
+
+                if (isSplit && rank === loserCard.rank) {
+                    const halfBet = Math.floor(bet.amount / 2);
+                    bank += halfBet;
+                    turnLosses += bet.amount - halfBet;
+                    messages.push(`Сплит ${rank}: -${bet.amount - halfBet} лв.`);
+                } else if (rank === winnerCard.rank) {
+                    if (bet.coppered) {
+                        turnLosses += bet.amount;
+                        messages.push(`${rank} спечели (О): -${bet.amount} лв.`);
+                    } else {
+                        const winnings = bet.amount * 2;
+                        bank += winnings;
+                        turnWinnings += bet.amount;
+                        messages.push(`${rank} спечели: +${bet.amount} лв.`);
+                    }
+                } else if (rank === loserCard.rank) {
+                    if (bet.coppered) {
+                        const winnings = bet.amount * 2;
+                        bank += winnings;
+                        turnWinnings += bet.amount;
+                        messages.push(`${rank} загуби (О): +${bet.amount} лв.`);
+                    } else {
+                        turnLosses += bet.amount;
+                        messages.push(`${rank} загуби: -${bet.amount} лв.`);
+                    }
+                } else {
+                    bank += bet.amount;
+                }
+            }
+
+            if (highCardBet.amount > 0) {
+                const winnerValue = getRankValue(winnerCard.rank);
+                const loserValue = getRankValue(loserCard.rank);
+                const winnerIsHigher = winnerValue > loserValue;
+
+                if (isSplit) {
+                    bank += highCardBet.amount;
+                    messages.push('Висока Карта: Равен');
+                } else if (winnerIsHigher !== highCardBet.coppered) {
+                    const winnings = highCardBet.amount * 2;
+                    bank += winnings;
+                    turnWinnings += highCardBet.amount;
+                    messages.push(`Висока Карта: +${highCardBet.amount} лв.`);
+                } else {
+                    turnLosses += highCardBet.amount;
+                    messages.push(`Висока Карта: -${highCardBet.amount} лв.`);
+                }
+            }
+
+            totalWon += turnWinnings;
+            totalLost += turnLosses;
+
+            bets = {};
+            highCardBet = { amount: 0, coppered: false };
+            clearBetDisplay();
+
+            const msgClass = turnWinnings > turnLosses ? 'win' : (turnLosses > turnWinnings ? 'lose' : 'info');
+            messages.forEach(msg => addMessage(msg, msgClass));
+
+            highlightBetCard(loserCard.rank, 'loser');
+            highlightBetCard(winnerCard.rank, 'winner');
+        }
+
+        // Get rank value
+        function getRankValue(rank) {
+            const values = { 'A': 14, 'K': 13, 'Q': 12, 'J': 11, '10': 10, '9': 9, '8': 8, '7': 7, '6': 6, '5': 5, '4': 4, '3': 3, '2': 2 };
+            return values[rank];
+        }
+
+        // Highlight bet card
+        function highlightBetCard(rank, type) {
+            const card = document.getElementById(`bet-${rank}`);
+            if (card) {
+                card.classList.add(type === 'winner' ? 'winner-pulse' : 'loser-pulse');
+                setTimeout(() => {
+                    card.classList.remove('winner-pulse', 'loser-pulse');
+                }, 1000);
+            }
+        }
+
+        // Update betting layout status
+        function updateBettingLayoutStatus() {
+            RANKS.forEach(rank => {
+                const card = document.getElementById(`bet-${rank}`);
+                if (caseKeeper[rank] >= 4) {
+                    card.classList.add('disabled');
+                } else {
+                    card.classList.remove('disabled');
+                }
+            });
+        }
+
+        // Update UI
+        function updateUI() {
+            document.getElementById('bankAmount').textContent = bank;
+            document.getElementById('cardsRemaining').textContent = deck.length;
+            document.getElementById('turnNumber').textContent = turnNumber;
+            document.getElementById('turnsPlayed').textContent = turnNumber;
+            document.getElementById('totalWon').textContent = `${totalWon} лв.`;
+            document.getElementById('totalLost').textContent = `${totalLost} лв.`;
+            document.getElementById('splitsHit').textContent = splitsHit;
+            document.getElementById('dealBtn').disabled = deck.length < 2 || isDealing;
+        }
+
+        // Update case keeper
+        function updateCaseKeeper() {
+            RANKS.forEach(rank => {
+                const beads = document.querySelectorAll(`#case-${rank} .case-bead`);
+                const count = caseKeeper[rank];
+
+                beads.forEach((bead, i) => {
+                    bead.classList.remove('used', 'dead');
+                    if (i < count) {
+                        bead.classList.add('used');
+                        if (count >= 4) {
+                            bead.classList.add('dead');
+                        }
+                    }
+                });
+            });
+        }
+
+        // Update bet display
+        function updateBetDisplay(rank) {
+            const card = document.getElementById(`bet-${rank}`);
+            const existingChip = card.querySelector('.bet-chip');
+            const existingPenny = card.querySelector('.copper-penny');
+
+            if (existingChip) existingChip.remove();
+            if (existingPenny) existingPenny.remove();
+
+            if (bets[rank] && bets[rank].amount > 0) {
+                const chip = document.createElement('div');
+                chip.className = `bet-chip${bets[rank].coppered ? ' coppered' : ''}`;
+                chip.textContent = `${bets[rank].amount}лв`;
+                card.appendChild(chip);
+
+                if (bets[rank].coppered) {
+                    const penny = document.createElement('div');
+                    penny.className = 'copper-penny';
+                    card.appendChild(penny);
+                }
+            }
+        }
+
+        // Update high card display
+        function updateHighCardDisplay() {
+            const display = document.getElementById('highCardAmount');
+            const container = document.getElementById('highCardBet');
+
+            if (highCardBet.amount > 0) {
+                display.textContent = `${highCardBet.amount} лв.${highCardBet.coppered ? ' (О)' : ''}`;
+                container.classList.add('has-bet');
+            } else {
+                display.textContent = '';
+                container.classList.remove('has-bet');
+            }
+        }
+
+        // Clear bet display
+        function clearBetDisplay() {
+            RANKS.forEach(rank => updateBetDisplay(rank));
+            updateHighCardDisplay();
+        }
+
+        // Add message
+        function addMessage(text, type = 'info') {
+            const log = document.getElementById('messageLog');
+            const p = document.createElement('p');
+            p.className = type;
+            p.textContent = text;
+            log.insertBefore(p, log.firstChild);
+
+            while (log.children.length > 20) {
+                log.removeChild(log.lastChild);
+            }
+        }
+
+        // End game
+        function endGame() {
+            const modal = document.getElementById('gameOverModal');
+            const title = document.getElementById('overlayTitle');
+            const finalBank = document.getElementById('finalBank');
+
+            finalBank.textContent = `Краен баланс: ${bank} лв.`;
+
+            if (bank > STARTING_BANK) {
+                title.textContent = '🎉 Вие Спечелихте!';
+                title.className = 'title is-2 has-text-success';
+            } else if (bank < STARTING_BANK) {
+                title.textContent = 'Къщата Печели';
+                title.className = 'title is-2 has-text-danger';
+            } else {
+                title.textContent = 'Без Промяна!';
+                title.className = 'title is-2 has-text-warning';
+            }
+
+            modal.classList.add('is-active');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('gameOverModal').classList.remove('is-active');
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                dealTurn();
+            } else if (e.code === 'KeyC') {
+                toggleCopper();
+            } else if (e.code === 'KeyN') {
+                newGame();
+            } else if (e.code === 'Escape') {
+                clearBets();
+                closeModal();
+            }
+        });
+
+        // Init on load
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
