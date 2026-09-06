@@ -2,18 +2,24 @@
 # Deploy from this directory:  npx wrangler deploy
 name = "uslugivik"
 main = "worker.js"
-compatibility_date = "2026-09-01"
+compatibility_date = "2026-08-01"
+workers_dev = false
+preview_urls = false
+routes = [
+  { pattern = "uslugivik.com", custom_domain = true },
+  { pattern = "www.uslugivik.com", custom_domain = true },
+]
 
 [assets]
 directory = "./public"
 binding = "ASSETS"
 html_handling = "auto-trailing-slash"
 
-# KV namespace for request-form submissions. The id below is the "VIK_LEADS"
-# namespace from the account; confirm it matches the Worker's current binding
-# in the dashboard (Workers & Pages -> uslugivik -> Settings -> Bindings) before deploying.
+# KV namespace for request-form submissions ("VIK_LEADS"; verified against the live
+# Worker's bindings on 2026-09-06).
 [[kv_namespaces]]
 binding = "LEADS"
 id = "bfe0452ce8b642f9a0ea249fab2d95b3"
 
-# Secret (set with `npx wrangler secret put LEADS_KEY`): key for reading /zayavki.txt?key=...
+# LEADS_KEY (key for reading /zayavki.txt?key=...) is set as a variable on the Worker in the
+# dashboard, not in this file. Deploy with `npx wrangler deploy --keep-vars` so it is preserved.
